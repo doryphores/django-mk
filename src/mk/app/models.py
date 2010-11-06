@@ -14,6 +14,10 @@ class Player(models.Model):
 	
 	name = models.CharField(max_length=200, unique=True)
 	
+	def _get_points(self):
+		return sum(self.__getattribute__(key).count() * POSITION_POINTS[key] for key in POSITION_POINTS)
+	points = property(_get_points)
+	
 	def __unicode__(self):
 		return self.name
 	
@@ -28,11 +32,11 @@ class Course(models.Model):
 	
 class Event(models.Model):
 	class Meta:
-		ordering = ['event_date']
+		ordering = ['-event_date']
 		
 	event_date = models.DateTimeField(auto_now_add=True)
 	complete = models.BooleanField(default=False)
-	players = models.ManyToManyRel(Player)
+	players = models.ManyToManyField(Player)
 	
 	def __unicode__(self):
 		return unicode(self.event_date)

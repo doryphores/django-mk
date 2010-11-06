@@ -4,7 +4,12 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
+from mk.app import views
+
 urlpatterns = patterns('',
+	(r'^$', 'mk.app.views.home'),
+	(r'^new/', 'mk.app.views.new'),
+	(r'^race/', 'mk.app.views.race'),
     # Example:
     # (r'^django_mk/', include('django_mk.foo.urls')),
 

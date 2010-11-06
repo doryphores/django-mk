@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Race{% endblock %}
+
+{% block content %}
+
+<form action="/race/" method="post">
+{% csrf_token %}
+{{ form }}
+<input type="submit" value="Next">
+</form>
+
+{% endblock %}
