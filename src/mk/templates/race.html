@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Race{% endblock %}
+{% block title %}Race #{{ race_number }}{% endblock %}
 
 {% block content %}
-
+<h2>Race #{{ race_number }}</h2>
 <form action="/race/" method="post">
 {% csrf_token %}
-{{ form }}
+{{ form.as_p }}
 <input type="submit" value="Next">
 </form>
+
+<h3>Results</h3>
+{% for result in results %}
+<p>{{ result.player }}: {{ result.points }}</p>
+{% endfor %}
 
 {% endblock %}
