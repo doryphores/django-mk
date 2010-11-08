@@ -12,7 +12,7 @@
 
 <h3>Results</h3>
 {% for result in results %}
-<p>{{ result.player }}: {{ result.points }}</p>
+<p>{{ result.player.name }}: {{ result.points }}</p>
 {% endfor %}
 
 {% endblock %}

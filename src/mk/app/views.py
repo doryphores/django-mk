@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from mk.app.forms import EventForm, RaceForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from mk.app.models import Race, Event, Course
+from mk.app.models import Race, Event
 
 def home(request):
 	return render_to_response('home.html')
