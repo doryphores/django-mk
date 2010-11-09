@@ -7,32 +7,29 @@ POSITION_POINTS = [15,9,4,1]
 
 
 class Player(models.Model):
-	class Meta:
-		ordering = ['name']
-	
 	name = models.CharField(max_length=200, unique=True)
 	
 	def __unicode__(self):
 		return self.name
+	
+	class Meta:
+		ordering = ['name']
 
-	
+
 class Course(models.Model):
-	class Meta:
-		ordering = ['name']
-	
 	name = models.CharField(max_length=200, unique=True)
 	
 	def __unicode__(self):
 		return self.name
+	
+	class Meta:
+		ordering = ['name']
 
 
 class Stats(models.Model):
-	class Meta:
-		ordering = ['-event']
-		get_latest_by = '-event__event-date'
-		
 	player = models.ForeignKey(Player)
 	event= models.ForeignKey('Event')
+	
 	points = models.IntegerField(default=0)
 	race_count = models.PositiveIntegerField(default=0)
 	race_firsts = models.PositiveIntegerField(default=0) 
@@ -47,14 +44,36 @@ class Stats(models.Model):
 	form = models.DecimalField(max_digits=2, decimal_places=1, default=0)
 	
 	def __unicode__(self):
-		return self.player.name + " - " + unicode(self.event.event_date)
+		return self.player.name + " - " + unicode(self.event)
+	
+	class Meta:
+		ordering = ['event', 'average']
+		get_latest_by = 'event'
+
+
+class RaceStats(models.Model):
+	event = models.ForeignKey('Event')
+	player = models.ForeignKey(Player)
+	course = models.ForeignKey(Course)
+	
+	firsts = models.PositiveIntegerField(default=0)
+	seconds = models.PositiveIntegerField(default=0)
+	thirds = models.PositiveIntegerField(default=0)
+	fourths = models.PositiveIntegerField(default=0)
+	points = models.PositiveIntegerField(default=0)
+	
+	def save(self, *args, **kwargs):
+		self.points = self.firsts * POSITION_POINTS[0] + self.seconds * POSITION_POINTS[1] + self.thirds * POSITION_POINTS[2] + self.fourths * POSITION_POINTS[3]
+		super(RaceStats, self).save(*args, **kwargs)
+	
+	def __unicode__(self):
+		return self.player.name + " - " + unicode(self.course) + " - " + unicode(self.event)
+	
+	class Meta:
+		ordering = ['-event__event_date','player','course']
 
 
 class Event(models.Model):
-	class Meta:
-		ordering = ['-event_date']
-		get_latest_by = 'event_date'
-		
 	event_date = models.DateTimeField(auto_now_add=True)
 	complete = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player)
@@ -83,7 +102,6 @@ class Event(models.Model):
 		return self.race_set.count()
 	race_count = property(_get_race_count)
 	
-	@transaction.commit_on_success
 	def set_complete(self):
 		if self.complete:
 			return
@@ -94,10 +112,8 @@ class Event(models.Model):
 		results = self.results
 		
 		for player in self.players.all():
-			stats = Stats(event=self, player=player)
-			player_stats = Stats.objects.filter(player=player).order_by('-event__event_date')
-			if player_stats.exists():
-				stats = player_stats[0]
+			if Stats.objects.filter(player=player).exists():
+				stats = Stats.objects.filter(player=player).order_by('event__event_date')[0]
 				stats.pk = None
 				stats.event = self
 			else:
@@ -119,16 +135,35 @@ class Event(models.Model):
 			stats.average = Decimal(str(float(stats.points) / float(stats.race_count)))
 			
 			stats.save()
+			
+			for race in self.race_set.all():
+				if RaceStats.objects.filter(course=race.course, player=player).exists():
+					race_stats = RaceStats.objects.filter(course=race.course, player=player).order_by('event__event_date')[0]
+					race_stats.pk = None
+					race_stats.event = self
+				else:
+					race_stats = RaceStats(event=self, player=player, course=race.course)
+				
+				if race.first == player:
+					race_stats.firsts += 1
+				elif race.second == player:
+					race_stats.seconds += 1
+				elif race.third == player:
+					race_stats.thirds += 1
+				else:
+					race_stats.fourths += 1
+					
+				race_stats.save()
 	
 	def __unicode__(self):
 		return unicode(self.event_date)
+	
+	class Meta:
+		ordering = ['-event_date']
+		get_latest_by = 'event_date'
 
 
 class Race(models.Model):
-	class Meta:
-		order_with_respect_to = 'event'
-		ordering = ['order']
-	
 	event = models.ForeignKey(Event)
 	course = models.ForeignKey(Course)
 	order = models.PositiveSmallIntegerField()
@@ -143,3 +178,6 @@ class Race(models.Model):
 	def save(self, *args, **kwargs):
 		self.order = self.event.race_set.count()
 		super(Race, self).save(*args, **kwargs)
+	
+	class Meta:
+		ordering = ['event','order']

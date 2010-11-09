@@ -264,5 +264,241 @@
         "fields": {
             "name": "Yoshi Falls"
         }
+    }, 
+    {
+        "pk": 10, 
+        "model": "app.event", 
+        "fields": {
+            "event_date": "2010-11-08 17:07:26", 
+            "complete": false, 
+            "players": [
+                2, 
+                3, 
+                4, 
+                1
+            ]
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "app.event", 
+        "fields": {
+            "event_date": "2010-11-08 14:41:58", 
+            "complete": false, 
+            "players": [
+                2, 
+                3, 
+                4, 
+                1
+            ]
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "app.race", 
+        "fields": {
+            "third": 4, 
+            "order": 0, 
+            "course": 9, 
+            "second": 3, 
+            "fourth": 1, 
+            "event": 10, 
+            "first": 2
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "app.race", 
+        "fields": {
+            "third": 1, 
+            "order": 1, 
+            "course": 12, 
+            "second": 2, 
+            "fourth": 4, 
+            "event": 10, 
+            "first": 3
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "app.race", 
+        "fields": {
+            "third": 4, 
+            "order": 2, 
+            "course": 13, 
+            "second": 2, 
+            "fourth": 1, 
+            "event": 10, 
+            "first": 3
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "app.race", 
+        "fields": {
+            "third": 2, 
+            "order": 3, 
+            "course": 31, 
+            "second": 4, 
+            "fourth": 3, 
+            "event": 10, 
+            "first": 1
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "app.race", 
+        "fields": {
+            "third": 2, 
+            "order": 4, 
+            "course": 25, 
+            "second": 4, 
+            "fourth": 1, 
+            "event": 10, 
+            "first": 3
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "app.race", 
+        "fields": {
+            "third": 4, 
+            "order": 5, 
+            "course": 22, 
+            "second": 3, 
+            "fourth": 2, 
+            "event": 10, 
+            "first": 1
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "app.race", 
+        "fields": {
+            "third": 3, 
+            "order": 6, 
+            "course": 24, 
+            "second": 4, 
+            "fourth": 1, 
+            "event": 10, 
+            "first": 2
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "app.race", 
+        "fields": {
+            "third": 2, 
+            "order": 7, 
+            "course": 15, 
+            "second": 3, 
+            "fourth": 1, 
+            "event": 10, 
+            "first": 4
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "app.race", 
+        "fields": {
+            "third": 3, 
+            "order": 0, 
+            "course": 11, 
+            "second": 4, 
+            "fourth": 1, 
+            "event": 8, 
+            "first": 2
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "app.race", 
+        "fields": {
+            "third": 1, 
+            "order": 1, 
+            "course": 18, 
+            "second": 3, 
+            "fourth": 4, 
+            "event": 8, 
+            "first": 2
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "app.race", 
+        "fields": {
+            "third": 3, 
+            "order": 2, 
+            "course": 2, 
+            "second": 4, 
+            "fourth": 2, 
+            "event": 8, 
+            "first": 1
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "app.race", 
+        "fields": {
+            "third": 4, 
+            "order": 3, 
+            "course": 4, 
+            "second": 3, 
+            "fourth": 2, 
+            "event": 8, 
+            "first": 1
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "app.race", 
+        "fields": {
+            "third": 2, 
+            "order": 4, 
+            "course": 12, 
+            "second": 3, 
+            "fourth": 4, 
+            "event": 8, 
+            "first": 1
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "app.race", 
+        "fields": {
+            "third": 1, 
+            "order": 5, 
+            "course": 32, 
+            "second": 3, 
+            "fourth": 2, 
+            "event": 8, 
+            "first": 4
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "app.race", 
+        "fields": {
+            "third": 2, 
+            "order": 6, 
+            "course": 7, 
+            "second": 3, 
+            "fourth": 1, 
+            "event": 8, 
+            "first": 4
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "app.race", 
+        "fields": {
+            "third": 1, 
+            "order": 7, 
+            "course": 14, 
+            "second": 4, 
+            "fourth": 3, 
+            "event": 8, 
+            "first": 2
+        }
     }
 ]

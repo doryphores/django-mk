@@ -25,7 +25,7 @@ def new(request):
 def race(request):
 	event = Event.objects.get(pk=request.session['event_pk'])
 	race = Race(event=event)
-		
+	
 	if request.method == 'POST':
 		form = RaceForm(request.POST, instance=race)
 		
