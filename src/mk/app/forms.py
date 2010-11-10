@@ -1,8 +1,14 @@
 from mk.app.models import Event, Race, Player, Course
 from django.forms import ModelForm, ValidationError, models, widgets
+from django.utils.safestring import mark_safe
+
+class CheckboxSelectMultipleNoUl(widgets.CheckboxSelectMultiple):
+	def render(self, *args, **kwargs):
+		output = super(CheckboxSelectMultipleNoUl, self).render(*args, **kwargs)
+		return mark_safe(output.replace(u'<ul>', u'').replace(u'</ul>', u'').replace(u'<li>', u'').replace(u'</li>', u''))
 
 class EventForm(ModelForm):
-	players = models.ModelMultipleChoiceField(queryset=Player.objects.all(), widget=widgets.CheckboxSelectMultiple)
+	players = models.ModelMultipleChoiceField(queryset=Player.objects.all(), widget=CheckboxSelectMultipleNoUl)
 	
 	class Meta:
 		model = Event
@@ -31,7 +37,7 @@ class RaceForm(ModelForm):
 		super(RaceForm, self).__init__(*args, **kwargs)
 		
 		player_choices = self.instance.event.players
-		course_choices = Course.objects.exclude(pk__in=self.instance.event.race_set.values_list('course'))
+		course_choices = Course.objects.exclude(pk__in=self.instance.event.race_set.exclude(pk=self.instance.pk).values_list('course'))
 		
 		self.fields['course'].queryset = course_choices
 		self.fields['first'].queryset = player_choices

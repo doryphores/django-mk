@@ -1,7 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block page_title %}Stats{% endblock %}
 
 {% block content %}
-<p>Welcome to Mario Kart</p>
+
+<h2>Latest stats</h2>
+<table>
+	<thead>
+		<tr>
+			<th rowspan="2">Player</th>
+			<th colspan="4">Overall event results</th>
+			<th colspan="4">Overall race results</th>
+			<th rowspan="2">Points</th>
+			<th rowspan="2">Races</th>
+			<th rowspan="2">Average</th>
+		</tr>
+		<tr>
+			<th>1st</th>
+			<th>2nd</th>
+			<th>3rd</th>
+			<th>4th</th>
+			<th>1st</th>
+			<th>2nd</th>
+			<th>3rd</th>
+			<th>4th</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for row in stats %}
+		<tr class="{% cycle 'odd','even' %}">
+			<td>{{ row.player.name }}</td>
+			<td>{{ row.current.event_firsts }}</td>
+			<td>{{ row.current.event_seconds }}</td>
+			<td>{{ row.current.event_thirds }}</td>
+			<td>{{ row.current.event_fourths }}</td>
+			<td>{{ row.current.race_firsts }}</td>
+			<td>{{ row.current.race_seconds }}</td>
+			<td>{{ row.current.race_thirds }}</td>
+			<td>{{ row.current.race_fourths }}</td>
+			<td>{{ row.current.points }}</td>
+			<td>{{ row.current.race_count }}</td>
+			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}+{% else %}-{% endif %})</td>
+		</tr>
+	{% endfor %} 
+	</tbody>
+</table>
 {% endblock %}

@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Race #{{ race_number }}{% endblock %}
+{% block title %}Race #{{ race.order|add:1 }}{% endblock %}
 
 {% block content %}
-<h2>Race #{{ race_number }}</h2>
-<form action="/race/" method="post">
+
+<h2>Race #{{ race.order|add:1 }}</h2>
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
 {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Next">
+
+<a href="{{ previous_url }}">Back</a>
 </form>
 
 <h3>Results</h3>
-{% for result in results %}
-<p>{{ result.player.name }}: {{ result.points }}</p>
+{% for player, points in results %}
+<p>{{ player }}: {{ points }}</p>
 {% endfor %}
 
 {% endblock %}

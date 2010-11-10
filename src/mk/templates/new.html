@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}New event{% endblock %}
+{% block page_title %}New event{% endblock %}
 
 {% block content %}
 
 <form action="/new/" method="post">
 {% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Start">
+{% for field in form %}
+<div data-role="fieldcontain">
+{{ field.label_tag }}
+<fieldset data-role="controlgroup">
+{{ field }}
+</fieldset>
+</div>
+{% endfor %}
+<input type="submit" value="Start" data-inline="true">
 </form>
 
 {% endblock %}

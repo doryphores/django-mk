@@ -1,10 +1,10 @@
 from django.db import models
 from operator import itemgetter
 from decimal import Decimal
-from django.db import transaction
 
 POSITION_POINTS = [15,9,4,1]
 
+FORM_COUNT = 10
 
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
@@ -47,7 +47,7 @@ class Stats(models.Model):
 		return self.player.name + " - " + unicode(self.event)
 	
 	class Meta:
-		ordering = ['event', 'average']
+		ordering = ['event', '-average']
 		get_latest_by = 'event'
 
 
@@ -70,7 +70,7 @@ class RaceStats(models.Model):
 		return self.player.name + " - " + unicode(self.course) + " - " + unicode(self.event)
 	
 	class Meta:
-		ordering = ['-event__event_date','player','course']
+		ordering = ['event','player','course']
 
 
 class Event(models.Model):
@@ -79,24 +79,36 @@ class Event(models.Model):
 	players = models.ManyToManyField(Player)
 	
 	def _get_results(self):
-		results = {}.fromkeys([player.name for player in self.players.all()], 0)
+		results = {}.fromkeys([player for player in self.players.all()])
 		
 		for player in self.players.all():
-			results[player.name] = {
-				'player': player,
-				'points': 0
+			results[player] = {
+				'rank': 0,
+				'points': 0,
+				'positions': [0, 0, 0, 0]
 			}
 		
 		for race in self.race_set.all():
-			results[race.first.name]['points'] += POSITION_POINTS[0]
-			results[race.second.name]['points'] += POSITION_POINTS[1]
-			results[race.third.name]['points'] += POSITION_POINTS[2]
-			results[race.fourth.name]['points'] += POSITION_POINTS[3]
+			results[race.first]['points'] += POSITION_POINTS[0]
+			results[race.first]['positions'][0] += 1
+			results[race.second]['points'] += POSITION_POINTS[1]
+			results[race.second]['positions'][1] += 1
+			results[race.third]['points'] += POSITION_POINTS[2]
+			results[race.third]['positions'][2] += 1
+			results[race.fourth]['points'] += POSITION_POINTS[3]
+			results[race.fourth]['positions'][3] += 1
 		
-		results = [{ 'player': results[key]['player'], 'points': results[key]['points'] } for key in results]
+		for i, p in enumerate(sorted([(player, results[player]['points']) for player in results], key=itemgetter(1), reverse=True)):
+			results[p[0]]['rank'] = i
 		
-		return sorted(results, key=itemgetter('points'), reverse=True)
+		return results
 	results = property(_get_results)
+	
+	def get_player_result(self, player):
+		if player not in self.players:
+			raise "Player didn't take part in this event"
+		
+		return self.results[player]
 	
 	def _get_race_count(self):
 		return self.race_set.count()
@@ -113,24 +125,30 @@ class Event(models.Model):
 		
 		for player in self.players.all():
 			if Stats.objects.filter(player=player).exists():
-				stats = Stats.objects.filter(player=player).order_by('event__event_date')[0]
+				stats = Stats.objects.filter(player=player).order_by('-event__event_date')[0]
 				stats.pk = None
 				stats.event = self
 			else:
 				stats = Stats(event=self, player=player)
 			
 			stats.race_count += 8
-			stats.race_firsts += player.firsts.filter(event=self).count()
-			stats.race_seconds += player.seconds.filter(event=self).count()
-			stats.race_thirds += player.thirds.filter(event=self).count()
-			stats.race_fourths += player.fourths.filter(event=self).count()
 			
-			for (i, result) in enumerate(results):
-				if result['player'] == player:
-					f = ['event_firsts', 'event_seconds', 'event_thirds', 'event_fourths'][i]
-					stats.__setattr__(f, stats.__getattribute__(f) + 1)
-					stats.points += result['points'] 
-					break
+			stats.points += results[player]['points']
+			
+			stats.race_firsts += results[player]['positions'][0]
+			stats.race_seconds += results[player]['positions'][1]
+			stats.race_thirds += results[player]['positions'][2]
+			stats.race_fourths += results[player]['positions'][3]
+			
+			rank = results[player]['rank']
+			if rank == 1:
+				stats.event_firsts += 1
+			elif rank == 2:
+				stats.event_seconds += 1
+			elif rank == 3:
+				stats.event_thirds += 1
+			else:
+				stats.event_fourths += 1
 			
 			stats.average = Decimal(str(float(stats.points) / float(stats.race_count)))
 			
@@ -176,8 +194,9 @@ class Race(models.Model):
 		return unicode(self.event.event_date) + " - " + self.course.name
 	
 	def save(self, *args, **kwargs):
-		self.order = self.event.race_set.count()
+		if self.order == None:
+			self.order = self.event.race_set.count()
 		super(Race, self).save(*args, **kwargs)
 	
 	class Meta:
-		ordering = ['event','order']
+		ordering = ['event','-order']
