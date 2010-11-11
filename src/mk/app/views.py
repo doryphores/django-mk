@@ -12,14 +12,19 @@ def home(request):
 	stats = []
 	
 	for player in player_list:
-		player_stats = Stats.objects.filter(player=player)[0:2]
-		if player_stats.count() > 0:
-			stats.append({
-				'player': player,
-				'rank': player_stats[0].average,
-				'current': player_stats[0],
-				'previous': player_stats[1]
-			})
+		current_stats = Stats.objects.filter(player=player).latest()
+		
+		try:
+			previous_stats = current_stats.get_previous_by_record_date(player=player)
+		except Stats.DoesNotExist:
+			previous_stats = Stats(player=player)
+		
+		stats.append({
+			'player': player,
+			'rank': current_stats.average,
+			'current': current_stats,
+			'previous': previous_stats
+		})
 	
 	stats.sort(key=itemgetter('rank'), reverse=True)
 	

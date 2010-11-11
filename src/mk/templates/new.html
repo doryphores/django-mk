@@ -5,16 +5,14 @@
 {% block content %}
 
 <form action="/new/" method="post">
+{{ form.non_field_errors }}
 {% csrf_token %}
 {% for field in form %}
-<div data-role="fieldcontain">
-{{ field.label_tag }}
-<fieldset data-role="controlgroup">
+<h4>{{ field.label }}</h4>
+{{ field.errors }}
 {{ field }}
-</fieldset>
-</div>
 {% endfor %}
-<input type="submit" value="Start" data-inline="true">
+<input type="submit" value="Start" data-inline="true" data-theme="b">
 </form>
 
 {% endblock %}

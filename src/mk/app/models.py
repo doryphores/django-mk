@@ -6,29 +6,9 @@ POSITION_POINTS = [15,9,4,1]
 
 FORM_COUNT = 10
 
-class Player(models.Model):
-	name = models.CharField(max_length=200, unique=True)
-	
-	def __unicode__(self):
-		return self.name
-	
-	class Meta:
-		ordering = ['name']
-
-
-class Course(models.Model):
-	name = models.CharField(max_length=200, unique=True)
-	
-	def __unicode__(self):
-		return self.name
-	
-	class Meta:
-		ordering = ['name']
-
-
 class Stats(models.Model):
-	player = models.ForeignKey(Player)
-	event= models.ForeignKey('Event')
+	player = models.ForeignKey('Player')
+	record_date = models.DateTimeField(auto_now_add=True)
 	
 	points = models.IntegerField(default=0)
 	race_count = models.PositiveIntegerField(default=0)
@@ -44,17 +24,42 @@ class Stats(models.Model):
 	form = models.DecimalField(max_digits=2, decimal_places=1, default=0)
 	
 	def __unicode__(self):
-		return self.player.name + " - " + unicode(self.event)
+		return self.player.name + " - " + unicode(self.record_date)
 	
 	class Meta:
-		ordering = ['event', '-average']
-		get_latest_by = 'event'
+		ordering = ['-record_date', '-average']
+		get_latest_by = 'record_date'
+
+
+class Player(models.Model):
+	name = models.CharField(max_length=200, unique=True)
+	
+	def __unicode__(self):
+		return self.name
+	
+	def save(self, *args, **kwargs):
+		super(Player, self).save(*args, **kwargs)
+		s = Stats(player=self);
+		s.save();
+	
+	class Meta:
+		ordering = ['name']
+
+
+class Course(models.Model):
+	name = models.CharField(max_length=200, unique=True)
+	
+	def __unicode__(self):
+		return self.name
+	
+	class Meta:
+		ordering = ['name']
 
 
 class RaceStats(models.Model):
-	event = models.ForeignKey('Event')
 	player = models.ForeignKey(Player)
 	course = models.ForeignKey(Course)
+	record_date = models.DateTimeField(auto_now_add=True)
 	
 	firsts = models.PositiveIntegerField(default=0)
 	seconds = models.PositiveIntegerField(default=0)
@@ -67,10 +72,11 @@ class RaceStats(models.Model):
 		super(RaceStats, self).save(*args, **kwargs)
 	
 	def __unicode__(self):
-		return self.player.name + " - " + unicode(self.course) + " - " + unicode(self.event)
+		return self.player.name + " - " + unicode(self.course) + " - " + unicode(self.record_date)
 	
 	class Meta:
-		ordering = ['event','player','course']
+		ordering = ['-record_date', 'player', 'course']
+		get_latest_by = 'record_date'
 
 
 class Event(models.Model):
@@ -124,12 +130,12 @@ class Event(models.Model):
 		results = self.results
 		
 		for player in self.players.all():
-			if Stats.objects.filter(player=player).exists():
-				stats = Stats.objects.filter(player=player).order_by('-event__event_date')[0]
+			try:
+				stats = Stats.objects.filter(player=player).latest()
 				stats.pk = None
-				stats.event = self
-			else:
-				stats = Stats(event=self, player=player)
+				stats.record_date = None
+			except Stats.DoesNotExist:
+				stats = Stats(player=player)
 			
 			stats.race_count += 8
 			
@@ -155,12 +161,12 @@ class Event(models.Model):
 			stats.save()
 			
 			for race in self.race_set.all():
-				if RaceStats.objects.filter(course=race.course, player=player).exists():
-					race_stats = RaceStats.objects.filter(course=race.course, player=player).order_by('event__event_date')[0]
+				try:
+					race_stats = RaceStats.objects.filter(course=race.course, player=player).latest()
 					race_stats.pk = None
-					race_stats.event = self
-				else:
-					race_stats = RaceStats(event=self, player=player, course=race.course)
+					race_stats.record_date = None
+				except RaceStats.DoesNotExist:
+					race_stats = RaceStats(player=player, course=race.course)
 				
 				if race.first == player:
 					race_stats.firsts += 1

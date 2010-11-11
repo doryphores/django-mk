@@ -40,7 +40,7 @@
 			<td>{{ row.current.race_fourths }}</td>
 			<td>{{ row.current.points }}</td>
 			<td>{{ row.current.race_count }}</td>
-			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}+{% else %}-{% endif %})</td>
+			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}&uArr;{% else %}{% if row.current.average < row.previous.average %}&dArr;{% else %}-{% endif %}{% endif %})</td>
 		</tr>
 	{% endfor %} 
 	</tbody>

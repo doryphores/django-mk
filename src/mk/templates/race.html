@@ -1,21 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Race #{{ race.order|add:1 }}{% endblock %}
+{% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 
 {% block content %}
-
-<h2>Race #{{ race.order|add:1 }}</h2>
-<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
-{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Next">
-
-<a href="{{ previous_url }}">Back</a>
-</form>
-
-<h3>Results</h3>
-{% for player, points in results %}
-<p>{{ player }}: {{ points }}</p>
-{% endfor %}
-
+<div class="ui-grid-a">
+	<div class="ui-block-a">
+		<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
+			{% csrf_token %}
+			{% for field in form %}
+			<div class="ui-grid-a">
+				<h4 class="ui-block-a">{{ field.label }}</h4>
+				<div class="ui-block-b">{{ field }}</div>
+			</div>
+			{% endfor %}
+			<a href="{{ previous_url }}" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
+			<input type="submit" value="Next" data-theme="b" data-icon="arrow-r" data-inline="true">
+		</form>
+	</div>
+	<div class="ui-block-b">
+		<h3>Results</h3>
+		<ul data-role="listview" data-inset="true" data-theme="d">
+			{% for player, points in results %}
+			<li><h4>{{ player }}</h4> <span class="ui-li-count">{{ points }}</span></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
 {% endblock %}

@@ -5,10 +5,31 @@ admin.site.register(Player)
 
 admin.site.register(Course)
 
-admin.site.register(Event)
+class EventAdmin(admin.ModelAdmin):
+	list_display = ('event_date', 'player_list', 'complete')
+	date_hierarchy = 'event_date'
+	list_filter = ['complete', 'players']
+	
+	def player_list(self, obj):
+		return ", ".join([player.name for player in obj.players.all()])
 
-admin.site.register(Race)
+admin.site.register(Event, EventAdmin)
 
-admin.site.register(Stats)
+class RaceAdmin(admin.ModelAdmin):
+	list_display = ('event', 'course')
 
-admin.site.register(RaceStats)
+admin.site.register(Race, RaceAdmin)
+
+class StatsAdmin(admin.ModelAdmin):
+	list_display = ('player', 'record_date', 'average')
+	list_filter = ['player']
+	date_hierarchy = 'record_date'
+
+admin.site.register(Stats, StatsAdmin)
+
+class RaceStatsAdmin(admin.ModelAdmin):
+	list_display = ('player', 'course', 'record_date', 'points')
+	list_filter = ['player', 'course']
+	date_hierarchy = 'record_date'
+
+admin.site.register(RaceStats, RaceStatsAdmin)
