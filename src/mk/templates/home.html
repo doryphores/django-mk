@@ -14,6 +14,7 @@
 			<th rowspan="2">Points</th>
 			<th rowspan="2">Races</th>
 			<th rowspan="2">Average</th>
+			<th rowspan="2">Form</th>
 		</tr>
 		<tr>
 			<th>1st</th>
@@ -40,7 +41,8 @@
 			<td>{{ row.current.race_fourths }}</td>
 			<td>{{ row.current.points }}</td>
 			<td>{{ row.current.race_count }}</td>
-			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}&uArr;{% else %}{% if row.current.average < row.previous.average %}&dArr;{% else %}-{% endif %}{% endif %})</td>
+			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}&uArr;{% else %}{% if row.current.average < row.previous.average %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
+			<td>{{ row.current.form }} ({% if row.current.form > row.previous.form %}&uArr;{% else %}{% if row.current.form < row.previous.form %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
 		</tr>
 	{% endfor %} 
 	</tbody>

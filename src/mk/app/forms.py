@@ -1,4 +1,4 @@
-from mk.app.models import Event, Race, Player, Course
+from mk.app.models import Event, Race, Player, Track
 from django.forms import ModelForm, ValidationError, models, widgets
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
@@ -97,7 +97,7 @@ class RaceForm(ModelForm):
 		super(RaceForm, self).__init__(*args, **kwargs)
 		
 		player_choices = self.instance.event.players
-		course_choices = Course.objects.exclude(pk__in=self.instance.event.race_set.exclude(pk=self.instance.pk).values_list('course'))
+		course_choices = Track.objects.exclude(pk__in=self.instance.event.race_set.exclude(pk=self.instance.pk).values_list('course'))
 		
 		self.fields['course'].queryset = course_choices
 		self.fields['first'].queryset = player_choices

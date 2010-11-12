@@ -1,12 +1,12 @@
 from django.contrib import admin
-from mk.app.models import Player, Course, Event, Race, Stats, RaceStats
+from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult
 
 admin.site.register(Player)
 
-admin.site.register(Course)
+admin.site.register(Track)
 
 class EventAdmin(admin.ModelAdmin):
-	list_display = ('event_date', 'player_list', 'complete')
+	list_display = ('__unicode__', 'player_list', 'complete')
 	date_hierarchy = 'event_date'
 	list_filter = ['complete', 'players']
 	
@@ -16,20 +16,21 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 
 class RaceAdmin(admin.ModelAdmin):
-	list_display = ('event', 'course')
+	list_display = ('event', 'track', 'player_list')
+	
+	def player_list(self, obj):
+		return ", ".join([player.name for player in obj.players.all()])
 
 admin.site.register(Race, RaceAdmin)
 
-class StatsAdmin(admin.ModelAdmin):
-	list_display = ('player', 'record_date', 'average')
+class EventResultAdmin(admin.ModelAdmin):
+	list_display = ('player', 'event', 'firsts', 'seconds', 'thirds', 'fourths', 'points')
 	list_filter = ['player']
-	date_hierarchy = 'record_date'
 
-admin.site.register(Stats, StatsAdmin)
+admin.site.register(EventResult, EventResultAdmin)
 
-class RaceStatsAdmin(admin.ModelAdmin):
-	list_display = ('player', 'course', 'record_date', 'points')
-	list_filter = ['player', 'course']
-	date_hierarchy = 'record_date'
+class RaceResultAdmin(admin.ModelAdmin):
+	list_display = ('race', 'player', 'position')
+	list_filter = ['player']
 
-admin.site.register(RaceStats, RaceStatsAdmin)
+admin.site.register(RaceResult, RaceResultAdmin)

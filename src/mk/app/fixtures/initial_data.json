@@ -43,462 +43,226 @@
     }, 
     {
         "pk": 11, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Bowser Castle N64"
         }
     }, 
     {
         "pk": 9, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Bowser's Castle"
         }
     }, 
     {
         "pk": 10, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Bowser's Castle 3"
         }
     }, 
     {
         "pk": 19, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Coconut Mall"
         }
     }, 
     {
         "pk": 5, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Daisy Circuit"
         }
     }, 
     {
         "pk": 32, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Delfino Square"
         }
     }, 
     {
         "pk": 26, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Desert Hills"
         }
     }, 
     {
         "pk": 20, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "DK Mountain"
         }
     }, 
     {
         "pk": 14, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "DK's Jungle Parkway"
         }
     }, 
     {
         "pk": 13, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "DK's Snowboard Cross"
         }
     }, 
     {
         "pk": 27, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Dry Dry Ruins"
         }
     }, 
     {
         "pk": 18, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Ghost Valley"
         }
     }, 
     {
         "pk": 31, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Grumble Volcano"
         }
     }, 
     {
         "pk": 30, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Koopa Cape"
         }
     }, 
     {
         "pk": 12, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Luigi Circuit"
         }
     }, 
     {
         "pk": 22, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Maple Treeway"
         }
     }, 
     {
         "pk": 1, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Mario Circuit"
         }
     }, 
     {
         "pk": 3, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Mario Circuit 3"
         }
     }, 
     {
         "pk": 2, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Mario Circuit GCN"
         }
     }, 
     {
         "pk": 4, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Mario Raceway"
         }
     }, 
     {
         "pk": 25, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Moo Moo Meadows"
         }
     }, 
     {
         "pk": 16, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Moonview Highway"
         }
     }, 
     {
         "pk": 24, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Mushroom Gorge"
         }
     }, 
     {
         "pk": 7, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Peach Beach"
         }
     }, 
     {
         "pk": 6, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Peach Gardens"
         }
     }, 
     {
         "pk": 15, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Rainbow Road"
         }
     }, 
     {
         "pk": 23, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Sherbet Land"
         }
     }, 
     {
         "pk": 8, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Shy Guy Beach"
         }
     }, 
     {
         "pk": 29, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Toad's Factory"
         }
     }, 
     {
         "pk": 28, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Waluigi Stadium"
         }
     }, 
     {
         "pk": 21, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Wario's Gold Mine"
         }
     }, 
     {
         "pk": 17, 
-        "model": "app.course", 
+        "model": "app.track", 
         "fields": {
             "name": "Yoshi Falls"
-        }
-    }, 
-    {
-        "pk": 10, 
-        "model": "app.event", 
-        "fields": {
-            "event_date": "2010-11-08 17:07:26", 
-            "complete": false, 
-            "players": [
-                2, 
-                3, 
-                4, 
-                1
-            ]
-        }
-    }, 
-    {
-        "pk": 8, 
-        "model": "app.event", 
-        "fields": {
-            "event_date": "2010-11-08 14:41:58", 
-            "complete": false, 
-            "players": [
-                2, 
-                3, 
-                4, 
-                1
-            ]
-        }
-    }, 
-    {
-        "pk": 16, 
-        "model": "app.race", 
-        "fields": {
-            "third": 4, 
-            "order": 0, 
-            "course": 9, 
-            "second": 3, 
-            "fourth": 1, 
-            "event": 10, 
-            "first": 2
-        }
-    }, 
-    {
-        "pk": 17, 
-        "model": "app.race", 
-        "fields": {
-            "third": 1, 
-            "order": 1, 
-            "course": 12, 
-            "second": 2, 
-            "fourth": 4, 
-            "event": 10, 
-            "first": 3
-        }
-    }, 
-    {
-        "pk": 18, 
-        "model": "app.race", 
-        "fields": {
-            "third": 4, 
-            "order": 2, 
-            "course": 13, 
-            "second": 2, 
-            "fourth": 1, 
-            "event": 10, 
-            "first": 3
-        }
-    }, 
-    {
-        "pk": 19, 
-        "model": "app.race", 
-        "fields": {
-            "third": 2, 
-            "order": 3, 
-            "course": 31, 
-            "second": 4, 
-            "fourth": 3, 
-            "event": 10, 
-            "first": 1
-        }
-    }, 
-    {
-        "pk": 20, 
-        "model": "app.race", 
-        "fields": {
-            "third": 2, 
-            "order": 4, 
-            "course": 25, 
-            "second": 4, 
-            "fourth": 1, 
-            "event": 10, 
-            "first": 3
-        }
-    }, 
-    {
-        "pk": 21, 
-        "model": "app.race", 
-        "fields": {
-            "third": 4, 
-            "order": 5, 
-            "course": 22, 
-            "second": 3, 
-            "fourth": 2, 
-            "event": 10, 
-            "first": 1
-        }
-    }, 
-    {
-        "pk": 22, 
-        "model": "app.race", 
-        "fields": {
-            "third": 3, 
-            "order": 6, 
-            "course": 24, 
-            "second": 4, 
-            "fourth": 1, 
-            "event": 10, 
-            "first": 2
-        }
-    }, 
-    {
-        "pk": 23, 
-        "model": "app.race", 
-        "fields": {
-            "third": 2, 
-            "order": 7, 
-            "course": 15, 
-            "second": 3, 
-            "fourth": 1, 
-            "event": 10, 
-            "first": 4
-        }
-    }, 
-    {
-        "pk": 7, 
-        "model": "app.race", 
-        "fields": {
-            "third": 3, 
-            "order": 0, 
-            "course": 11, 
-            "second": 4, 
-            "fourth": 1, 
-            "event": 8, 
-            "first": 2
-        }
-    }, 
-    {
-        "pk": 8, 
-        "model": "app.race", 
-        "fields": {
-            "third": 1, 
-            "order": 1, 
-            "course": 18, 
-            "second": 3, 
-            "fourth": 4, 
-            "event": 8, 
-            "first": 2
-        }
-    }, 
-    {
-        "pk": 9, 
-        "model": "app.race", 
-        "fields": {
-            "third": 3, 
-            "order": 2, 
-            "course": 2, 
-            "second": 4, 
-            "fourth": 2, 
-            "event": 8, 
-            "first": 1
-        }
-    }, 
-    {
-        "pk": 10, 
-        "model": "app.race", 
-        "fields": {
-            "third": 4, 
-            "order": 3, 
-            "course": 4, 
-            "second": 3, 
-            "fourth": 2, 
-            "event": 8, 
-            "first": 1
-        }
-    }, 
-    {
-        "pk": 11, 
-        "model": "app.race", 
-        "fields": {
-            "third": 2, 
-            "order": 4, 
-            "course": 12, 
-            "second": 3, 
-            "fourth": 4, 
-            "event": 8, 
-            "first": 1
-        }
-    }, 
-    {
-        "pk": 12, 
-        "model": "app.race", 
-        "fields": {
-            "third": 1, 
-            "order": 5, 
-            "course": 32, 
-            "second": 3, 
-            "fourth": 2, 
-            "event": 8, 
-            "first": 4
-        }
-    }, 
-    {
-        "pk": 13, 
-        "model": "app.race", 
-        "fields": {
-            "third": 2, 
-            "order": 6, 
-            "course": 7, 
-            "second": 3, 
-            "fourth": 1, 
-            "event": 8, 
-            "first": 4
-        }
-    }, 
-    {
-        "pk": 14, 
-        "model": "app.race", 
-        "fields": {
-            "third": 1, 
-            "order": 7, 
-            "course": 14, 
-            "second": 4, 
-            "fourth": 3, 
-            "event": 8, 
-            "first": 2
         }
     }
 ]

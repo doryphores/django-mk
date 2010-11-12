@@ -5,13 +5,14 @@
 {% block content %}
 
 <form action="/new/" method="post">
-{{ form.non_field_errors }}
 {% csrf_token %}
-{% for field in form %}
-<h4>{{ field.label }}</h4>
-{{ field.errors }}
-{{ field }}
+<fieldset data-role="controlgroup">
+<legend>Select players</legend>
+{% for player in player_list %}
+<input type="checkbox" name="players" value="{{ player.pk }}" id="player{{ forloop.counter }}"{% if player in selected_players %} checked="checked"{% endif %}>
+<label for="player{{ forloop.counter }}">{{ player.name }}</label>
 {% endfor %}
+</fieldset>
 <input type="submit" value="Start" data-inline="true" data-theme="b">
 </form>
 

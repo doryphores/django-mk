@@ -3,27 +3,22 @@
 {% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 
 {% block content %}
-<div class="ui-grid-a">
-	<div class="ui-block-a">
-		<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
-			{% csrf_token %}
-			{% for field in form %}
-			<div class="ui-grid-a">
-				<h4 class="ui-block-a">{{ field.label }}</h4>
-				<div class="ui-block-b">{{ field }}</div>
-			</div>
-			{% endfor %}
-			<a href="{{ previous_url }}" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
-			<input type="submit" value="Next" data-theme="b" data-icon="arrow-r" data-inline="true">
-		</form>
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
+	{% csrf_token %}
+	<h3>First</h3>
+	{% for field in form %}
+		<h4 class="ui-block-a">{{ field.label }}</h4>
+		<div class="ui-block-b">{{ field }}</div>
 	</div>
-	<div class="ui-block-b">
-		<h3>Results</h3>
-		<ul data-role="listview" data-inset="true" data-theme="d">
-			{% for player, points in results %}
-			<li><h4>{{ player }}</h4> <span class="ui-li-count">{{ points }}</span></li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
+	{% endfor %}
+	{# <a href="{{ previous_url }}" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a> #}
+	<input type="submit" value="Next" data-theme="b" data-icon="arrow-r" data-inline="true">
+</form>
+
+<h3>Results</h3>
+<ul data-role="listview" data-inset="true" data-theme="d">
+	{% for player, points in results %}
+	<li><h4>{{ player }}</h4> <span class="ui-li-count">{{ points }}</span></li>
+	{% endfor %}
+</ul>
 {% endblock %}

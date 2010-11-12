@@ -2,86 +2,80 @@ from django.shortcuts import render_to_response
 from mk.app.forms import EventForm, RaceForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
-from mk.app.models import Race, Event, Stats, Player
+from mk.app.models import Race, Event, EventResult, Player, RANK_STRINGS,\
+	RaceResult, Track, POSITION_POINTS
 from operator import itemgetter
 from django.db import transaction
+from django.contrib import messages
 
 def home(request):
 	player_list = Player.objects.all()
 	
-	stats = []
-	
-	for player in player_list:
-		current_stats = Stats.objects.filter(player=player).latest()
-		
-		try:
-			previous_stats = current_stats.get_previous_by_record_date(player=player)
-		except Stats.DoesNotExist:
-			previous_stats = Stats(player=player)
-		
-		stats.append({
-			'player': player,
-			'rank': current_stats.average,
-			'current': current_stats,
-			'previous': previous_stats
-		})
-	
-	stats.sort(key=itemgetter('rank'), reverse=True)
-	
-	return render_to_response('home.html', { 'stats': stats })
+	return render_to_response('home.html')
 
+@transaction.commit_on_success()
 def new(request):
 	if request.method == 'POST':
-		form = EventForm(request.POST)
+		selected_players = Player.objects.filter(pk__in=request.POST.getlist('players'))
 		
-		if form.is_valid():
-			event = form.save()
+		if selected_players.count() == 4:
+			event = Event()
+			event.save()
+			
+			for player in selected_players:
+				EventResult(player=player, event=event).save()
 			
 			request.session['event_pk'] = event.pk
 			
 			return HttpResponseRedirect('/race/')
+		else:
+			messages.error(request, 'Please select exactly 4 players')
 	else:
-		form = EventForm()
+		selected_players = Player.objects.none()
 	
-	return render_to_response('new.html', { 'form': form }, context_instance=RequestContext(request))
+	player_list = Player.objects.all()
+	
+	return render_to_response('new.html', { 'player_list': player_list, 'selected_players': selected_players }, context_instance=RequestContext(request))
 
-@transaction.commit_on_success
+@transaction.commit_on_success()
 def race(request, race_id=0):
 	event = Event.objects.get(pk=request.session['event_pk'])
 	
 	try:
-		race = Race.objects.get(pk=race_id)
+		race = Race.objects.filter(event=event).get(pk=race_id)
 	except Race.DoesNotExist:
 		race = Race(event=event, order=event.race_count)
 	
 	if request.method == 'POST':
-		form = RaceForm(request.POST, instance=race)
+		race.track = Track.objects.get(pk=request.POST['track'])
+		race.save()
 		
-		if form.is_valid():
-			form.save()
+		race.results.all().delete()
+		
+		for i, position in enumerate(RANK_STRINGS):
+			RaceResult(race=race, player=Player.objects.get(pk=request.POST[position]), position=i).save()
+		
+		for result in event.results.all():
+			result.points = 0
 			
-			if event.race_count == 8:
-				event.set_complete()
-				return HttpResponseRedirect('/')
+			for i, position in enumerate(RANK_STRINGS):
+				count = result.player.race_results.filter(position=i).count()
+				result.points += count * POSITION_POINTS[i]
+				setattr(result, RANK_STRINGS + "s", count)
 			
-			return HttpResponseRedirect('/race/')
+			result.save()
+		
+		for i, result in enumerate(event.results.all().order_by('-point')):
+			result.rank = i
+			result.save()			
+		
+		return HttpResponseRedirect('/race/')
 	else:
 		form = RaceForm(instance=race)
 	
-	# Format event results as list of sorted tuples (player_name, points)
-	results = sorted([(result.name, event.results[result]['points']) for result in event.results], key=itemgetter(1), reverse=True)
-	
-	try:
-		previous_race = event.race_set.get(order=race.order - 1)
-		previous_url = '/race/' + str(previous_race.pk) + '/'
-	except Race.DoesNotExist:
-		previous_url = '/new/'
-	
 	view_vars = {
-		'form': form,
+		'event': event,
 		'race': race,
-		'results': results,
-		'previous_url': previous_url,
 	}
 	
 	return render_to_response('race.html', view_vars, context_instance=RequestContext(request))
