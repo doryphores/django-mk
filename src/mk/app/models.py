@@ -74,9 +74,6 @@ class Event(models.Model):
 		return self.races.count()
 	race_count = property(_get_race_count)
 	
-	def get_tracks(self):
-		return self.races.values_list('track')
-	
 	def __unicode__(self):
 		return u'%s (%s slot)' % (self.event_date.strftime("%a. %b. %d %Y"), self.slot)
 	
@@ -90,6 +87,26 @@ class Race(models.Model):
 	track = models.ForeignKey(Track)
 	players = models.ManyToManyField(Player, through='RaceResult')
 	order = models.PositiveSmallIntegerField()
+	
+	def get_available_tracks(self):
+		return Track.objects.exclude(pk__in=self.event.races.exclude(pk=self.pk).values_list("track"))
+	available_tracks = property(get_available_tracks)
+	
+	def get_first(self):
+		return self.results.get(position=0).player
+	first = property(get_first)
+	
+	def get_second(self):
+		return self.results.get(position=1).player
+	second = property(get_second)
+	
+	def get_third(self):
+		return self.results.get(position=2).player
+	third = property(get_third)
+	
+	def get_fourth(self):
+		return self.results.get(position=3).player
+	fourth = property(get_fourth)
 	
 	def __unicode__(self):
 		return u'%s on %s' % (self.track, self.event) 
