@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
 	RANK_STRINGS, RaceResult, Track, POSITION_POINTS, PlayerStat, FORM_COUNT
 from django.db import transaction
