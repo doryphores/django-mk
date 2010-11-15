@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action="/new/" method="post" rel="external">
+<form action="/new/" method="post">
 {% csrf_token %}
 <fieldset data-role="controlgroup">
 <legend>Select players</legend>
@@ -13,7 +13,7 @@
 <label for="player{{ forloop.counter }}">{{ player.name }}</label>
 {% endfor %}
 </fieldset>
-<input type="submit" value="Start" data-inline="true" data-theme="b">
+<input type="submit" value="Start" data-inline="true" data-theme="b" data-icon="arrow-r">
 </form>
 
 {% endblock %}

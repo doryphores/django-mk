@@ -28,21 +28,21 @@
 		</tr>
 	</thead>
 	<tbody>
-	{% for row in stats %}
+	{% for stats in player_stats %}
 		<tr class="{% cycle 'odd','even' %}">
-			<td>{{ row.player.name }}</td>
-			<td>{{ row.current.event_firsts }}</td>
-			<td>{{ row.current.event_seconds }}</td>
-			<td>{{ row.current.event_thirds }}</td>
-			<td>{{ row.current.event_fourths }}</td>
-			<td>{{ row.current.race_firsts }}</td>
-			<td>{{ row.current.race_seconds }}</td>
-			<td>{{ row.current.race_thirds }}</td>
-			<td>{{ row.current.race_fourths }}</td>
-			<td>{{ row.current.points }}</td>
-			<td>{{ row.current.race_count }}</td>
-			<td>{{ row.current.average }} ({% if row.current.average > row.previous.average %}&uArr;{% else %}{% if row.current.average < row.previous.average %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
-			<td>{{ row.current.form }} ({% if row.current.form > row.previous.form %}&uArr;{% else %}{% if row.current.form < row.previous.form %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
+			<td>{{ stats.player.name }}</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>{{ stats.points }}</td>
+			<td>{{ stats.race_count }}</td>
+			<td>{{ stats.average|floatformat:2 }} ({% if stats.average_delta > 0 %}&uArr;{% else %}{% if stats.average_delta < 0 %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
+			<td>{{ stats.form|floatformat:2 }} ({% if stats.form_delta > 0 %}&uArr;{% else %}{% if stats.form_delta < 0 %}&dArr;{% else %}&hArr;{% endif %}{% endif %})</td>
 		</tr>
 	{% endfor %} 
 	</tbody>

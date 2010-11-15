@@ -1,17 +1,16 @@
 from django.shortcuts import render_to_response
-from mk.app.forms import EventForm, RaceForm
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
-from mk.app.models import Race, Event, EventResult, Player, RANK_STRINGS,\
-	RaceResult, Track, POSITION_POINTS
-from operator import itemgetter
+from mk.app.models import Race, Event, EventResult, Player,\
+	RANK_STRINGS, RaceResult, Track, POSITION_POINTS, PlayerStat, FORM_COUNT
 from django.db import transaction
 from django.contrib import messages
+from django.db.models import Avg
 
 def home(request):
-	player_list = Player.objects.all()
+	player_stats = PlayerStat.objects.filter(event=Event.objects.latest()).all()
 	
-	return render_to_response('home.html')
+	return render_to_response('home.html', { 'player_stats': player_stats })
 
 @transaction.commit_on_success()
 def new(request):
@@ -41,48 +40,103 @@ def new(request):
 def race(request, race_id=0):
 	event = Event.objects.get(pk=request.session['event_pk'])
 	
+	form_data = {
+		'track': None,
+		'first': None,
+		'second': None,
+		'third': None,
+		'fourth': None,
+	}
+	
 	try:
 		race = Race.objects.filter(event=event).get(pk=race_id)
+		form_data['track'] = race.track
+		form_data['first'] = race.first
+		form_data['second'] = race.second
+		form_data['third'] = race.third
+		form_data['fourth'] = race.fourth
 	except Race.DoesNotExist:
 		race = Race(event=event, order=event.race_count)
 	
 	if request.method == 'POST':
-		form = {
-			'track': request.POST.get('track', 0),
-			'first': request.POST.get('first', 0),
-			'second': request.POST.get('second', 0),
-			'third': request.POST.get('third', 0),
-			'fourth': request.POST.get('fourth', 0),
-		}
+		player_list = []
+		valid = True
+		for position in RANK_STRINGS:
+			player_pk = request.POST.get(position, 0)
+			if player_pk == 0:
+				messages.error(request, "All positions must be selected")
+				valid = False
+				break
+			else:
+				form_data[position] = Player.objects.get(pk=player_pk)
+				player_list.append(form_data[position])
 		
-		# Save the race
-		race.track = Track.objects.get(pk=request.POST['track'])
-		race.save()
+		if len(player_list) == 4 and len(set(player_list)) < 4:
+			messages.error(request, "Can't have multiple players in same position")
+			valid = False
 		
-		# Delete existing race results
-		race.results.all().delete()
+		form_data['track'] = Track.objects.get(pk=request.POST.get('track', 0))
 		
-		# Write new race results
-		for i, position in enumerate(RANK_STRINGS):
-			RaceResult(race=race, player=Player.objects.get(pk=request.POST[position]), position=i).save()
-		
-		# Write the event results
-		for result in event.results.all():
-			result.points = 0
+		if valid:
+			race.track = form_data['track']
 			
+			# Save the race
+			race.save()
+			
+			# Delete existing race results
+			race.results.all().delete()
+			
+			# Write new race results
 			for i, position in enumerate(RANK_STRINGS):
-				count = result.player.race_results.filter(position=i).count()
-				result.points += count * POSITION_POINTS[i]
-				setattr(result, position + "s", count)
+				RaceResult(race=race, player=Player.objects.get(pk=request.POST[position]), position=i).save()
 			
-			result.save()
-		
-		# Update the event results ranks
-		for i, result in enumerate(event.results.all().order_by('-points')):
-			result.rank = i
-			result.save()			
-		
-		return HttpResponseRedirect('/race/')
+			# Write the event results
+			for result in event.results.all():
+				result.points = 0
+				
+				for i, position in enumerate(RANK_STRINGS):
+					count = result.player.race_results.filter(race__event=event,position=i).count()
+					result.points += count * POSITION_POINTS[i]
+					setattr(result, position + "s", count)
+				
+				result.save()
+			
+			# Update the event results ranks
+			for i, result in enumerate(event.results.all().order_by('-points')):
+				result.rank = i
+				result.save()
+			
+			# If last race, complete the event
+			if event.race_count == 8:
+				event.complete = True
+				event.save()
+				
+				for player in Player.objects.all():
+					try:
+						stats = PlayerStat.objects.filter(player=player).order_by('-event__event_date')[0:1].get()
+					except PlayerStat.DoesNotExist:
+						stats = PlayerStat(player=player)
+					
+					stats.pk = None
+					stats.event = event
+					
+					if player in event.players.all():
+						result = event.results.get(player=player)
+						
+						stats.points += result.points
+						stats.race_count += 8
+						new_average = EventResult.objects.filter(event__complete=True, player=player).aggregate(avg=Avg('points'))['avg']
+						stats.average_delta = new_average - stats.average
+						stats.average = new_average
+						new_form = EventResult.objects.filter(event__complete=True, player=player)[0:FORM_COUNT].aggregate(avg=Avg('points'))['avg']
+						stats.form_delta = new_form - stats.form
+						stats.form = new_form
+					
+					stats.save()
+				
+				return HttpResponseRedirect('/')
+			
+			return HttpResponseRedirect('/race/')
 	
 	try:
 		previous_race = event.races.get(order=race.order - 1)
@@ -92,6 +146,7 @@ def race(request, race_id=0):
 	view_vars = {
 		'event': event,
 		'race': race,
+		'form_data': form_data,
 		'previous_race': previous_race,
 	}
 	

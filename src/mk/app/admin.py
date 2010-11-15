@@ -1,5 +1,6 @@
 from django.contrib import admin
-from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult
+from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult,\
+	PlayerStat
 
 admin.site.register(Player)
 
@@ -16,7 +17,7 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 
 class RaceAdmin(admin.ModelAdmin):
-	list_display = ('event', 'track', 'player_list')
+	list_display = ('event', 'track', 'player_list', 'order')
 	
 	def player_list(self, obj):
 		return ", ".join([player.name for player in obj.players.all()])
@@ -34,3 +35,5 @@ class RaceResultAdmin(admin.ModelAdmin):
 	list_filter = ['player']
 
 admin.site.register(RaceResult, RaceResultAdmin)
+
+admin.site.register(PlayerStat)

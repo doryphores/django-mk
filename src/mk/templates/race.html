@@ -4,46 +4,46 @@
 
 {% block content %}
 
-<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post" rel="external">
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
 	{% csrf_token %}
-	<label for="race-track">Select track</label>
-	<select id="race-track" name="track">
+	<label for="race-track-{{ race.order }}">Select track</label>
+	<select id="race-track-{{ race.order }}" name="track">
 		{% for track in race.available_tracks %}
-		<option value="{{ track.pk }}"{% ifequal race.track track %} selected="selected"{% endifequal %}>{{ track.name }}</option>
+		<option value="{{ track.pk }}"{% ifequal form_data.track track %} selected="selected"{% endifequal %}>{{ track.name }}</option>
 		{% endfor %}
 	</select>
 	<fieldset data-role="controlgroup" data-type="horizontal">
 		<legend>First</legend>
 		{% for player in event.players.all %}
-		<input type="radio" id="first{{ forloop.counter }}" name="first" value="{{ player.pk }}"{% ifequal race.first player %} checked="checked"{% endifequal %}>
-		<label for="first{{ forloop.counter }}">{{ player.name }}</label>
+		<input type="radio" id="first-{{ race.order }}{{ forloop.counter }}" name="first" value="{{ player.pk }}"{% ifequal form_data.first player %} checked="checked"{% endifequal %}>
+		<label for="first-{{ race.order }}{{ forloop.counter }}">{{ player.name }}</label>
 		{% endfor %}
 	</fieldset>
 	<fieldset data-role="controlgroup" data-type="horizontal">
 		<legend>Second</legend>
 		{% for player in event.players.all %}
-		<input type="radio" id="second{{ forloop.counter }}" name="second" value="{{ player.pk }}"{% ifequal race.second player %} checked="checked"{% endifequal %}>
-		<label for="second{{ forloop.counter }}">{{ player.name }}</label>
+		<input type="radio" id="second-{{ race.order }}{{ forloop.counter }}" name="second" value="{{ player.pk }}"{% ifequal form_data.second player %} checked="checked"{% endifequal %}>
+		<label for="second-{{ race.order }}{{ forloop.counter }}">{{ player.name }}</label>
 		{% endfor %}
 	</fieldset>
 	<fieldset data-role="controlgroup" data-type="horizontal">
-		<legend>First</legend>
+		<legend>Third</legend>
 		{% for player in event.players.all %}
-		<input type="radio" id="third{{ forloop.counter }}" name="third" value="{{ player.pk }}"{% ifequal race.third player %} checked="checked"{% endifequal %}>
-		<label for="third{{ forloop.counter }}">{{ player.name }}</label>
+		<input type="radio" id="third-{{ race.order }}{{ forloop.counter }}" name="third" value="{{ player.pk }}"{% ifequal form_data.third player %} checked="checked"{% endifequal %}>
+		<label for="third-{{ race.order }}{{ forloop.counter }}">{{ player.name }}</label>
 		{% endfor %}
 	</fieldset>
 	<fieldset data-role="controlgroup" data-type="horizontal">
-		<legend>First</legend>
+		<legend>Fourth</legend>
 		{% for player in event.players.all %}
-		<input type="radio" id="fourth{{ forloop.counter }}" name="fourth" value="{{ player.pk }}"{% ifequal race.fourth player %} checked="checked"{% endifequal %}>
-		<label for="fourth{{ forloop.counter }}">{{ player.name }}</label>
+		<input type="radio" id="fourth-{{ race.order }}{{ forloop.counter }}" name="fourth" value="{{ player.pk }}"{% ifequal form_data.fourth player %} checked="checked"{% endifequal %}>
+		<label for="fourth-{{ race.order }}{{ forloop.counter }}">{{ player.name }}</label>
 		{% endfor %}
 	</fieldset>
 	{% if previous_race %}
-	<a href="/race/{{ previous_race.pk }}/" rel="external" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
+	<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
 	{% endif %}
-	<input type="submit" value="Next" data-theme="b" data-icon="arrow-r" data-inline="true">
+	<input type="submit" value="{% if race.order == 7 %}Finish{% else %}Next{% endif %}" data-theme="b" data-icon="arrow-r" data-inline="true">
 </form>
 
 <h3>Results</h3>

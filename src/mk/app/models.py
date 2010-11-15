@@ -1,5 +1,7 @@
 from django.db import models
 from decimal import Decimal
+from django.db.models.fields import PositiveSmallIntegerField,\
+	PositiveIntegerField
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -80,6 +82,25 @@ class Event(models.Model):
 	class Meta:
 		ordering = ['-event_date']
 		get_latest_by = 'event_date'
+
+
+class PlayerStat(models.Model):
+	player = models.ForeignKey(Player)
+	event = models.ForeignKey(Event)
+	
+	average = models.FloatField(default=0.0)
+	average_delta = models.FloatField(default=0.0)
+	form = models.FloatField(default=0.0)
+	form_delta = models.FloatField(default=0.0)
+	rank = PositiveSmallIntegerField(default=0)
+	points = PositiveIntegerField(default=0)
+	race_count = PositiveIntegerField(default=0)
+	
+	def __unicode__(self):
+		return u'%s on %s' % (self.player.name, self.event)
+	
+	class Meta:
+		ordering =['event', '-form']
 
 
 class Race(models.Model):
