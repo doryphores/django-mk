@@ -63,10 +63,9 @@ def race(request, race_id=0):
 		valid = True
 		for position in RANK_STRINGS:
 			player_pk = request.POST.get(position, 0)
-			if player_pk == 0:
+			if valid and player_pk == 0:
 				messages.error(request, "All positions must be selected")
 				valid = False
-				break
 			else:
 				form_data[position] = Player.objects.get(pk=player_pk)
 				player_list.append(form_data[position])
@@ -90,53 +89,13 @@ def race(request, race_id=0):
 			for i, position in enumerate(RANK_STRINGS):
 				RaceResult(race=race, player=Player.objects.get(pk=request.POST[position]), position=i).save()
 			
-			# Write the event results
-			for result in event.results.all():
-				result.points = 0
-				
-				for i, position in enumerate(RANK_STRINGS):
-					count = result.player.race_results.filter(race__event=event,position=i).count()
-					result.points += count * POSITION_POINTS[i]
-					setattr(result, position + "s", count)
-				
-				result.save()
+			# Update event results
+			event.update_results()
 			
-			# Update the event results ranks
-			for i, result in enumerate(event.results.all().order_by('-points')):
-				result.rank = i
-				result.save()
-			
-			# If last race, complete the event
-			if event.race_count == 8:
-				event.complete = True
-				event.save()
-				
-				for player in Player.objects.all():
-					try:
-						stats = PlayerStat.objects.filter(player=player).order_by('-event__event_date')[0:1].get()
-					except PlayerStat.DoesNotExist:
-						stats = PlayerStat(player=player)
-					
-					stats.pk = None
-					stats.event = event
-					
-					if player in event.players.all():
-						result = event.results.get(player=player)
-						
-						stats.points += result.points
-						stats.race_count += 8
-						new_average = EventResult.objects.filter(event__complete=True, player=player).aggregate(avg=Avg('points'))['avg']
-						stats.average_delta = new_average - stats.average
-						stats.average = new_average
-						new_form = EventResult.objects.filter(event__complete=True, player=player)[0:FORM_COUNT].aggregate(avg=Avg('points'))['avg']
-						stats.form_delta = new_form - stats.form
-						stats.form = new_form
-					
-					stats.save()
-				
-				return HttpResponseRedirect('/')
-			
-			return HttpResponseRedirect('/race/')
+			if event.completed:
+				return HttpResponseRedirect('/confirm/')
+			else:
+				return HttpResponseRedirect('/race/')
 	
 	try:
 		previous_race = event.races.get(order=race.order - 1)
@@ -151,3 +110,14 @@ def race(request, race_id=0):
 	}
 	
 	return render_to_response('race.html', view_vars, context_instance=RequestContext(request))
+
+
+def confirm(request):
+	event = Event.objects.get(pk=request.session['event_pk'])
+	
+	view_vars = {
+		'event': event,
+		'previous_race': event.races.all()[:1].get()
+	}
+	
+	return render_to_response('confirm.html', view_vars)

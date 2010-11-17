@@ -7,9 +7,9 @@ admin.site.register(Player)
 admin.site.register(Track)
 
 class EventAdmin(admin.ModelAdmin):
-	list_display = ('__unicode__', 'player_list', 'complete')
+	list_display = ('__unicode__', 'player_list', 'completed')
 	date_hierarchy = 'event_date'
-	list_filter = ['complete', 'players']
+	list_filter = ['completed', 'players']
 	
 	def player_list(self, obj):
 		return ", ".join([player.name for player in obj.players.all()])
@@ -25,7 +25,7 @@ class RaceAdmin(admin.ModelAdmin):
 admin.site.register(Race, RaceAdmin)
 
 class EventResultAdmin(admin.ModelAdmin):
-	list_display = ('player', 'event', 'firsts', 'seconds', 'thirds', 'fourths', 'points')
+	list_display = ('player', 'event', 'firsts', 'seconds', 'thirds', 'fourths', 'points', 'rank')
 	list_filter = ['player']
 
 admin.site.register(EventResult, EventResultAdmin)

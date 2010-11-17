@@ -43,7 +43,7 @@ class EventResult(models.Model):
 		return u'%s %s (rank: %s)' % (self.player, self.event, RANK_STRINGS[self.rank])
 	
 	class Meta:
-		ordering = ['event','rank']
+		ordering = ['event','-points']
 
 
 class RaceResult(models.Model):
@@ -61,7 +61,7 @@ class RaceResult(models.Model):
 
 class Event(models.Model):
 	event_date = models.DateTimeField(auto_now_add=True)
-	complete = models.BooleanField(default=False)
+	completed = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player, through='EventResult')
 	
 	def _get_slot(self):
@@ -74,6 +74,51 @@ class Event(models.Model):
 	def _get_race_count(self):
 		return self.races.count()
 	race_count = property(_get_race_count)
+	
+	def update_results(self):
+		# Update points and position counts
+		for result in self.results.all():
+			result.points = 0
+			
+			for i, position in enumerate(RANK_STRINGS):
+				count = result.player.race_results.filter(race__event=self, position=i).count()
+				result.points += count * POSITION_POINTS[i]
+				setattr(result, position + "s", count)
+				result.save()
+		
+		# Update rank
+		for i, result in enumerate(self.results.all().order_by('-points')):
+			result.rank = i
+			result.save()
+	
+	def complete(self):
+		PlayerStat.objects.filter(event=self).delete()
+		
+		for player in Player.objects.all():
+			try:
+				stats = PlayerStat.objects.filter(player=player).order_by('-event__event_date')[0:1].get()
+			except PlayerStat.DoesNotExist:
+				stats = PlayerStat(player=player)
+			
+			stats.event = self
+			stats.pk = None
+			
+			if player in self.players.all():
+				result = self.results.get(player=player)
+				
+				stats.points += result.points
+				stats.race_count += 8
+				new_average = EventResult.objects.filter(event__completed=True, player=player).aggregate(avg=models.Avg('points'))['avg']
+				stats.average_delta = new_average - stats.average
+				stats.average = new_average
+				new_form = EventResult.objects.filter(event__completed=True, player=player)[0:FORM_COUNT].aggregate(avg=models.Avg('points'))['avg']
+				stats.form_delta = new_form - stats.form
+				stats.form = new_form
+			
+			stats.save()
+		
+		self.completed = True
+		self.save()
 	
 	def __unicode__(self):
 		return u'%s (%s slot)' % (self.event_date.strftime("%a. %b. %d %Y"), self.slot)
@@ -100,6 +145,7 @@ class PlayerStat(models.Model):
 	
 	class Meta:
 		ordering =['event', '-form']
+		get_latest_by = 'record_date'
 
 
 class Race(models.Model):
