@@ -2,15 +2,17 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
-	RANK_STRINGS, RaceResult, Track, POSITION_POINTS, PlayerStat, FORM_COUNT
+	RANK_STRINGS, RaceResult, Track, PlayerStat
 from django.db import transaction
 from django.contrib import messages
-from django.db.models import Avg
 
 def home(request):
-	player_stats = PlayerStat.objects.filter(event=Event.objects.latest()).all()
+	try:
+		player_stats = PlayerStat.objects.filter(event=Event.objects.latest()).all()
+	except Event.DoesNotExist:
+		player_stats = PlayerStat.objects.none()
 	
-	return render_to_response('home.html', { 'player_stats': player_stats })
+	return render_to_response('home.djhtm', { 'player_stats': player_stats })
 
 @transaction.commit_on_success()
 def new(request):
