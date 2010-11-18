@@ -1,0 +1,9 @@
+.result-points {
+	position: absolute;
+	right: 38px;
+	top: 50%;
+	margin-top: -10px;
+	font-size: 20px;
+	line-height: 1
+	font-weight: bold;
+}

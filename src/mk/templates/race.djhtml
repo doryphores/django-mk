@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.djhtml" %}
 
 {% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 
@@ -33,7 +33,10 @@
 <h3>Results</h3>
 <ul data-role="listview" data-inset="true" data-theme="d">
 	{% for result in event.results.all %}
-	<li><h4>{{ result.player }}</h4> <span class="ui-li-count">{{ result.points }}</span></li>
+	<li>
+		<h4>{{ result.player }}</h4>
+		<span class="result-points">{{ result.points }}</span>
+	</li>
 	{% endfor %}
 </ul>
 {% endblock %}

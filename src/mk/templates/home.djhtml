@@ -1,0 +1,74 @@
+{% extends "base.djhtml" %}
+
+{% block page_title %}Stats{% endblock %}
+
+{% block content %}
+
+<h2>Latest stats</h2>
+<table>
+	<thead>
+		<tr>
+			<th rowspan="2">Player</th>
+			<th colspan="4">Overall event results</th>
+			<th colspan="4">Overall race results</th>
+			<th rowspan="2">Points</th>
+			<th rowspan="2">Races</th>
+			<th rowspan="2">Average</th>
+			<th rowspan="2">Form</th>
+		</tr>
+		<tr>
+			<th>1st</th>
+			<th>2nd</th>
+			<th>3rd</th>
+			<th>4th</th>
+			<th>1st</th>
+			<th>2nd</th>
+			<th>3rd</th>
+			<th>4th</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for stats in player_stats %}
+		<tr class="{% cycle 'odd','even' %}">
+			<td>{{ stats.player.name }}</td>
+			<td>{{ stats.event_firsts }}</td>
+			<td>{{ stats.event_seconds }}</td>
+			<td>{{ stats.event_thirds }}</td>
+			<td>{{ stats.event_fourths }}</td>
+			<td>{{ stats.race_firsts }}</td>
+			<td>{{ stats.race_seconds }}</td>
+			<td>{{ stats.race_thirds }}</td>
+			<td>{{ stats.race_fourths }}</td>
+			<td>{{ stats.points }}</td>
+			<td>{{ stats.race_count }}</td>
+			<td>
+				{{ stats.average|floatformat:1 }}
+				({% if stats.average_delta > 0 %}
+					&uArr;
+				{% else %}
+					{% if stats.average_delta < 0 %}
+						&dArr;
+					{% else %}
+						&hArr;
+					{% endif %}
+				{% endif %}
+				{{ stats.average_delta|stringformat:'+0.1f' }})
+			</td>
+			<td>
+				{{ stats.form|floatformat:1 }}
+				({% if stats.form_delta > 0 %}
+					&uArr;
+				{% else %}
+					{% if stats.form_delta < 0 %}
+						&dArr;
+					{% else %}
+						&hArr;
+					{% endif %}
+				{% endif %}
+				{{ stats.form_delta|stringformat:'+0.1f' }})
+			</td>
+		</tr>
+	{% endfor %} 
+	</tbody>
+</table>
+{% endblock %}

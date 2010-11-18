@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.djhtml" %}
 
 {% block page_title %}New event{% endblock %}
 

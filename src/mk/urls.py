@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 	(r'^race/(?P<race_id>\d+)/$', 'mk.app.views.race'),
     (r'^race/$', 'mk.app.views.race'),
     (r'^confirm/$', 'mk.app.views.confirm'),
+	(r'^finish/$', 'mk.app.views.finish'),
     # Example:
     # (r'^django_mk/', include('django_mk.foo.urls')),
 

@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
-	RANK_STRINGS, RaceResult, Track, PlayerStat
+	RANK_STRINGS, RaceResult, Track, PlayerStat, RACE_COUNT
 from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
@@ -62,10 +62,7 @@ def race(request, race_id=0):
 			for i, position in enumerate(RANK_STRINGS):
 				RaceResult(race=race, player=Player.objects.get(pk=form.cleaned_data[position]), position=i).save()
 			
-			# Update event results
-			event.update_results()
-			
-			if event.completed:
+			if event.race_count == RACE_COUNT:
 				return HttpResponseRedirect('/confirm/')
 			else:
 				try:
@@ -88,7 +85,7 @@ def race(request, race_id=0):
 		'previous_race': previous_race,
 	}
 	
-	return render_to_response('djrace.html', view_vars, context_instance=RequestContext(request))
+	return render_to_response('race.djhtml', view_vars, context_instance=RequestContext(request))
 
 
 def confirm(request):
@@ -99,4 +96,12 @@ def confirm(request):
 		'previous_race': event.races.all()[:1].get()
 	}
 	
-	return render_to_response('djconfirm.html', view_vars)
+	return render_to_response('confirm.djhtml', view_vars)
+
+@transaction.commit_on_success()
+def finish(request):
+	event = Event.objects.get(pk=request.session['event_pk'])
+	
+	event.complete()
+	
+	return HttpResponseRedirect('/')
