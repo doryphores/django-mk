@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
+
+{% block content %}
+{{ form.non_field_errors }}
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
+	{% csrf_token %}
+	{{ form.track.label_tag }}
+	{{ form.track }}
+	<fieldset data-role="controlgroup" data-type="horizontal">
+		<legend>First</legend>
+		{{ form.first }}
+	</fieldset>
+	<fieldset data-role="controlgroup" data-type="horizontal">
+		<legend>Second</legend>
+		{{ form.second }}
+	</fieldset>
+	<fieldset data-role="controlgroup" data-type="horizontal">
+		<legend>Third</legend>
+		{{ form.third }}
+	</fieldset>
+	<fieldset data-role="controlgroup" data-type="horizontal">
+		<legend>Fourth</legend>
+		{{ form.fourth }}
+	</fieldset>
+	{% if previous_race %}
+	<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
+	{% endif %}
+	<input type="submit" value="{% if race.order == 7 %}Finish{% else %}Next{% endif %}" data-theme="b" data-icon="arrow-r" data-inline="true">
+</form>
+
+<h3>Results</h3>
+<ul data-role="listview" data-inset="true" data-theme="d">
+	{% for result in event.results.all %}
+	<li><h4>{{ result.player }}</h4> <span class="ui-li-count">{{ result.points }}</span></li>
+	{% endfor %}
+</ul>
+{% endblock %}

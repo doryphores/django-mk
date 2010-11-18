@@ -10,6 +10,7 @@ RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
+	avatar = models.ImageField(upload_to='images/avatars', blank=True)
 	
 	def __unicode__(self):
 		return self.name
@@ -150,7 +151,7 @@ class PlayerStat(models.Model):
 
 class Race(models.Model):
 	event = models.ForeignKey(Event, related_name='races')
-	track = models.ForeignKey(Track)
+	track = models.ForeignKey(Track, null=True)
 	players = models.ManyToManyField(Player, through='RaceResult')
 	order = models.PositiveSmallIntegerField()
 	
@@ -159,19 +160,31 @@ class Race(models.Model):
 	available_tracks = property(get_available_tracks)
 	
 	def get_first(self):
-		return self.results.get(position=0).player
+		try:
+			return self.results.get(position=0).player
+		except RaceResult.DoesNotExist:
+			return Player()
 	first = property(get_first)
 	
 	def get_second(self):
-		return self.results.get(position=1).player
+		try:
+			return self.results.get(position=1).player
+		except RaceResult.DoesNotExist:
+			return Player()
 	second = property(get_second)
 	
 	def get_third(self):
-		return self.results.get(position=2).player
+		try:
+			return self.results.get(position=2).player
+		except RaceResult.DoesNotExist:
+			return Player()
 	third = property(get_third)
 	
 	def get_fourth(self):
-		return self.results.get(position=3).player
+		try:
+			return self.results.get(position=3).player
+		except RaceResult.DoesNotExist:
+			return Player()
 	fourth = property(get_fourth)
 	
 	def __unicode__(self):
