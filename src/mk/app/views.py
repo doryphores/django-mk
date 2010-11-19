@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
@@ -22,6 +22,21 @@ def players(request):
 	player_list = Player.objects.all()
 	
 	return render_to_response('players.djhtml', { 'player_list': player_list })
+
+def player(request, player_id):
+	player = get_object_or_404(Player, pk=player_id)
+	
+	return render_to_response('player.djhtml', { 'player': player })
+
+def tracks(request):
+	track_list = Track.objects.all_by_popularity()
+	
+	return render_to_response('tracks.djhtml', { 'track_list': track_list })
+
+def track(request, track_id):
+	track = get_object_or_404(Track, pk=track_id)
+	
+	return render_to_response('track.djhtml', { 'track': track })
 
 @transaction.commit_on_success()
 def new(request):

@@ -10,18 +10,24 @@
 $(document).bind("mobileinit", function(){
 	$.extend(  $.mobile , {
 		ajaxFormsEnabled: false,
-		ajaxLinksEnabled: false
+		ajaxLinksEnabled: true
 	});
 });
 </script>
 <script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
+<script>
+$(document).ready(function () {
+	$("form").live("submit", function () {
+		$.mobile.pageLoading();
+	});
+});
+</script>
 </head>
 <body>
 <div data-role="page">
 	<div data-role="header" data-nobackbtn="true">
-		<a href="/" data-theme="a">Home</a>
 		<h1>{% block page_title %}{% endblock %}</h1>
-		<a href="/new/" data-theme="b" data-icon="plus">New event</a>
+		<a href="/new/" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
 	</div>
 	<div data-role="content">
 	{% if messages %}
@@ -33,12 +39,14 @@ $(document).bind("mobileinit", function(){
 	{% endif %}
 	{% block content %}{% endblock %}
 	</div>
-	<div data-role="footer" class="ui-bar" data-position="fixed" id="footer-nav">
-		<div data-role="controlgroup" data-type="horizontal">
-			<h4>More stats:</h4>
-			<a href="/players/" data-theme="a">Players</a>
-			<a href="/tracks/" data-theme="a">Tracks</a>
-			<a href="/events/" data-theme="a">Events</a>
+	<div data-role="footer" data-position="fixed" data-id="footer-nav">
+		<div data-role="navbar" class="footer-nav">
+			<ul>
+				<li id="btn-home"><a href="/" data-icon="custom">Home</a></li>
+				<li id="btn-players"><a href="/players/" data-icon="custom">Players</a></li>
+				<li id="btn-tracks"><a href="/tracks/" data-icon="custom">Tracks</a></li>
+				<li id="btn-events"><a href="/events/" data-icon="custom">Events</a></li>
+			</ul>
 		</div>
 	</div>
 </div>

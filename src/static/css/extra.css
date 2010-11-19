@@ -1,11 +1,3 @@
-#footer-nav {
-	text-align: center;
-}
-
-#footer-nav h4 {
-	margin-right: 20px;
-}
-
 .result-points {
 	position: absolute;
 	right: 38px;
@@ -33,4 +25,98 @@
 .ui-select .ui-btn {
 	margin-left: 0;
 	margin-right: 0;
+}
+
+
+/* Glyphish icons */
+
+.footer-nav .ui-btn .ui-btn-inner {
+	padding-top: 40px !important;
+}
+
+.footer-nav .ui-btn .ui-icon {
+	width: 30px !important;
+	height: 30px !important;
+	margin-left: -15px !important;
+	box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	-webkit-border-radius: none !important;
+	border-radius: none !important;
+}
+
+#btn-home .ui-icon {
+	background:  url(../images/icons/stats.png) 50% 50% no-repeat;
+}
+
+#btn-players .ui-icon {
+	background:  url(../images/icons/players.png) 50% 50% no-repeat;
+}
+
+#btn-tracks .ui-icon {
+	background:  url(../images/icons/tracks.png) 50% 50% no-repeat;
+}
+
+#btn-events .ui-icon {
+	background:  url(../images/icons/events.png) 50% 50% no-repeat;
+}
+
+
+/* Stats table */
+
+table.stats {
+	border-collapse: collapse;
+}
+
+table.stats tr {
+	cursor: default;
+}
+
+table.stats th {
+	text-align: right;
+	vertical-align: bottom;
+	padding: 4px 10px;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+table.stats thead tr:first-child th {
+	text-align: center;
+}
+
+table.stats th.name {
+	text-align: left;
+	padding-left: 51px;
+}
+
+table.stats td.name {
+	text-align: left;
+}
+
+table.stats td.avatar {
+	padding: 0;
+	border-left: none;
+}
+
+table.stats td.avatar img {
+	display: block;
+}
+
+table.stats td {
+	padding: 10px;
+	border-left: 1px solid #ccc;
+	text-align: right;
+}
+
+table.stats td span {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+table.stats td.delta-u {
+	color: #1ba047;
+}
+
+table.stats td.delta-d {
+	color: #d8242c;
 }

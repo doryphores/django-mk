@@ -14,6 +14,9 @@ urlpatterns = patterns('',
     (r'^confirm/$', 'mk.app.views.confirm'),
 	(r'^finish/$', 'mk.app.views.finish'),
     (r'^players/$', 'mk.app.views.players'),
+	(r'^player/(?P<player_id>\d+)/$', 'mk.app.views.player'),
+	(r'^tracks/$', 'mk.app.views.tracks'),
+	(r'^track/(?P<track_id>\d+)/$', 'mk.app.views.track'),
     # Example:
     # (r'^django_mk/', include('django_mk.foo.urls')),
 

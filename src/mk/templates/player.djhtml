@@ -1,0 +1,7 @@
+{% extends "base.djhtml" %}
+
+{% block page_title %}Player: {{ player.name }}{% endblock %}
+
+{% block content %}
+<img src="{{ player.avatar.url }}">
+{% endblock %}

@@ -27,7 +27,7 @@
 	<div class="ui-grid-a">
 		<div class="ui-block-a">
 		{% if previous_race %}
-			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Previous race</a>
+			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous race</a>
 		{% else %}
 			&nbsp;
 		{% endif %}

@@ -5,7 +5,7 @@
 {% block content %}
 <ul data-role="listview">
 	{% for player in player_list %}
-	<li><a href="#">
+	<li><a href="/player/{{ player.pk }}/">
 		<h3>{{ player.name }}</h3>
 		{% if player.avatar %}
 		<img src="{{ player.avatar.url }}">

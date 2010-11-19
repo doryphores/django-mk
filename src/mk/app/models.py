@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from django.db.models.fields import PositiveSmallIntegerField,\
 	PositiveIntegerField
 import logging
@@ -22,8 +22,19 @@ class Player(models.Model):
 		ordering = ['name']
 
 
+class TrackManager(models.Manager):
+	def all_by_popularity(self):
+		return Track.objects.raw('''
+			select		app_track.*, count(app_race.id) as race_count
+			from		app_track left outer join app_race on app_race.track_id = app_track.id left outer join app_event on app_event.id = app_race.event_id and app_event.completed = 1
+			group by	app_track.id
+			order by	race_count desc, app_track.name''')
+
+
 class Track(models.Model):
 	name = models.CharField(max_length=200, unique=True)
+	
+	objects = TrackManager()
 	
 	def __unicode__(self):
 		return self.name
@@ -266,7 +277,7 @@ class PlayerStat(models.Model):
 
 class Race(models.Model):
 	event = models.ForeignKey(Event, related_name='races')
-	track = models.ForeignKey(Track, null=True)
+	track = models.ForeignKey(Track, null=True, related_name='races')
 	players = models.ManyToManyField(Player, through='RaceResult')
 	order = models.PositiveSmallIntegerField()
 	
