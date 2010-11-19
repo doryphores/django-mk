@@ -4,7 +4,7 @@
 
 {% block content %}
 {{ form.non_field_errors }}
-<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post" class="ui-body">
 	{% csrf_token %}
 	{{ form.track.label_tag }}
 	{{ form.track }}
@@ -24,10 +24,18 @@
 		<legend>Fourth</legend>
 		{{ form.fourth }}
 	</fieldset>
-	{% if previous_race %}
-	<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
-	{% endif %}
-	<input type="submit" value="{% if race.order == 7 %}Finish{% else %}Next{% endif %}" data-theme="b" data-icon="arrow-r" data-inline="true">
+	<div class="ui-grid-a">
+		<div class="ui-block-a">
+		{% if previous_race %}
+			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Previous race</a>
+		{% else %}
+			&nbsp;
+		{% endif %}
+		</div>
+		<div class="ui-block-b">
+			<input type="submit" value="{% if race.order == 7 %}Finish{% else %}Next race{% endif %}" data-theme="b" data-icon="arrow-r" data-inline="true" data-iconpos="right">
+		</div>
+	</div>
 </form>
 
 <h3>Results</h3>

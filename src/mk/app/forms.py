@@ -13,7 +13,7 @@ class RadioSelectPlain(widgets.RadioSelect):
 		return mark_safe(unicode(output))
 
 class RaceForm(forms.Form):
-	track = forms.ChoiceField(required=True)
+	track = forms.ChoiceField(required=True, widget=widgets.Select({ 'data-inline': 'true' }))
 	first = forms.ChoiceField(widget=RadioSelectPlain, required=True)
 	second = forms.ChoiceField(widget=RadioSelectPlain, required=True)
 	third = forms.ChoiceField(widget=RadioSelectPlain, required=True)

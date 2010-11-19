@@ -6,14 +6,22 @@ from mk.app.models import Race, Event, EventResult, Player,\
 from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
+import logging
 
 def home(request):
 	try:
-		player_stats = PlayerStat.objects.filter(event=Event.objects.latest()).all()
+		player_stats = PlayerStat.objects.filter(event=Event.completed_objects.latest()).all()
 	except Event.DoesNotExist:
 		player_stats = PlayerStat.objects.none()
 	
+	logging.debug("Hello there")
+	
 	return render_to_response('home.djhtml', { 'player_stats': player_stats })
+
+def players(request):
+	player_list = Player.objects.all()
+	
+	return render_to_response('players.djhtml', { 'player_list': player_list })
 
 @transaction.commit_on_success()
 def new(request):
@@ -41,7 +49,11 @@ def new(request):
 
 @transaction.commit_on_success()
 def race(request, race_id=0):
-	event = Event.objects.get(pk=request.session['event_pk'])
+	try:
+		event = Event.objects.get(pk=request.session['event_pk'])
+	except Event.DoesNotExist:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	
 	try:
 		race = Race.objects.filter(event=event).get(pk=race_id)
@@ -89,7 +101,11 @@ def race(request, race_id=0):
 
 
 def confirm(request):
-	event = Event.objects.get(pk=request.session['event_pk'])
+	try:
+		event = Event.objects.get(pk=request.session['event_pk'])
+	except Event.DoesNotExist:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	
 	view_vars = {
 		'event': event,
@@ -98,10 +114,19 @@ def confirm(request):
 	
 	return render_to_response('confirm.djhtml', view_vars)
 
+
 @transaction.commit_on_success()
 def finish(request):
-	event = Event.objects.get(pk=request.session['event_pk'])
+	try:
+		event = Event.objects.get(pk=request.session['event_pk'])
+	except Event.DoesNotExist:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	
-	event.complete()
+	event.completed = True
+	event.save()
+	
+	# Remove event from session
+	del request.session['event_pk']
 	
 	return HttpResponseRedirect('/')

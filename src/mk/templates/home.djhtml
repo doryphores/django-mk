@@ -8,7 +8,7 @@
 <table>
 	<thead>
 		<tr>
-			<th rowspan="2">Player</th>
+			<th rowspan="2" colspan="2">Player</th>
 			<th colspan="4">Overall event results</th>
 			<th colspan="4">Overall race results</th>
 			<th rowspan="2">Points</th>
@@ -30,7 +30,8 @@
 	<tbody>
 	{% for stats in player_stats %}
 		<tr class="{% cycle 'odd','even' %}">
-			<td>{{ stats.player.name }}</td>
+			<td><img src="{{ stats.player.avatar.url }}"></td>
+			<td><h3>{{ stats.player.name }}</h3></td>
 			<td>{{ stats.event_firsts }}</td>
 			<td>{{ stats.event_seconds }}</td>
 			<td>{{ stats.event_thirds }}</td>

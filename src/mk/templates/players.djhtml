@@ -1,0 +1,16 @@
+{% extends "base.djhtml" %}
+
+{% block page_title %}Players{% endblock %}
+
+{% block content %}
+<ul data-role="listview">
+	{% for player in player_list %}
+	<li><a href="#">
+		<h3>{{ player.name }}</h3>
+		{% if player.avatar %}
+		<img src="{{ player.avatar.url }}">
+		{% endif %}
+	</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

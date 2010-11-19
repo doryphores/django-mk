@@ -1,10 +1,11 @@
 from django.db import models
 from django.db.models.fields import PositiveSmallIntegerField,\
 	PositiveIntegerField
+import logging
 
 POSITION_POINTS = [15,9,4,1]
 
-FORM_COUNT = 10
+FORM_COUNT = 2
 
 RACE_COUNT = 8
 
@@ -70,10 +71,18 @@ class RaceResult(models.Model):
 		ordering = ['race','position']
 
 
+class CompletedEventManager(models.Manager):
+	def get_query_set(self):
+		return super(CompletedEventManager, self).get_query_set().filter(completed=True)
+
+
 class Event(models.Model):
 	event_date = models.DateTimeField(auto_now_add=True)
 	completed = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player, through='EventResult')
+	
+	objects = models.Manager()
+	completed_objects = CompletedEventManager()
 	
 	def _get_slot(self):
 		if self.event_date.hour < 16:
@@ -85,6 +94,13 @@ class Event(models.Model):
 	def _get_race_count(self):
 		return self.races.count()
 	race_count = property(_get_race_count)
+	
+	def get_next_event(self):
+		next_events = Event.completed_objects.exclude(pk=self.pk).filter(event_date__gt=self.event_date).order_by('event_date')
+		if next_events.exists():
+			return next_events[0:1].get()
+		else:
+			raise Event.DoesNotExist
 	
 	def update_results(self):
 		# Update points and position counts
@@ -101,22 +117,22 @@ class Event(models.Model):
 		for i, result in enumerate(self.results.all().order_by('-points')):
 			result.rank = i
 			result.save()
-	
-	def complete(self):
-		# Mark event as completed
-		self.completed = True
-		self.save()
 		
+		if self.completed:
+			self.update_stats()
+	
+	def update_stats(self):
 		# Delete any stats previously created for this event 
 		PlayerStat.objects.filter(event=self).delete()
 		
 		# Write a new stats object for each event participant
 		for result in self.results.all():
-			try:
+			previous_stats = PlayerStat.objects.filter(player=result.player, event__event_date__lt=self.event_date)
+			
+			if previous_stats.exists():
 				# Get previous stats for player
-				stats = PlayerStat.objects.filter(player=result.player, event__event_date__lt=self.event_date).order_by('-event__event_date')[0:1].get()
-			except PlayerStat.DoesNotExist:
-				# First event for player (get an empty stats model)
+				stats = previous_stats[0:1].get()
+			else:
 				stats = PlayerStat(player=result.player)
 			
 			stats.event = self
@@ -126,13 +142,20 @@ class Event(models.Model):
 			stats.points += result.points
 			stats.race_count += RACE_COUNT
 			
-			# Calculate overall and form averages and deltas
-			new_average = EventResult.objects.filter(event__completed=True, player=result.player).aggregate(avg=models.Avg('points'))['avg'] / RACE_COUNT
+			# Calculate overall average
+			new_average = float(stats.points) / float(stats.race_count)
 			stats.average_delta = new_average - stats.average
 			stats.average = new_average
-			new_form = EventResult.objects.filter(event__completed=True, player=result.player)[0:FORM_COUNT].aggregate(avg=models.Avg('points'))['avg'] / RACE_COUNT
-			stats.form_delta = new_form - stats.form
-			stats.form = new_form
+			
+			# Calculate form average
+			if previous_stats.count() >= FORM_COUNT:
+				new_form = float(stats.points - previous_stats[FORM_COUNT-1].points) / float(RACE_COUNT * FORM_COUNT)
+				stats.form_delta = new_form - stats.form
+				stats.form = new_form
+			else:
+				# Not enough events for form calculation
+				stats.form = stats.average
+				stats.form_delta = stats.average_delta
 			
 			# Update race position counts
 			stats.race_firsts += result.firsts
@@ -142,6 +165,21 @@ class Event(models.Model):
 			
 			# Update event position counts
 			setattr(stats, 'event_%ss' % RANK_STRINGS[result.rank], getattr(stats, 'event_%ss' % RANK_STRINGS[result.rank]) + 1)
+			
+			stats.save()
+		
+		# Write a stats record for players not in this event
+		for player in Player.objects.exclude(pk__in=self.players.all()):
+			previous_stats = PlayerStat.objects.filter(player=player)
+			
+			if previous_stats.exists():
+				# Get previous stats for player
+				stats = previous_stats[0]
+			else:
+				stats = PlayerStat(player=player)
+			
+			stats.event = self
+			stats.pk = None
 			
 			stats.save()
 		
@@ -156,11 +194,36 @@ class Event(models.Model):
 		# Now we need to update any subsequent stats records as they depend on eachother
 		try:
 			# Get the next completed event
-			next_event = Event.objects.filter(completed=True, event_date__gt=self.event_date).order_by('event_date')[0:1].get()
-			next_event.complete()
+			next_event = self.get_next_event()
+			next_event.update_stats()
 		except Event.DoesNotExist:
-			# This the latest completed event, so stop
+			# This the latest completed event, so do nothing
 			pass
+	
+	def save(self, *args, **kwargs):
+		require_stats_update = False
+		if self.pk is not None:
+			old_record = Event.objects.get(pk=self.pk)
+			require_stats_update = not old_record.completed and self.completed
+		
+		super(Event, self).save(*args, **kwargs)
+		
+		if require_stats_update:
+			self.update_stats()
+	
+	def delete(self, *args, **kwargs):
+		require_update = False
+		if self.pk is not None and self.completed:
+			try:
+				next_event = self.get_next_event()
+				require_update = True
+			except Event.DoesNotExist:
+				pass
+		
+		super(Event, self).delete(*args, **kwargs)
+		
+		if require_update:
+			next_event.update_stats()
 	
 	def __unicode__(self):
 		return u'%s (%s slot)' % (self.event_date.strftime("%a. %b. %d %Y"), self.slot)
@@ -171,7 +234,7 @@ class Event(models.Model):
 
 
 class PlayerStat(models.Model):
-	player = models.ForeignKey(Player)
+	player = models.ForeignKey(Player, related_name='stats')
 	event = models.ForeignKey(Event, related_name='stats')
 	
 	rank = PositiveSmallIntegerField(default=0)
@@ -199,7 +262,6 @@ class PlayerStat(models.Model):
 	
 	class Meta:
 		ordering =['event', 'form_rank', 'rank']
-		get_latest_by = 'record_date'
 
 
 class Race(models.Model):

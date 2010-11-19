@@ -18,9 +18,10 @@ $(document).bind("mobileinit", function(){
 </head>
 <body>
 <div data-role="page">
-	<div data-role="header">
+	<div data-role="header" data-nobackbtn="true">
+		<a href="/" data-theme="a">Home</a>
 		<h1>{% block page_title %}{% endblock %}</h1>
-		<a href="/new/" data-theme="b" class="ui-btn-right">New event</a>
+		<a href="/new/" data-theme="b" data-icon="plus">New event</a>
 	</div>
 	<div data-role="content">
 	{% if messages %}
@@ -31,6 +32,14 @@ $(document).bind("mobileinit", function(){
 	</ul>
 	{% endif %}
 	{% block content %}{% endblock %}
+	</div>
+	<div data-role="footer" class="ui-bar" data-position="fixed" id="footer-nav">
+		<div data-role="controlgroup" data-type="horizontal">
+			<h4>More stats:</h4>
+			<a href="/players/" data-theme="a">Players</a>
+			<a href="/tracks/" data-theme="a">Tracks</a>
+			<a href="/events/" data-theme="a">Events</a>
+		</div>
 	</div>
 </div>
 </body>

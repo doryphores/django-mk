@@ -1,3 +1,11 @@
+#footer-nav {
+	text-align: center;
+}
+
+#footer-nav h4 {
+	margin-right: 20px;
+}
+
 .result-points {
 	position: absolute;
 	right: 38px;
@@ -6,4 +14,23 @@
 	font-size: 20px;
 	line-height: 1
 	font-weight: bold;
+}
+
+.ui-btn-corner-all {
+	border-radius: 6px;
+}
+
+.ui-corner-left {
+	border-bottom-left-radius: 6px 6px;
+	border-top-left-radius: 6px 6px;
+}
+
+.ui-corner-right {
+	border-bottom-right-radius: 6px 6px;
+	border-top-right-radius: 6px 6px;
+}
+
+.ui-select .ui-btn {
+	margin-left: 0;
+	margin-right: 0;
 }

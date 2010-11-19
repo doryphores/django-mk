@@ -22,6 +22,8 @@ DATABASES = {
     }
 }
 
+INTERNAL_IPS=('127.0.0.1')
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -76,6 +78,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'mk.urls'
@@ -98,4 +101,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'mk.app',
+    'debug_toolbar',
 )
+
+DEBUG_TOOLBAR_CONFIG = {
+	'INTERCEPT_REDIRECTS': False,
+}

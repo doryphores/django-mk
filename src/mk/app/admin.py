@@ -21,6 +21,24 @@ class EventAdmin(admin.ModelAdmin):
 		EventResultInline,
 	]
 	
+	actions=['really_delete_selected']
+	
+	def get_actions(self, request):
+		actions = super(EventAdmin, self).get_actions(request)
+		del actions['delete_selected']
+		return actions
+	
+	def really_delete_selected(self, request, queryset):
+		for obj in queryset:
+			obj.delete()
+		
+		if queryset.count() == 1:
+			message_bit = "1 event was"
+		else:
+			message_bit = "%s events were" % queryset.count()
+		self.message_user(request, "%s successfully deleted." % message_bit)
+	really_delete_selected.short_description = "Deleted selected events"
+	
 	def player_list(self, obj):
 		return ", ".join([player.name for player in obj.players.all()])
 
@@ -57,7 +75,7 @@ class EventResultAdmin(admin.ModelAdmin):
 admin.site.register(EventResult, EventResultAdmin)
 
 class PlayerStatAdmin(admin.ModelAdmin):
-	list_display = ('__unicode__', 'average', 'form', 'rank', 'form_rank')
+	list_display = ('__unicode__', 'points', 'race_count', 'average', 'form', 'rank', 'form_rank')
 	list_filter = ['player']
 
 admin.site.register(PlayerStat, PlayerStatAdmin)
