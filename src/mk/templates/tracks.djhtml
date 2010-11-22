@@ -1,11 +1,13 @@
 {% extends "base.djhtml" %}
 
+{% load app_extras %}
+
 {% block page_title %}Tracks{% endblock %}
 
 {% block content %}
 <ul data-role="listview">
 	{% for track in track_list %}
-	<li><a href="/track/{{ track.pk }}/">
+	<li><a href="{{ '/track/'|buildlink }}{{ track.pk }}/">
 		<h3>{{ track.name }}</h3>
 		<span class="ui-li-count">{{ track.race_count }}</span>
 	</a></li>

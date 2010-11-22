@@ -1,10 +1,12 @@
 {% extends "base.djhtml" %}
 
+{% load app_extras %}
+
 {% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 
 {% block content %}
 {{ form.non_field_errors }}
-<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post" class="ui-body">
+<form action="{{ '/race/'|buildlink }}{{ race.pk|default_if_none:0 }}/" method="post" class="ui-body">
 	{% csrf_token %}
 	{{ form.track.label_tag }}
 	{{ form.track }}
@@ -27,7 +29,7 @@
 	<div class="ui-grid-a">
 		<div class="ui-block-a">
 		{% if previous_race %}
-			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous race</a>
+			<a href="{{ '/race/'|buildlink }}{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous race</a>
 		{% else %}
 			&nbsp;
 		{% endif %}

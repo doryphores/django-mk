@@ -1,5 +1,7 @@
 {% extends "base.djhtml" %}
 
+{% load app_extras %}
+
 {% block page_title %}Stats{% endblock %}
 
 {% block content %}
@@ -30,14 +32,14 @@
 	<tbody>
 	{% for stats in player_stats %}
 		<tr class="ui-btn-up-c">
-			<td class="avatar"><a href="/player/{{ stats.player.pk }}/">
+			<td class="avatar"><a href="{{ '/player/'|buildlink }}{{ stats.player.pk }}/">
 				{% if stats.player.avatar %}
 				<img src="{{ stats.player.avatar.url }}" width="40" height="40">
 				{% else %}
 				<img src="/static/avatars/default.png" width="40" height="40">
 				{% endif %}
 			</a></td>
-			<td class="name"><a href="/player/{{ stats.player.pk }}/">{{ stats.player.name }}</a></td>
+			<td class="name"><a href="{{ '/player/'|buildlink }}{{ stats.player.pk }}/">{{ stats.player.name }}</a></td>
 			<td>{{ stats.event_firsts }}</td>
 			<td>{{ stats.event_seconds }}</td>
 			<td>{{ stats.event_thirds }}</td>

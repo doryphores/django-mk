@@ -1,10 +1,12 @@
 {% extends "base.djhtml" %}
 
+{% load app_extras %}
+
 {% block page_title %}New event{% endblock %}
 
 {% block content %}
 
-<form action="/new/" method="post">
+<form action="{{ '/new/'|buildlink }}" method="post">
 {% csrf_token %}
 <fieldset data-role="controlgroup">
 <legend>Select players</legend>
