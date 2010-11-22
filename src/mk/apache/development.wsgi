@@ -5,7 +5,7 @@ project = os.path.dirname(apache_configuration)
 workspace = os.path.dirname(project)
 sys.path.append(workspace)
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'mk.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mk.settings.development'
 
 import django.core.handlers.wsgi
 
