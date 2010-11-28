@@ -1,7 +1,8 @@
-from django.db import models, connection
+from django.db import models
 from django.db.models.fields import PositiveSmallIntegerField,\
 	PositiveIntegerField
-import logging
+import datetime
+from django.db.utils import IntegrityError
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -54,6 +55,38 @@ class EventResult(models.Model):
 	thirds = models.PositiveSmallIntegerField(default=0)
 	fourths = models.PositiveSmallIntegerField(default=0)
 	
+	def save(self, *args, **kwargs):
+		# Calculate points
+		new_points = 0
+		for i, position in enumerate(RANK_STRINGS):
+			new_points += getattr(self, '%ss' % position) * POSITION_POINTS[i] 
+		
+		# If points have changed
+		if new_points != self.points:
+			self.points = new_points
+			
+			event_points = 0
+			
+			# TODO: finish integrity error handling
+			
+			# Update event rankings
+			for i, result in enumerate(self.event.results.all().order_by('-points')):
+				event_points += result.points
+				if result == self:
+					self.rank = i
+				else:
+					result.rank = i
+					result.save()
+		
+		#===========================================================================
+		# event_points = sum([r.points for r in self.results.all()])
+		#	if event_points != sum(POSITION_POINTS) * RACE_COUNT:
+		#		raise IntegrityError("Event has invalid number of points (%s)" % str(event_points))
+		#		return
+		#===========================================================================
+		
+		super(EventResult, self).save(*args, **kwargs)
+	
 	def __unicode__(self):
 		return u'%s on %s (rank: %s)' % (self.player, self.event, RANK_STRINGS[self.rank])
 	
@@ -88,7 +121,7 @@ class CompletedEventManager(models.Manager):
 
 
 class Event(models.Model):
-	event_date = models.DateTimeField(auto_now_add=True)
+	event_date = models.DateTimeField()
 	completed = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player, through='EventResult')
 	
@@ -116,17 +149,9 @@ class Event(models.Model):
 	def update_results(self):
 		# Update points and position counts
 		for result in self.results.all():
-			result.points = 0
-			
 			for i, position in enumerate(RANK_STRINGS):
 				count = result.player.race_results.filter(race__event=self, position=i).count()
-				result.points += count * POSITION_POINTS[i]
 				setattr(result, position + "s", count)
-				result.save()
-		
-		# Update rank
-		for i, result in enumerate(self.results.all().order_by('-points')):
-			result.rank = i
 			result.save()
 		
 		if self.completed:
@@ -212,6 +237,15 @@ class Event(models.Model):
 			pass
 	
 	def save(self, *args, **kwargs):
+		if self.completed:
+			event_points = sum([r.points for r in self.results.all()])
+			if event_points != sum(POSITION_POINTS) * RACE_COUNT:
+				raise IntegrityError("Event has invalid number of points (%s)" % str(event_points))
+				return
+		
+		if self.event_date is None:
+			self.event_date = datetime.datetime.today()
+		
 		require_stats_update = False
 		if self.pk is not None:
 			old_record = Event.objects.get(pk=self.pk)

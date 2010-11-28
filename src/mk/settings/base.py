@@ -22,6 +22,17 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    },
+    'import': {
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'kartleague',
+        'USER': 'sqlogin',
+        'PASSWORD': 'd1lb3rt',
+        'HOST': r'192.168.1.182\SQLEXPRESS',
+        'OPTIONS': {
+             'driver': 'SQL Native Client',
+             'MARS_Connection': True,
+        },
     }
 }
 
