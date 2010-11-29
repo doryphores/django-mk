@@ -50,14 +50,8 @@
 			<td>{{ stats.race_fourths }}</td>
 			<td>{{ stats.points }}</td>
 			<td>{{ stats.race_count }}</td>
-			<td class="delta-{% if stats.average_delta < 0 %}d{% else %}u{% endif %}">
-				{{ stats.average|stringformat:'0.1f' }}
-				<span>({{ stats.average_delta|stringformat:'+0.1f' }})</span>
-			</td>
-			<td class="delta-{% if stats.form_delta < 0 %}d{% else %}u{% endif %}">
-				{{ stats.form|stringformat:'0.1f' }}
-				<span>({{ stats.form_delta|stringformat:'+0.1f' }})</span>
-			</td>
+			<td>{{ stats.average|stringformat:'0.1f' }}</td>
+			<td>{{ stats.form|stringformat:'0.1f' }}</td>
 		</tr>
 	{% endfor %} 
 	</tbody>

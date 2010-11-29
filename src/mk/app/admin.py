@@ -16,6 +16,7 @@ class EventAdmin(admin.ModelAdmin):
 	list_display = ('__unicode__', 'player_list', 'completed')
 	date_hierarchy = 'event_date'
 	list_filter = ['completed', 'players']
+	list_per_page = 20
 	
 	inlines = [
 		EventResultInline,

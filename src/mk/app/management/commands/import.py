@@ -1,6 +1,6 @@
 from django.core.management.base import NoArgsCommand
 from django.db import connections, transaction
-from mk.app.models import Player, Event, EventResult
+from mk.app.models import Player, Event, EventResult, MAX_EVENT_POINTS
 from django.db.models.aggregates import Sum
 
 class Command(NoArgsCommand):
@@ -54,18 +54,19 @@ class Command(NoArgsCommand):
 				event_points += result.points
 				
 				if event.results.count() == 4:
-					if event_points != 232:
+					if event_points != MAX_EVENT_POINTS:
 						# Discard invalid events
 						event.delete()
 					else:
 						# Complete event
 						event.completed = True
 						event.save()
-					
+			
 		except:
 			transaction.rollback()
 			transaction.leave_transaction_management()
 			self.stdout.write("Unexpected error importing events")
+			raise
 			return
 		
 		transaction.commit()

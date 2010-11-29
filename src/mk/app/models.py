@@ -1,14 +1,17 @@
-from django.db import models
+from django.db import models, connection, transaction
 from django.db.models.fields import PositiveSmallIntegerField,\
 	PositiveIntegerField
 import datetime
 from django.db.utils import IntegrityError
+from django.db.models.aggregates import Avg
 
 POSITION_POINTS = [15,9,4,1]
 
-FORM_COUNT = 2
+FORM_COUNT = 10
 
 RACE_COUNT = 8
+
+MAX_EVENT_POINTS = sum(POSITION_POINTS) * RACE_COUNT
 
 RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
@@ -56,36 +59,26 @@ class EventResult(models.Model):
 	fourths = models.PositiveSmallIntegerField(default=0)
 	
 	def save(self, *args, **kwargs):
+		old_points = self.points
+		
 		# Calculate points
 		new_points = 0
 		for i, position in enumerate(RANK_STRINGS):
-			new_points += getattr(self, '%ss' % position) * POSITION_POINTS[i] 
+			new_points += getattr(self, '%ss' % position) * POSITION_POINTS[i]
 		
 		# If points have changed
 		if new_points != self.points:
 			self.points = new_points
-			
-			event_points = 0
-			
-			# TODO: finish integrity error handling
-			
-			# Update event rankings
-			for i, result in enumerate(self.event.results.all().order_by('-points')):
-				event_points += result.points
-				if result == self:
-					self.rank = i
-				else:
-					result.rank = i
-					result.save()
-		
-		#===========================================================================
-		# event_points = sum([r.points for r in self.results.all()])
-		#	if event_points != sum(POSITION_POINTS) * RACE_COUNT:
-		#		raise IntegrityError("Event has invalid number of points (%s)" % str(event_points))
-		#		return
-		#===========================================================================
 		
 		super(EventResult, self).save(*args, **kwargs)
+		
+		# Update rank for all results in event if points have changed
+		if new_points != old_points:
+			cursor = connection.cursor()
+			
+			for i, result in enumerate(self.event.results.all().order_by('-points')):
+				cursor.execute('UPDATE app_eventresult SET rank = %s WHERE id = %s', [i, result.pk])
+				transaction.commit_unless_managed()
 	
 	def __unicode__(self):
 		return u'%s on %s (rank: %s)' % (self.player, self.event, RANK_STRINGS[self.rank])
@@ -179,19 +172,16 @@ class Event(models.Model):
 			stats.race_count += RACE_COUNT
 			
 			# Calculate overall average
-			new_average = float(stats.points) / float(stats.race_count)
-			stats.average_delta = new_average - stats.average
-			stats.average = new_average
+			stats.average = float(stats.points) / float(stats.race_count)
 			
 			# Calculate form average
-			if previous_stats.count() >= FORM_COUNT:
-				new_form = float(stats.points - previous_stats[FORM_COUNT-1].points) / float(RACE_COUNT * FORM_COUNT)
-				stats.form_delta = new_form - stats.form
-				stats.form = new_form
-			else:
+			previous_results = EventResult.objects.filter(player=result.player, event__completed=True, event__event_date__lt=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
+			
+			if previous_results.count() < FORM_COUNT:
 				# Not enough events for form calculation
 				stats.form = stats.average
-				stats.form_delta = stats.average_delta
+			else:
+				stats.form = previous_results.aggregate(Avg('points'))['points__avg'] / float(RACE_COUNT)
 			
 			# Update race position counts
 			stats.race_firsts += result.firsts
@@ -237,12 +227,6 @@ class Event(models.Model):
 			pass
 	
 	def save(self, *args, **kwargs):
-		if self.completed:
-			event_points = sum([r.points for r in self.results.all()])
-			if event_points != sum(POSITION_POINTS) * RACE_COUNT:
-				raise IntegrityError("Event has invalid number of points (%s)" % str(event_points))
-				return
-		
 		if self.event_date is None:
 			self.event_date = datetime.datetime.today()
 		
@@ -288,9 +272,7 @@ class PlayerStat(models.Model):
 	race_count = PositiveIntegerField(default=0)
 	
 	average = models.FloatField(default=0.0)
-	average_delta = models.FloatField(default=0.0)
 	form = models.FloatField(default=0.0)
-	form_delta = models.FloatField(default=0.0)
 	
 	event_firsts = PositiveIntegerField(default=0)
 	event_seconds = PositiveIntegerField(default=0)
@@ -301,7 +283,7 @@ class PlayerStat(models.Model):
 	race_seconds = PositiveIntegerField(default=0)
 	race_thirds = PositiveIntegerField(default=0)
 	race_fourths = PositiveIntegerField(default=0)
-		
+	
 	def __unicode__(self):
 		return u'%s on %s' % (self.player.name, self.event)
 	
