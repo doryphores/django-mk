@@ -16,27 +16,27 @@ def home(request):
 	
 	logging.debug("Hello there")
 	
-	return render_to_response('home.djhtml', { 'player_stats': player_stats })
+	return render_to_response('home.djhtml', { 'player_stats': player_stats }, context_instance=RequestContext(request))
 
 def players(request):
 	player_list = Player.objects.all()
 	
-	return render_to_response('players.djhtml', { 'player_list': player_list })
+	return render_to_response('players.djhtml', { 'player_list': player_list }, context_instance=RequestContext(request))
 
 def player(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
 	
-	return render_to_response('player.djhtml', { 'player': player })
+	return render_to_response('player.djhtml', { 'player': player }, context_instance=RequestContext(request))
 
 def tracks(request):
 	track_list = Track.objects.all_by_popularity()
 	
-	return render_to_response('tracks.djhtml', { 'track_list': track_list })
+	return render_to_response('tracks.djhtml', { 'track_list': track_list }, context_instance=RequestContext(request))
 
 def track(request, track_id):
 	track = get_object_or_404(Track, pk=track_id)
 	
-	return render_to_response('track.djhtml', { 'track': track })
+	return render_to_response('track.djhtml', { 'track': track }, context_instance=RequestContext(request))
 
 @transaction.commit_on_success()
 def new(request):
@@ -127,7 +127,7 @@ def confirm(request):
 		'previous_race': event.races.all()[:1].get()
 	}
 	
-	return render_to_response('confirm.djhtml', view_vars)
+	return render_to_response('confirm.djhtml', view_vars, context_instance=RequestContext(request))
 
 
 @transaction.commit_on_success()

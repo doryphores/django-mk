@@ -3,5 +3,7 @@
 {% block page_title %}Player: {{ player.name }}{% endblock %}
 
 {% block content %}
+{% if player.avatar %}
 <img src="{{ player.avatar.url }}">
+{% endif %}
 {% endblock %}

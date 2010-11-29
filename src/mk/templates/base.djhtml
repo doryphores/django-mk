@@ -1,12 +1,10 @@
-{% load app_extras %}
-
 <!DOCTYPE html>
 <html>
 <head>
 <title>{% block title %}Mario Kart{% endblock %}</title>
 
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css" />
-<link rel="stylesheet" href="{{ '/static/css/extra.css'|buildlink }}" />
+<link rel="stylesheet" href="{{ base_url }}/static/css/extra.css" />
 <script src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
 <script>
 $(document).bind("mobileinit", function(){
@@ -29,7 +27,7 @@ $(document).ready(function () {
 <div data-role="page">
 	<div data-role="header" data-nobackbtn="true">
 		<h1>{% block page_title %}{% endblock %}</h1>
-		<a href="{{ '/new/'|buildlink }}" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
+		<a href="{{ base_url }}/new/" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
 	</div>
 	<div data-role="content">
 	{% if messages %}
@@ -44,10 +42,10 @@ $(document).ready(function () {
 	<div data-role="footer" data-position="fixed" data-id="footer-nav">
 		<div data-role="navbar" class="footer-nav">
 			<ul>
-				<li id="btn-home"><a href="{{ '/'|buildlink }}" data-icon="custom">Home</a></li>
-				<li id="btn-players"><a href="{{ '/players/'|buildlink }}" data-icon="custom">Players</a></li>
-				<li id="btn-tracks"><a href="{{ '/tracks/'|buildlink }}" data-icon="custom">Tracks</a></li>
-				<li id="btn-events"><a href="{{ '/events/'|buildlink }}" data-icon="custom">Events</a></li>
+				<li id="btn-home"><a href="{{ base_url }}/" data-icon="custom">Home</a></li>
+				<li id="btn-players"><a href="{{ base_url }}/players/" data-icon="custom">Players</a></li>
+				<li id="btn-tracks"><a href="{{ base_url }}/tracks/" data-icon="custom">Tracks</a></li>
+				<li id="btn-events"><a href="{{ base_url }}/events/" data-icon="custom">Events</a></li>
 			</ul>
 		</div>
 	</div>

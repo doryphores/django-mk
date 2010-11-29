@@ -1,4 +1,5 @@
 import os
+import django.conf.global_settings as DEFAULT_SETTINGS
 
 APP_ROOT = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.dirname(APP_ROOT)
@@ -103,6 +104,10 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(APP_ROOT, "templates")
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+	"mk.app.context_processors.base_url",
 )
 
 INSTALLED_APPS = (
