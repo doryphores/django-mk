@@ -5,5 +5,7 @@
 {% block content %}
 {% if player.avatar %}
 <img src="{{ player.avatar.url }}">
+
+<img src="http://chart.apis.google.com/chart?chxl=0:|4rth|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&chs=1000x100&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ results }}&chdlp=l&chtt=Results&chts=000000,11.5" width="1000" height="100" alt="Results" />
 {% endif %}
 {% endblock %}

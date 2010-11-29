@@ -14,8 +14,6 @@ def home(request):
 	except Event.DoesNotExist:
 		player_stats = PlayerStat.objects.none()
 	
-	logging.debug("Hello there")
-	
 	return render_to_response('home.djhtml', { 'player_stats': player_stats }, context_instance=RequestContext(request))
 
 def players(request):
@@ -26,7 +24,12 @@ def players(request):
 def player(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
 	
-	return render_to_response('player.djhtml', { 'player': player }, context_instance=RequestContext(request))
+	recent_events = [str(abs(er.rank - 3)+1) for er in EventResult.objects.filter(player=player, event__completed=True).order_by('-event__event_date')[0:100]]
+	recent_events.reverse()
+	
+	results = ",".join(recent_events)
+	
+	return render_to_response('player.djhtml', { 'player': player, 'results': results }, context_instance=RequestContext(request))
 
 def tracks(request):
 	track_list = Track.objects.all_by_popularity()

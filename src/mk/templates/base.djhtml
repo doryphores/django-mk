@@ -45,7 +45,7 @@ $(document).ready(function () {
 				<li id="btn-home"><a href="{{ base_url }}/" data-icon="custom">Home</a></li>
 				<li id="btn-players"><a href="{{ base_url }}/players/" data-icon="custom">Players</a></li>
 				<li id="btn-tracks"><a href="{{ base_url }}/tracks/" data-icon="custom">Tracks</a></li>
-				<li id="btn-events"><a href="{{ base_url }}/events/" data-icon="custom">Events</a></li>
+				{#<li id="btn-events"><a href="{{ base_url }}/events/" data-icon="custom">Events</a></li>#}
 			</ul>
 		</div>
 	</div>
