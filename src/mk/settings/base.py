@@ -10,31 +10,31 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+	# ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(PROJECT_ROOT, "db.sqlite"),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    },
-    'import': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'kartleague',
-        'USER': 'sqlogin',
-        'PASSWORD': 'd1lb3rt',
-        'HOST': r'192.168.1.182\SQLEXPRESS',
-        'OPTIONS': {
-             'driver': 'SQL Native Client',
-             'MARS_Connection': True,
-        },
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+		'NAME': os.path.join(PROJECT_ROOT, "db.sqlite"),					  # Or path to database file if using sqlite3.
+		'USER': '',					  # Not used with sqlite3.
+		'PASSWORD': '',				  # Not used with sqlite3.
+		'HOST': '',					  # Set to empty string for localhost. Not used with sqlite3.
+		'PORT': '',					  # Set to empty string for default. Not used with sqlite3.
+	},
+	'import': {
+		'ENGINE': 'sqlserver_ado',
+		'NAME': 'kartleague',
+		'USER': 'sqlogin',
+		'PASSWORD': 'd1lb3rt',
+		'HOST': r'192.168.1.182\SQLEXPRESS',
+		'OPTIONS': {
+			'provider': 'SQLOLEDB',
+			'use_mars': True,
+		},
+	}
 }
 
 INTERNAL_IPS=('127.0.0.1', '192.168.1.56')
@@ -83,27 +83,27 @@ SECRET_KEY = 'y&8alk18xnzfp_g16ttdv9md%*#&jx9wjp)7_1xrg0ds9puy4w'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+	'django.template.loaders.filesystem.Loader',
+	'django.template.loaders.app_directories.Loader',
+#	 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'mk.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(APP_ROOT, "templates")
+	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+	# Always use forward slashes, even on Windows.
+	# Don't forget to use absolute paths, not relative paths.
+	os.path.join(APP_ROOT, "templates")
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
@@ -111,14 +111,14 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'mk.app',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.sites',
+	'django.contrib.messages',
+	# Uncomment the next line to enable the admin:
+	'django.contrib.admin',
+	# Uncomment the next line to enable admin documentation:
+	# 'django.contrib.admindocs',
+	'mk.app',
 )

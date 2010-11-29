@@ -175,13 +175,13 @@ class Event(models.Model):
 			stats.average = float(stats.points) / float(stats.race_count)
 			
 			# Calculate form average
-			previous_results = EventResult.objects.filter(player=result.player, event__completed=True, event__event_date__lt=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
+			previous_results = EventResult.objects.filter(player=result.player, event__completed=True, event__event_date__lte=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
 			
 			if previous_results.count() < FORM_COUNT:
 				# Not enough events for form calculation
 				stats.form = stats.average
 			else:
-				stats.form = previous_results.aggregate(Avg('points'))['points__avg'] / float(RACE_COUNT)
+				stats.form = sum([er.points for er in previous_results]) / float(FORM_COUNT * RACE_COUNT)
 			
 			# Update race position counts
 			stats.race_firsts += result.firsts

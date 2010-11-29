@@ -13,7 +13,7 @@ class Command(NoArgsCommand):
 		row = cursor.fetchone()
 		players = {}
 		while True:
-			if len(row) == 0:
+			if row is None:
 				break
 			try:
 				player = Player.objects.get(name=row[1])
@@ -24,7 +24,7 @@ class Command(NoArgsCommand):
 			players[row[0]] = player
 			
 			row = cursor.fetchone()
-			
+		
 		cursor.execute('''
 			SELECT	EventID, Event.Date, PlayerID, [1st], [2nd], [3rd], [4th]
 			FROM	Result INNER JOIN Event on Event.ID = Result.EventID
@@ -34,14 +34,14 @@ class Command(NoArgsCommand):
 		
 		event_id = 0
 		event = None
-		
+		row = cursor.fetchone()
 		
 		transaction.commit_unless_managed()
 		transaction.enter_transaction_management()
 		transaction.managed(True)
 		
 		try:
-			for row in cursor.fetchall():
+			while row:
 				if event_id != row[0]:
 					event = Event(event_date=row[1])
 					event.save()
@@ -57,10 +57,13 @@ class Command(NoArgsCommand):
 					if event_points != MAX_EVENT_POINTS:
 						# Discard invalid events
 						event.delete()
+						self.stdout.write("Discarding event %s[%s] (invalid number of points: %s)\n" % (event, event_id, event_points))
 					else:
 						# Complete event
 						event.completed = True
 						event.save()
+				
+				row = cursor.fetchone()
 			
 		except:
 			transaction.rollback()
