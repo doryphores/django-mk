@@ -6,7 +6,8 @@ from mk.app.models import Race, Event, EventResult, Player,\
 from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
-import logging
+from django.db.models import Min, Max
+from operator import itemgetter
 
 def home(request):
 	try:
@@ -19,17 +20,44 @@ def home(request):
 def players(request):
 	player_list = Player.objects.all()
 	
-	return render_to_response('players.djhtml', { 'player_list': player_list }, context_instance=RequestContext(request))
+	# Build list of players with stats and rank to allow sorting
+	players = []
+	for player in player_list:
+		stats = player.latest_stats
+		players.append({
+			'player': player,
+			'stats': stats,
+			'rank': stats.rank,
+		})
+	
+	return render_to_response('players.djhtml', {
+		'players': sorted(players, key=itemgetter('rank')),
+	}, context_instance=RequestContext(request))
 
 def player(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
 	
-	recent_events = [str(abs(er.rank - 3)+1) for er in EventResult.objects.filter(player=player, event__completed=True).order_by('-event__event_date')[0:100]]
-	recent_events.reverse()
+	total_event_count = Event.completed_objects.count()
 	
-	results = ",".join(recent_events)
+	event_results = EventResult.completed_objects.filter(player=player).select_related('event')
 	
-	return render_to_response('player.djhtml', { 'player': player, 'results': results }, context_instance=RequestContext(request))
+	# Data for event ranking graph (reverse rank values to fit graph)
+	recent_rankings = [str(abs(er.rank - 3)+1) for er in event_results[0:100]]
+	# Reverse order so that recent events are on the left
+	recent_rankings.reverse()
+	
+	scores = event_results.aggregate(min=Min('points'), max=Max('points'))
+	
+	recent_results = event_results[0:20]
+	
+	return render_to_response('player.djhtml', {
+		'total_event_count': total_event_count,
+		'player': player,
+		'recent_rankings': recent_rankings,
+		'stats': player.latest_stats,
+		'scores': scores,
+		'recent_results': recent_results,
+	}, context_instance=RequestContext(request))
 
 def tracks(request):
 	track_list = Track.objects.all_by_popularity()

@@ -19,6 +19,10 @@ class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
 	
+	def _get_latest_stats(self):
+		return self.stats.all()[0:1].get()
+	latest_stats = property(_get_latest_stats)
+	
 	def __unicode__(self):
 		return self.name
 	
@@ -47,6 +51,11 @@ class Track(models.Model):
 		ordering = ['name']
 
 
+class CompletedEventResultManager(models.Manager):
+	def get_query_set(self):
+		return super(CompletedEventResultManager, self).get_query_set().filter(event__completed=True)
+
+
 class EventResult(models.Model):
 	event = models.ForeignKey('Event', related_name='results')
 	player = models.ForeignKey('Player', related_name='event_results')
@@ -57,6 +66,9 @@ class EventResult(models.Model):
 	seconds = models.PositiveSmallIntegerField(default=0)
 	thirds = models.PositiveSmallIntegerField(default=0)
 	fourths = models.PositiveSmallIntegerField(default=0)
+	
+	objects = models.Manager()
+	completed_objects = CompletedEventResultManager()
 	
 	def save(self, *args, **kwargs):
 		old_points = self.points
@@ -114,7 +126,7 @@ class CompletedEventManager(models.Manager):
 
 
 class Event(models.Model):
-	event_date = models.DateTimeField()
+	event_date = models.DateTimeField(unique=True)
 	completed = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player, through='EventResult')
 	
@@ -175,7 +187,7 @@ class Event(models.Model):
 			stats.average = float(stats.points) / float(stats.race_count)
 			
 			# Calculate form average
-			previous_results = EventResult.objects.filter(player=result.player, event__completed=True, event__event_date__lte=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
+			previous_results = EventResult.completed_objects.filter(player=result.player, event__event_date__lte=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
 			
 			if previous_results.count() < FORM_COUNT:
 				# Not enough events for form calculation
@@ -283,6 +295,10 @@ class PlayerStat(models.Model):
 	race_seconds = PositiveIntegerField(default=0)
 	race_thirds = PositiveIntegerField(default=0)
 	race_fourths = PositiveIntegerField(default=0)
+	
+	def _get_event_count(self):
+		return self.race_count / RACE_COUNT
+	event_count = property(_get_event_count)
 	
 	def __unicode__(self):
 		return u'%s on %s' % (self.player.name, self.event)

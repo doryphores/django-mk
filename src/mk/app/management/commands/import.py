@@ -2,12 +2,15 @@ from django.core.management.base import NoArgsCommand
 from django.db import connections, transaction
 from mk.app.models import Player, Event, EventResult, MAX_EVENT_POINTS
 from django.db.models.aggregates import Sum
+from django.db.utils import IntegrityError
 
 class Command(NoArgsCommand):
 	help = 'Import events from legacy DB'
 	
 	def handle_noargs(self, **options):
 		cursor = connections['import'].cursor()
+		
+		# Import players
 		
 		cursor.execute('SELECT ID, Name FROM Player')
 		row = cursor.fetchone()
@@ -32,6 +35,8 @@ class Command(NoArgsCommand):
 			ORDER BY Event.Date ASC
 		''')
 		
+		# Import events
+		
 		event_id = 0
 		event = None
 		row = cursor.fetchone()
@@ -44,24 +49,30 @@ class Command(NoArgsCommand):
 			while row:
 				if event_id != row[0]:
 					event = Event(event_date=row[1])
-					event.save()
-					event_id = row[0]
-					event_points = 0
-					self.stdout.write("Importing event %s\n" % event)
-				
-				result = EventResult(event=event, player=players[row[2]], firsts=row[3], seconds=row[4], thirds=row[5], fourths=row[6])
-				result.save()
-				event_points += result.points
-				
-				if event.results.count() == 4:
-					if event_points != MAX_EVENT_POINTS:
-						# Discard invalid events
-						event.delete()
-						self.stdout.write("Discarding event %s[%s] (invalid number of points: %s)\n" % (event, event_id, event_points))
-					else:
-						# Complete event
-						event.completed = True
+					try:
 						event.save()
+						event_id = row[0]
+						event_points = 0
+						self.stdout.write("Importing event %s\n" % event)
+					except IntegrityError:
+						# Event already exists, skip it
+						self.stdout.write("Skipping event %s (already imported)\n" % row[0])
+				
+				# Only process result if a saved event exists
+				if event.pk is not None:
+					result = EventResult(event=event, player=players[row[2]], firsts=row[3], seconds=row[4], thirds=row[5], fourths=row[6])
+					result.save()
+					event_points += result.points
+					
+					if event.results.count() == 4:
+						if event_points != MAX_EVENT_POINTS:
+							# Discard invalid events
+							event.delete()
+							self.stdout.write("Discarding event %s[%s] (invalid number of points: %s)\n" % (event, event_id, event_points))
+						else:
+							# Complete event
+							event.completed = True
+							event.save()
 				
 				row = cursor.fetchone()
 			

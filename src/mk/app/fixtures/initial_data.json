@@ -3,42 +3,64 @@
         "pk": 2, 
         "model": "app.player", 
         "fields": {
-            "name": "Adam"
+            "name": "Adam", 
+            "avatar": "images/avatars/wario.png"
         }
     }, 
     {
         "pk": 3, 
         "model": "app.player", 
         "fields": {
-            "name": "Andy"
+            "name": "Andy", 
+            "avatar": "images/avatars/mario.png"
         }
     }, 
     {
         "pk": 4, 
         "model": "app.player", 
         "fields": {
-            "name": "Anton"
+            "name": "Anton", 
+            "avatar": "images/avatars/boo.png"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "app.player", 
+        "fields": {
+            "name": "David", 
+            "avatar": "images/avatars/diddy_1.png"
         }
     }, 
     {
         "pk": 1, 
         "model": "app.player", 
         "fields": {
-            "name": "Martin"
+            "name": "Martin", 
+            "avatar": "images/avatars/bowser.png"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "app.player", 
+        "fields": {
+            "name": "Simon", 
+            "avatar": "images/avatars/yoshi.png"
         }
     }, 
     {
         "pk": 5, 
         "model": "app.player", 
         "fields": {
-            "name": "Stuart"
+            "name": "Stuart", 
+            "avatar": "images/avatars/funky.png"
         }
     }, 
     {
         "pk": 6, 
         "model": "app.player", 
         "fields": {
-            "name": "Wyndham"
+            "name": "Wyndham", 
+            "avatar": "images/avatars/diddy.png"
         }
     }, 
     {
@@ -70,27 +92,6 @@
         }
     }, 
     {
-        "pk": 5, 
-        "model": "app.track", 
-        "fields": {
-            "name": "Daisy Circuit"
-        }
-    }, 
-    {
-        "pk": 32, 
-        "model": "app.track", 
-        "fields": {
-            "name": "Delfino Square"
-        }
-    }, 
-    {
-        "pk": 26, 
-        "model": "app.track", 
-        "fields": {
-            "name": "Desert Hills"
-        }
-    }, 
-    {
         "pk": 20, 
         "model": "app.track", 
         "fields": {
@@ -109,6 +110,27 @@
         "model": "app.track", 
         "fields": {
             "name": "DK's Snowboard Cross"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "app.track", 
+        "fields": {
+            "name": "Daisy Circuit"
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "app.track", 
+        "fields": {
+            "name": "Delfino Square"
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "app.track", 
+        "fields": {
+            "name": "Desert Hills"
         }
     }, 
     {

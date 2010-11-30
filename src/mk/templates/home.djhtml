@@ -48,8 +48,8 @@
 			<td>{{ stats.race_fourths }}</td>
 			<td>{{ stats.points }}</td>
 			<td>{{ stats.race_count }}</td>
-			<td>{{ stats.average|stringformat:'0.1f' }}</td>
-			<td>{{ stats.form|stringformat:'0.1f' }}</td>
+			<td>{{ stats.average|stringformat:'0.2f' }}</td>
+			<td class="form">{{ stats.form|stringformat:'0.2f' }}</td>
 		</tr>
 	{% endfor %} 
 	</tbody>

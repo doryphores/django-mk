@@ -4,11 +4,17 @@
 
 {% block content %}
 <ul data-role="listview">
-	{% for player in player_list %}
-	<li><a href="{{ base_url }}/player/{{ player.pk }}/">
-		<h3>{{ player.name }}</h3>
-		{% if player.avatar %}
-		<img src="{{ player.avatar.url }}">
+	{% for player in players %}
+	<li><a href="{{ base_url }}/player/{{ player.player.pk }}/">
+		<h3>{{ player.player.name }}</h3>
+		<p>
+			Rank: <strong>#{{ player.rank|add:1 }}</strong>
+			| Points: <strong>{{ player.stats.points }}</strong>
+			| Average: <strong>{{ player.stats.average|stringformat:'0.2f' }}</strong>
+			| Form: <strong>{{ player.stats.form|stringformat:'0.2f' }}</strong>
+		</p>
+		{% if player.player.avatar %}
+		<img src="{{ player.player.avatar.url }}">
 		{% endif %}
 	</a></li>
 	{% endfor %}

@@ -93,6 +93,17 @@ table.stats th.name {
 	padding-left: 51px;
 }
 
+table.stats td {
+	padding: 10px;
+	border-left: 1px solid #ccc;
+	text-align: right;
+	font-weight: normal;
+}
+
+table.stats .form-event td {
+	font-weight: bold;
+}
+
 table.stats td.name {
 	text-align: left;
 }
@@ -106,12 +117,6 @@ table.stats td.avatar img {
 	display: block;
 }
 
-table.stats td {
-	padding: 10px;
-	border-left: 1px solid #ccc;
-	text-align: right;
-}
-
 table.stats td span {
 	font-size: 12px;
 	font-weight: bold;
@@ -123,4 +128,15 @@ table.stats td.delta-u {
 
 table.stats td.delta-d {
 	color: #d8242c;
+}
+
+
+/* Player page */
+
+img.avatar {
+	float: right;
+	-webkit-box-shadow: 0 1px 5px #666;
+	border-radius: 4px;
+	background: #fff;
+	padding: 5px;
 }

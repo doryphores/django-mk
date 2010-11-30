@@ -2,10 +2,67 @@
 
 {% block page_title %}Player: {{ player.name }}{% endblock %}
 
+{% load formatters %}
+
 {% block content %}
 {% if player.avatar %}
-<img src="{{ player.avatar.url }}">
-
-<img src="http://chart.apis.google.com/chart?chxl=0:|4rth|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&chs=1000x100&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ results }}&chdlp=l&chtt=Results&chts=000000,11.5" width="1000" height="100" alt="Results" />
+<img src="{{ player.avatar.url }}" class="avatar">
 {% endif %}
+
+<h2>{{ player.name }}</h2>
+
+<h3>Stats</h3>
+<p>
+	Rank: <strong>#{{ stats.rank|add:1 }}</strong><br />
+	Races: <strong>{{ stats.race_count }} races / {{ stats.event_count }} events (participated in {{ stats.event_count|percentage:total_event_count }} of events)</strong><br />
+	Points: <strong>{{ stats.points }}</strong><br />
+	Average: <strong>{{ stats.average|stringformat:'0.2f' }}</strong><br />
+	Form: <strong>{{ stats.form|stringformat:'0.2f' }}</strong><br />
+	Highest score: <strong>{{ scores.max }}</strong><br />
+	Lowest score: <strong>{{ scores.min }}</strong>
+</p>
+
+<h3>Last {{ recent_rankings|length }} event results</h3>
+<script>
+var maxWidth = $("body").width() - 30;
+if (maxWidth > 1000) maxWidth = 1000;
+document.write('<img src="http://chart.apis.google.com/chart?chs=' + maxWidth + 'x100&chf=bg,s,F0F0F000&chxl=0:|4rth|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:"," }}&chdlp=l&chts=000000,12" alt="" />');
+</script>
+<div class="ui-grid-a">
+	<div class="ui-block-a">
+		<h3>Race results</h3>
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ stats.race_count }}&chd=t:{{ stats.race_firsts }},{{ stats.race_seconds }},{{ stats.race_thirds }},{{ stats.race_fourths }}&chdlp=l&chl=1st ({{ stats.race_firsts|percentage:stats.race_count }})|2nd ({{ stats.race_seconds|percentage:stats.race_count }})|3rd ({{ stats.race_thirds|percentage:stats.race_count }})|4rth ({{ stats.race_fourths|percentage:stats.race_count }})" width="380" height="200" alt="" />
+	</div>
+	<div class="ui-block-b">
+		<h3>Event results</h3>
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ stats.event_count }}&chd=t:{{ stats.event_firsts }},{{ stats.event_seconds }},{{ stats.event_thirds }},{{ stats.event_fourths }}&chdlp=l&chl=1st ({{ stats.event_firsts|percentage:stats.event_count }})|2nd ({{ stats.event_seconds|percentage:stats.event_count }})|3rd ({{ stats.event_thirds|percentage:stats.event_count }})|4rth ({{ stats.event_fourths|percentage:stats.event_count }})" width="380" height="200" alt="" />
+	</div>
+</div>
+<h3>Recent events</h3>
+<table class="stats">
+	<thead>
+		<tr>
+			<th>Event</th>
+			<th>Firsts</th>
+			<th>Seconds</th>
+			<th>Thirds</th>
+			<th>Fourths</th>
+			<th>Points</th>
+			<th>Rank</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for result in recent_results %}
+		<tr class="ui-btn-up-c{% if forloop.counter0 < 10 %} form-event{% endif %}">
+			<td class="name">{{ result.event }}</td>
+			<td>{{ result.firsts }}</td>
+			<td>{{ result.seconds }}</td>
+			<td>{{ result.thirds }}</td>
+			<td>{{ result.fourths }}</td>
+			<td>{{ result.points }}</td>
+			<td class="name">{{ result.rank|position }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
