@@ -23,11 +23,7 @@
 </p>
 
 <h3>Last {{ recent_rankings|length }} event results</h3>
-<script>
-var maxWidth = $("body").width() - 30;
-if (maxWidth > 1000) maxWidth = 1000;
-document.write('<img src="http://chart.apis.google.com/chart?chs=' + maxWidth + 'x100&chf=bg,s,F0F0F000&chxl=0:|4rth|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:"," }}&chdlp=l&chts=000000,12" alt="" />');
-</script>
+<span class="results-chart" chart-url="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxl=0:|4rth|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:',' }}&chdlp=l&chts=000000,12"></span>
 <div class="ui-grid-a">
 	<div class="ui-block-a">
 		<h3>Race results</h3>

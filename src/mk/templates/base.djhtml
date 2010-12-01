@@ -15,13 +15,7 @@ $(document).bind("mobileinit", function(){
 });
 </script>
 <script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
-<script>
-$(document).ready(function () {
-	$("form").live("submit", function () {
-		$.mobile.pageLoading();
-	});
-});
-</script>
+<script src="{{ base_url }}/static/js/extra.js"></script>
 </head>
 <body>
 <div data-role="page">
