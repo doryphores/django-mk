@@ -25,14 +25,14 @@ DATABASES = {
 		'PORT': '',					  # Set to empty string for default. Not used with sqlite3.
 	},
 	'import': {
-		'ENGINE': 'sql_server.pyodbc',
+		'ENGINE': 'sqlserver_ado',
 		'NAME': 'kartleague',
-		'HOST': r'192.168.1.182\SQLEXPRESS',
 		'USER': 'sqlogin',
 		'PASSWORD': 'd1lb3rt',
+		'HOST': r'192.168.1.182\SQLEXPRESS',
 		'OPTIONS': {
-			'driver': 'FreeTDS',
-			'host_is_server': True,
+			'provider': 'SQLOLEDB',
+			'use_mars': True,
 		},
 	}
 }
