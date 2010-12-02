@@ -12,12 +12,12 @@ class Command(NoArgsCommand):
 		
 		# Import players
 		
+		players = {}
+		
 		cursor.execute('SELECT ID, Name FROM Player')
 		row = cursor.fetchone()
-		players = {}
-		while True:
-			if row is None:
-				break
+		
+		while row:
 			try:
 				player = Player.objects.get(name=row[1])
 			except Player.DoesNotExist:
