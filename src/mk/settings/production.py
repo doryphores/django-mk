@@ -12,5 +12,6 @@ DATABASES['import'] = {
     'PASSWORD': 'd1lb3rt',
     'OPTIONS': {
         'driver': 'FreeTDS',
+        'host_is_server': True,
     },
 }

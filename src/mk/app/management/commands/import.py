@@ -1,7 +1,6 @@
 from django.core.management.base import NoArgsCommand
 from django.db import connections, transaction
 from mk.app.models import Player, Event, EventResult, MAX_EVENT_POINTS
-from django.db.models.aggregates import Sum
 from django.db.utils import IntegrityError
 
 class Command(NoArgsCommand):
@@ -15,9 +14,7 @@ class Command(NoArgsCommand):
 		cursor.execute('SELECT ID, Name FROM Player')
 		row = cursor.fetchone()
 		players = {}
-		while True:
-			if row is None:
-				break
+		while row:
 			try:
 				player = Player.objects.get(name=row[1])
 			except Player.DoesNotExist:
