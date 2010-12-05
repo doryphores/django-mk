@@ -2,7 +2,7 @@ from mk.settings.base import *
 
 DEBUG = True
 
-BASE_URL = 'http://192.168.1.70/mk'
+BASE_URL = 'http://192.168.1.45'
 
 DATABASES['import'] = {
     'ENGINE': 'sql_server.pyodbc',
@@ -12,5 +12,6 @@ DATABASES['import'] = {
     'PASSWORD': 'd1lb3rt',
     'OPTIONS': {
         'driver': 'FreeTDS',
+        'host_is_server': True,
     },
 }
