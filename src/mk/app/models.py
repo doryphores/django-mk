@@ -1,6 +1,4 @@
 from django.db import models, connection, transaction
-from django.db.models.fields import PositiveSmallIntegerField,\
-	PositiveIntegerField
 import datetime
 from django.db.utils import IntegrityError
 from django.db.models.aggregates import Avg
@@ -19,6 +17,8 @@ class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
 	
+	rating = models.IntegerField(default=0)
+	
 	def _get_latest_stats(self):
 		return self.stats.all()[0:1].get()
 	latest_stats = property(_get_latest_stats)
@@ -27,7 +27,7 @@ class Player(models.Model):
 		return self.name
 	
 	class Meta:
-		ordering = ['name']
+		ordering = ['-rating']
 
 
 class TrackManager(models.Manager):
@@ -278,23 +278,23 @@ class PlayerStat(models.Model):
 	player = models.ForeignKey(Player, related_name='stats')
 	event = models.ForeignKey(Event, related_name='stats')
 	
-	rank = PositiveSmallIntegerField(default=0)
-	form_rank = PositiveSmallIntegerField(default=0)
-	points = PositiveIntegerField(default=0)
-	race_count = PositiveIntegerField(default=0)
+	rank = models.PositiveSmallIntegerField(default=0)
+	form_rank = models.PositiveSmallIntegerField(default=0)
+	points = models.PositiveIntegerField(default=0)
+	race_count = models.PositiveIntegerField(default=0)
 	
 	average = models.FloatField(default=0.0)
 	form = models.FloatField(default=0.0)
 	
-	event_firsts = PositiveIntegerField(default=0)
-	event_seconds = PositiveIntegerField(default=0)
-	event_thirds = PositiveIntegerField(default=0)
-	event_fourths = PositiveIntegerField(default=0)
+	event_firsts = models.PositiveIntegerField(default=0)
+	event_seconds = models.PositiveIntegerField(default=0)
+	event_thirds = models.PositiveIntegerField(default=0)
+	event_fourths = models.PositiveIntegerField(default=0)
 	
-	race_firsts = PositiveIntegerField(default=0)
-	race_seconds = PositiveIntegerField(default=0)
-	race_thirds = PositiveIntegerField(default=0)
-	race_fourths = PositiveIntegerField(default=0)
+	race_firsts = models.PositiveIntegerField(default=0)
+	race_seconds = models.PositiveIntegerField(default=0)
+	race_thirds = models.PositiveIntegerField(default=0)
+	race_fourths = models.PositiveIntegerField(default=0)
 	
 	def _get_event_count(self):
 		return self.race_count / RACE_COUNT

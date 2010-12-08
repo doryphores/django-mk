@@ -2,7 +2,10 @@ from django.contrib import admin
 from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult,\
 	PlayerStat
 
-admin.site.register(Player)
+class PlayerAdmin(admin.ModelAdmin):
+	list_display = ('name', 'rating')
+
+admin.site.register(Player, PlayerAdmin)
 
 admin.site.register(Track)
 
