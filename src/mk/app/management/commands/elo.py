@@ -8,7 +8,7 @@ class Command(NoArgsCommand):
 	def handle_noargs(self, **options):
 		events = Event.completed_objects.reverse().all()
 		
-		k = 32
+		k = 2
 		
 		transaction.commit_unless_managed()
 		transaction.enter_transaction_management()
@@ -28,20 +28,28 @@ class Command(NoArgsCommand):
 				for opp_result in results:
 					opponent = opp_result.player
 					if opponent is not player:
-						exp = 1 / (1 + pow(10, (opponent.rating - player.rating)/400))
+						exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
 						res = 0.5
 						if result.points > opp_result.points:
 							res = 1
 						elif result.points < opp_result.points:
 							res = 0
-						delta = abs(result.points - opp_result.points) * (res - exp)
-						delta = k * (res - exp)
-						new_ratings[player] = new_ratings[player] + delta
+						#delta = float(abs(result.points - opp_result.points)) * (res - exp)
+						delta = 32.0 * (res - exp)
+						#new_ratings[player] += k * int(round(delta))
+						new_ratings[player] += int(round(delta))
 						#self.output("%s(%s) vs. %s(%s): %s (%.2f)" % (player.name, ratings[player], opponent.name, ratings[opponent], res, delta))
 			
-			for r in new_ratings:
-				r.rating = new_ratings[r]
-				r.save()
+			for stat in event.stats.all():
+				if stat.player in new_ratings:
+					stat.rating_delta = new_ratings[stat.player] - stat.player.rating;
+					stat.rating = new_ratings[stat.player];
+					stat.player.rating = new_ratings[stat.player];
+					stat.player.save();
+				else:
+					stat.rating_delta = 0;
+					stat.rating = stat.player.rating;
+				stat.save();
 			
 			self.output(str(event.pk) + " ,".join(["%s: %s" % (r.name, new_ratings[r])  for r in new_ratings]))
 		

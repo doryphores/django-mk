@@ -8,6 +8,7 @@ from django.contrib import messages
 from mk.app.forms import RaceForm
 from django.db.models import Min, Max
 from operator import itemgetter
+from mk.utils import encoding
 
 def home(request):
 	try:
@@ -15,7 +16,19 @@ def home(request):
 	except Event.DoesNotExist:
 		player_stats = PlayerStat.objects.none()
 	
-	return render_to_response('home.djhtml', { 'player_stats': player_stats }, context_instance=RequestContext(request))
+	players = Player.objects.order_by('name').all()
+	rating_data = []
+	for p in players:
+		rating_data.append(encoding.chart_dataset(PlayerStat.objects.filter(player=p).values_list('rating', flat=True).reverse()))
+	
+	data_sets = ",".join(rating_data)
+	chart_legends = "|".join([p.name for p in players])
+	
+	return render_to_response('home.djhtml', {
+		'player_stats': player_stats,
+		'data_sets': data_sets,
+		'chart_legends': chart_legends,
+	}, context_instance=RequestContext(request))
 
 def players(request):
 	player_list = Player.objects.all()

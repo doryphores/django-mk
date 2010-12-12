@@ -3,7 +3,8 @@ from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult,\
 	PlayerStat
 
 class PlayerAdmin(admin.ModelAdmin):
-	list_display = ('name', 'rating')
+	list_display = ('name','rating')
+	list_editable = ('rating',)
 
 admin.site.register(Player, PlayerAdmin)
 
@@ -75,11 +76,13 @@ admin.site.register(Race, RaceAdmin)
 class EventResultAdmin(admin.ModelAdmin):
 	list_display = ('player', 'event', 'firsts', 'seconds', 'thirds', 'fourths', 'points', 'rank')
 	list_filter = ['player']
+	list_per_page = 20
 
 admin.site.register(EventResult, EventResultAdmin)
 
 class PlayerStatAdmin(admin.ModelAdmin):
-	list_display = ('__unicode__', 'points', 'race_count', 'average', 'form', 'rank', 'form_rank')
+	list_display = ('__unicode__', 'points', 'race_count', 'average', 'form', 'rank', 'form_rank', 'rating', 'rating_delta')
 	list_filter = ['player']
+	list_per_page = 20
 
 admin.site.register(PlayerStat, PlayerStatAdmin)

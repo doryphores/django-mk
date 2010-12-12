@@ -296,6 +296,9 @@ class PlayerStat(models.Model):
 	race_thirds = models.PositiveIntegerField(default=0)
 	race_fourths = models.PositiveIntegerField(default=0)
 	
+	rating = models.IntegerField(default=0)
+	rating_delta = models.IntegerField(default=0)
+	
 	def _get_event_count(self):
 		return self.race_count / RACE_COUNT
 	event_count = property(_get_event_count)
