@@ -13,6 +13,8 @@ MAX_EVENT_POINTS = sum(POSITION_POINTS) * RACE_COUNT
 
 RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
+ELO_K = 32
+
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
@@ -162,9 +164,35 @@ class Event(models.Model):
 		if self.completed:
 			self.update_stats()
 	
+	def get_rating_changes(self):
+		rating_changes = {}
+		for p in self.players.all():
+			rating_changes[p] = 0
+		
+		results = self.results.all()
+		
+		for result in results:
+			player = result.player
+			for opp_result in results:
+				opponent = opp_result.player
+				if opponent is not player:
+					exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
+					res = 0.5
+					if result.points > opp_result.points:
+						res = 1
+					elif result.points < opp_result.points:
+						res = 0
+					#delta = float(abs(result.points - opp_result.points)) * (res - exp)
+					delta = ELO_K * (res - exp)
+					rating_changes[player] += int(round(delta))
+		
+		return rating_changes
+	
 	def update_stats(self):
 		# Delete any stats previously created for this event 
 		PlayerStat.objects.filter(event=self).delete()
+		
+		rating_changes = self.get_rating_changes()
 		
 		# Write a new stats object for each event participant
 		for result in self.results.all():
@@ -178,6 +206,7 @@ class Event(models.Model):
 			
 			stats.event = self
 			stats.pk = None
+			stats.rating = result.player.rating
 			
 			# Update points and race count
 			stats.points += result.points
@@ -204,6 +233,14 @@ class Event(models.Model):
 			# Update event position counts
 			setattr(stats, 'event_%ss' % RANK_STRINGS[result.rank], getattr(stats, 'event_%ss' % RANK_STRINGS[result.rank]) + 1)
 			
+			# Record rating change
+			stats.rating_delta = rating_changes[result.player]
+			stats.rating += rating_changes[result.player]
+			
+			# Record new rating on player record
+			result.player.rating = stats.rating
+			result.player.save()
+			
 			stats.save()
 		
 		# Write a stats record for players not in this event
@@ -218,6 +255,10 @@ class Event(models.Model):
 			
 			stats.event = self
 			stats.pk = None
+			
+			# No change in rating
+			stats.rating_delta = 0
+			stats.rating = player.rating
 			
 			stats.save()
 		
@@ -307,7 +348,7 @@ class PlayerStat(models.Model):
 		return u'%s on %s' % (self.player.name, self.event)
 	
 	class Meta:
-		ordering =['event', 'form_rank', 'rank']
+		ordering =['event', '-rating', 'form_rank', 'rank']
 
 
 class Race(models.Model):
