@@ -108,6 +108,9 @@ def new(request):
 
 @transaction.commit_on_success()
 def race(request, race_id=0):
+	if 'pk' not in request.session:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
