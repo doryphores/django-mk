@@ -38,13 +38,5 @@
 	</div>
 </form>
 
-<h3>Results</h3>
-<ul data-role="listview" data-inset="true" data-theme="d">
-	{% for result in event.results.all %}
-	<li>
-		<h4>{{ result.player }}</h4>
-		<span class="result-points">{{ result.points }}</span>
-	</li>
-	{% endfor %}
-</ul>
+{% include '_results.djhtml' %}
 {% endblock %}

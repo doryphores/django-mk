@@ -2,15 +2,42 @@ html {
 	overflow-y: scroll;
 }
 
-.result-points {
+
+/* Race results table */
+
+.live-results li {
+	padding: 0;
+}
+
+.live-results h4 {
+	margin: 0;
+}
+
+.live-results .ui-btn-inner {
+	min-height: 22px;
+	padding-left: 50px;
+}
+
+.live-results .points {
 	position: absolute;
-	right: 38px;
-	top: 50%;
+	right: 15px;
+	top: 44%;
 	margin-top: -10px;
 	font-size: 20px;
 	line-height: 1
 	font-weight: bold;
 }
+
+.live-results .points span {
+	font-size: 16px;
+	line-height: 1.25;
+	width: 60px;
+	display: inline-block;
+	text-align: right;
+}
+
+
+/* Alter default border radius */
 
 .ui-btn-corner-all {
 	border-radius: 6px;

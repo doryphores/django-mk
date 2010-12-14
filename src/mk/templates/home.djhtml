@@ -8,24 +8,12 @@
 <table class="stats">
 	<thead>
 		<tr>
-			<th rowspan="2" colspan="2" />
-			<th colspan="4">Overall event results</th>
-			<th colspan="4">Overall race results</th>
-			<th rowspan="2">Points</th>
-			<th rowspan="2">Races</th>
-			<th rowspan="2">Average</th>
-			<th rowspan="2">Form</th>
-			<th rowspan="2">Rating</th>
-		</tr>
-		<tr>
-			<th>1st</th>
-			<th>2nd</th>
-			<th>3rd</th>
-			<th>4th</th>
-			<th>1st</th>
-			<th>2nd</th>
-			<th>3rd</th>
-			<th>4th</th>
+			<th colspan="2" />
+			<th>Points</th>
+			<th>Races</th>
+			<th>Average</th>
+			<th>Form</th>
+			<th>Rating</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -35,24 +23,16 @@
 				{% if stats.player.avatar %}
 				<img src="{{ stats.player.avatar.url }}" width="40" height="40">
 				{% else %}
-				<img src="/static/avatars/default.png" width="40" height="40">
+				<img src="/static/images/avatars/default.png" width="40" height="40">
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ base_url }}/player/{{ stats.player.pk }}/">{{ stats.player.name }}</a></td>
-			<td>{{ stats.event_firsts }}</td>
-			<td>{{ stats.event_seconds }}</td>
-			<td>{{ stats.event_thirds }}</td>
-			<td>{{ stats.event_fourths }}</td>
-			<td>{{ stats.race_firsts }}</td>
-			<td>{{ stats.race_seconds }}</td>
-			<td>{{ stats.race_thirds }}</td>
-			<td>{{ stats.race_fourths }}</td>
 			<td>{{ stats.points }}</td>
 			<td>{{ stats.race_count }}</td>
 			<td>{{ stats.average|stringformat:'0.2f' }}</td>
 			<td class="form">{{ stats.form|stringformat:'0.2f' }}</td>
 			<td class="{% if stats.rating_delta > 0 %}delta-u{% endif %}{% if stats.rating_delta < 0 %}delta-d{% endif %}">
-				{{ stats.rating }}{% if stats.rating_delta != 0 %} ({{ stats.rating_delta|stringformat:'+0d' }}){% endif %}
+				{{ stats.rating }}{% if stats.rating_delta != 0 %} <small>({{ stats.rating_delta|stringformat:'+0d' }})</small>{% endif %}
 			</td>
 		</tr>
 	{% endfor %} 

@@ -169,6 +169,9 @@ class Event(models.Model):
 		for p in self.players.all():
 			rating_changes[p] = 0
 		
+		if self.races.count() == 0:
+			return rating_changes
+		
 		results = self.results.all()
 		
 		for result in results:

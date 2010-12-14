@@ -149,9 +149,12 @@ def race(request, race_id=0):
 	except Race.DoesNotExist:
 		previous_race = None
 	
+	ratings = event.get_rating_changes()
+	results = [{'player': r.player, 'points': r.points, 'rating': ratings[r.player]} for r in event.results.all()]
+	
 	view_vars = {
 		'form': form,
-		'event': event,
+		'results': results,
 		'race': race,
 		'previous_race': previous_race,
 	}
@@ -160,15 +163,21 @@ def race(request, race_id=0):
 
 
 def confirm(request):
+	if 'pk' not in request.session:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
 		return HttpResponseRedirect('/')
 	
+	ratings = event.get_rating_changes()
+	results = [{'player': r.player, 'points': r.points, 'rating': ratings[r.player]} for r in event.results.all()]
+		
 	view_vars = {
-		'event': event,
-		'previous_race': event.races.all()[:1].get()
+		'results': results,
+		'previous_race': event.races.all()[:1].get(),
 	}
 	
 	return render_to_response('confirm.djhtml', view_vars, context_instance=RequestContext(request))
@@ -176,6 +185,9 @@ def confirm(request):
 
 @transaction.commit_on_success()
 def finish(request):
+	if 'pk' not in request.session:
+		messages.error(request, 'Event not found in session')
+		return HttpResponseRedirect('/')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
