@@ -169,7 +169,7 @@ class Event(models.Model):
 		for p in self.players.all():
 			rating_changes[p] = 0
 		
-		if self.races.count() == 0:
+		if self.races.count() == 0 and not self.completed:
 			return rating_changes
 		
 		results = self.results.all()
