@@ -108,7 +108,7 @@ def new(request):
 
 @transaction.commit_on_success()
 def race(request, race_id=0):
-	if 'pk' not in request.session:
+	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
 		return HttpResponseRedirect('/')
 	try:
@@ -166,7 +166,7 @@ def race(request, race_id=0):
 
 
 def confirm(request):
-	if 'pk' not in request.session:
+	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
 		return HttpResponseRedirect('/')
 	try:
@@ -188,7 +188,7 @@ def confirm(request):
 
 @transaction.commit_on_success()
 def finish(request):
-	if 'pk' not in request.session:
+	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
 		return HttpResponseRedirect('/')
 	try:
