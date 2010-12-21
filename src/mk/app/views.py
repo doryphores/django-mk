@@ -16,7 +16,7 @@ def home(request):
 	except Event.DoesNotExist:
 		player_stats = PlayerStat.objects.none()
 	
-	players = Player.objects.order_by('name').all()
+	players = Player.objects.exclude(rating__lt=500)
 	rating_data = []
 	for p in players:
 		rating_data.append(encoding.chart_dataset(PlayerStat.objects.filter(player=p).values_list('rating', flat=True).reverse()))

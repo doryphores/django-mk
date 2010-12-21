@@ -4,7 +4,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Adam", 
-            "avatar": "images/avatars/wario.png"
+            "avatar": "images/avatars/wario.png",
+            "rating": 1500
         }
     }, 
     {
@@ -12,7 +13,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Andy", 
-            "avatar": "images/avatars/mario.png"
+            "avatar": "images/avatars/mario.png",
+            "rating": 1500
         }
     }, 
     {
@@ -20,7 +22,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Anton", 
-            "avatar": "images/avatars/boo.png"
+            "avatar": "images/avatars/boo.png",
+            "rating": 1500
         }
     }, 
     {
@@ -28,7 +31,8 @@
         "model": "app.player", 
         "fields": {
             "name": "David", 
-            "avatar": "images/avatars/diddy_1.png"
+            "avatar": "images/avatars/diddy_1.png",
+            "rating": 400
         }
     }, 
     {
@@ -36,7 +40,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Martin", 
-            "avatar": "images/avatars/bowser.png"
+            "avatar": "images/avatars/bowser.png",
+            "rating": 1500
         }
     }, 
     {
@@ -44,7 +49,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Simon", 
-            "avatar": "images/avatars/yoshi.png"
+            "avatar": "images/avatars/yoshi.png",
+            "rating": 800
         }
     }, 
     {
@@ -52,7 +58,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Stuart", 
-            "avatar": "images/avatars/funky.png"
+            "avatar": "images/avatars/funky.png",
+            "rating": 800
         }
     }, 
     {
@@ -60,7 +67,8 @@
         "model": "app.player", 
         "fields": {
             "name": "Wyndham", 
-            "avatar": "images/avatars/diddy.png"
+            "avatar": "images/avatars/diddy.png",
+            "rating": 800
         }
     }, 
     {

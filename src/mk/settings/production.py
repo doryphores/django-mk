@@ -2,7 +2,7 @@ from mk.settings.base import *
 
 DEBUG = True
 
-BASE_URL = 'http://192.168.1.40'
+BASE_URL = 'http://192.168.1.134'
 
 ADMIN_MEDIA_PREFIX = '/static/admin-media/'
 

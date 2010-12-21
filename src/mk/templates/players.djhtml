@@ -8,10 +8,11 @@
 	<li><a href="{{ base_url }}/player/{{ player.player.pk }}/">
 		<h3>{{ player.player.name }}</h3>
 		<p>
-			Rank: <strong>#{{ player.rank|add:1 }}</strong>
+			Rank: <strong>#{{ forloop.counter }}</strong>
 			| Points: <strong>{{ player.stats.points }}</strong>
 			| Average: <strong>{{ player.stats.average|stringformat:'0.2f' }}</strong>
 			| Form: <strong>{{ player.stats.form|stringformat:'0.2f' }}</strong>
+            | Rating: <strong>{{ player.player.rating }}</strong>
 		</p>
 		{% if player.player.avatar %}
 		<img src="{{ player.player.avatar.url }}">
