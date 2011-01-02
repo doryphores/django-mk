@@ -91,6 +91,7 @@ class EventResult(models.Model):
 			cursor = connection.cursor()
 			
 			for i, result in enumerate(self.event.results.all().order_by('-points')):
+				# Update rank with raw query so we don't trigger any recursion
 				cursor.execute('UPDATE app_eventresult SET rank = %s WHERE id = %s', [i, result.pk])
 				transaction.commit_unless_managed()
 	
@@ -108,12 +109,12 @@ class RaceResult(models.Model):
 	position = models.PositiveSmallIntegerField(default=0)
 	
 	def save(self, *args, **kwargs):
-		self.race.event.update_results()
 		super(RaceResult, self).save(*args, **kwargs)
+		self.race.event.update_results()
 	
 	def delete(self, *args, **kwargs):
-		self.race.event.update_results()
 		super(RaceResult, self).delete(*args, **kwargs)
+		self.race.event.update_results()
 	
 	def __unicode__(self):
 		return u'%s %s (rank: %s)' % (self.player, self.race, RANK_STRINGS[self.position])
