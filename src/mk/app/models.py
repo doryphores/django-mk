@@ -35,8 +35,9 @@ class Player(models.Model):
 class TrackManager(models.Manager):
 	def all_by_popularity(self):
 		return Track.objects.raw('''
-			select		app_track.*, count(app_race.id) as race_count
-			from		app_track left outer join app_race on app_race.track_id = app_track.id left outer join app_event on app_event.id = app_race.event_id and app_event.completed = 1
+			select		app_track.*, count(race_id) as race_count
+			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
+						 on race_track_id = app_track.id
 			group by	app_track.id
 			order by	race_count desc, app_track.name''')
 
