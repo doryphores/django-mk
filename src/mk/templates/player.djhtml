@@ -13,11 +13,10 @@
 
 <h3>Stats</h3>
 <p>
-	Rank: <strong>#{{ stats.rank|add:1 }}</strong><br />
-	Races: <strong>{{ stats.race_count }} races / {{ stats.event_count }} events (participated in {{ stats.event_count|percentage:total_event_count }} of events)</strong><br />
-	Points: <strong>{{ stats.points }}</strong><br />
-	Average: <strong>{{ stats.average|stringformat:'0.2f' }}</strong><br />
-	Form: <strong>{{ stats.form|stringformat:'0.2f' }}</strong><br />
+	Races: <strong>{{ player.race_count }} races / {{ player.event_count }} events (participated in {{ player.event_count|percentage:total_event_count }} of events)</strong><br />
+	Points: <strong>{{ player.points }}</strong><br />
+	Average: <strong>{{ player.average|stringformat:'0.2f' }}</strong><br />
+	Form: <strong>{{ player.form|stringformat:'0.2f' }}</strong><br />
 	Highest score: <strong>{{ scores.max }}</strong><br />
 	Lowest score: <strong>{{ scores.min }}</strong>
 </p>
@@ -28,11 +27,11 @@
 <div class="ui-grid-a">
 	<div class="ui-block-a">
 		<h3>Race results</h3>
-		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ stats.race_count }}&chd=t:{{ stats.race_firsts }},{{ stats.race_seconds }},{{ stats.race_thirds }},{{ stats.race_fourths }}&chdlp=l&chl=1st ({{ stats.race_firsts|percentage:stats.race_count }})|2nd ({{ stats.race_seconds|percentage:stats.race_count }})|3rd ({{ stats.race_thirds|percentage:stats.race_count }})|4rth ({{ stats.race_fourths|percentage:stats.race_count }})" width="380" height="200" alt="" />
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.race_count }}&chd=t:{{ player.race_firsts }},{{ player.race_seconds }},{{ player.race_thirds }},{{ player.race_fourths }}&chdlp=l&chl=1st ({{ player.race_firsts|percentage:player.race_count }})|2nd ({{ player.race_seconds|percentage:player.race_count }})|3rd ({{ player.race_thirds|percentage:player.race_count }})|4rth ({{ player.race_fourths|percentage:player.race_count }})" width="380" height="200" alt="" />
 	</div>
 	<div class="ui-block-b">
 		<h3>Event results</h3>
-		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ stats.event_count }}&chd=t:{{ stats.event_firsts }},{{ stats.event_seconds }},{{ stats.event_thirds }},{{ stats.event_fourths }}&chdlp=l&chl=1st ({{ stats.event_firsts|percentage:stats.event_count }})|2nd ({{ stats.event_seconds|percentage:stats.event_count }})|3rd ({{ stats.event_thirds|percentage:stats.event_count }})|4rth ({{ stats.event_fourths|percentage:stats.event_count }})" width="380" height="200" alt="" />
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.event_count }}&chd=t:{{ player.event_firsts }},{{ player.event_seconds }},{{ player.event_thirds }},{{ player.event_fourths }}&chdlp=l&chl=1st ({{ player.event_firsts|percentage:player.event_count }})|2nd ({{ player.event_seconds|percentage:player.event_count }})|3rd ({{ player.event_thirds|percentage:player.event_count }})|4rth ({{ player.event_fourths|percentage:player.event_count }})" width="380" height="200" alt="" />
 	</div>
 </div>
 <h3>Recent events</h3>

@@ -1,5 +1,6 @@
 from django.db import models, connection, transaction
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -13,16 +14,48 @@ RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
 ELO_K = 32
 
+
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
 	
 	rating = models.IntegerField(default=0)
 	
-	def _get_latest_stats(self):
-		return self.stats.all()[0:1].get()
-	latest_stats = property(_get_latest_stats)
+	event_firsts = models.PositiveIntegerField(default=0)
+	event_seconds = models.PositiveIntegerField(default=0)
+	event_thirds = models.PositiveIntegerField(default=0)
+	event_fourths = models.PositiveIntegerField(default=0)
 	
+	race_firsts = models.PositiveIntegerField(default=0)
+	race_seconds = models.PositiveIntegerField(default=0)
+	race_thirds = models.PositiveIntegerField(default=0)
+	race_fourths = models.PositiveIntegerField(default=0)
+	
+	points = models.PositiveIntegerField(default=0)
+	race_count = models.PositiveIntegerField(default=0)
+	
+	average = models.FloatField(default=0.0)
+	form = models.FloatField(default=0.0)
+	
+	def _get_event_count(self):
+		return self.race_count / RACE_COUNT
+	event_count = property(_get_event_count)
+	
+	def _get_rating_change(self):
+		try:
+			return self.rating - self.history.get(event=Event.completed_objects.latest()).rating
+		except ObjectDoesNotExist:
+			return 0
+	rating_change = property(_get_rating_change)
+	
+	def rating_history(self):
+		return Player.objects.raw('''
+			select		app_track.*, count(race_id) as race_count
+			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
+						 on race_track_id = app_track.id
+			group by	app_track.id
+			order by	race_count desc, app_track.name''')
+
 	def __unicode__(self):
 		return self.name
 	
@@ -59,7 +92,7 @@ class CompletedEventResultManager(models.Manager):
 
 class EventResult(models.Model):
 	event = models.ForeignKey('Event', related_name='results')
-	player = models.ForeignKey('Player', related_name='event_results')
+	player = models.ForeignKey(Player, related_name='event_results')
 	
 	points = models.PositiveSmallIntegerField(default=0)
 	rank = models.PositiveSmallIntegerField(default=0)
@@ -103,7 +136,7 @@ class EventResult(models.Model):
 
 class RaceResult(models.Model):
 	race = models.ForeignKey('Race', related_name='results')
-	player = models.ForeignKey('Player', related_name='race_results')
+	player = models.ForeignKey(Player, related_name='race_results')
 	
 	position = models.PositiveSmallIntegerField(default=0)
 	
@@ -192,86 +225,47 @@ class Event(models.Model):
 		return rating_changes
 	
 	def update_stats(self):
-		# Delete any stats previously created for this event 
-		PlayerStat.objects.filter(event=self).delete()
-		
 		rating_changes = self.get_rating_changes()
-		
-		# Write a new stats object for each event participant
+				
+		# Rollback player state from history
+		for history in PlayerHistory.objects.filter(event=self):
+			history.restore()
+			history.delete()
+				
+		# Update each participant's stats
 		for result in self.results.all():
-			previous_stats = PlayerStat.objects.filter(player=result.player, event__event_date__lt=self.event_date)
-			
-			if previous_stats.exists():
-				# Get previous stats for player
-				stats = previous_stats[0:1].get()
-			else:
-				stats = PlayerStat(player=result.player)
-			
-			stats.event = self
-			stats.pk = None
-			stats.rating = result.player.rating
+			# Save player stats to history
+			history = PlayerHistory(event=self, player=result.player)
+			history.save()
 			
 			# Update points and race count
-			stats.points += result.points
-			stats.race_count += RACE_COUNT
+			result.player.points += result.points
+			result.player.race_count += RACE_COUNT
 			
 			# Calculate overall average
-			stats.average = float(stats.points) / float(stats.race_count)
+			result.player.average = float(result.player.points) / float(result.player.race_count)
 			
 			# Calculate form average
 			previous_results = EventResult.completed_objects.filter(player=result.player, event__event_date__lte=self.event_date).order_by('-event__event_date')[0:FORM_COUNT]
 			
 			if previous_results.count() < FORM_COUNT:
-				# Not enough events for form calculation
-				stats.form = stats.average
+				# Not enough events for form calculation so form is same as average
+				result.player.form = result.player.average
 			else:
-				stats.form = sum([er.points for er in previous_results]) / float(FORM_COUNT * RACE_COUNT)
+				result.player.form = sum([er.points for er in previous_results]) / float(FORM_COUNT * RACE_COUNT)
 			
 			# Update race position counts
-			stats.race_firsts += result.firsts
-			stats.race_seconds += result.seconds
-			stats.race_thirds += result.thirds
-			stats.race_fourths += result.fourths
+			result.player.race_firsts += result.firsts
+			result.player.race_seconds += result.seconds
+			result.player.race_thirds += result.thirds
+			result.player.race_fourths += result.fourths
 			
 			# Update event position counts
-			setattr(stats, 'event_%ss' % RANK_STRINGS[result.rank], getattr(stats, 'event_%ss' % RANK_STRINGS[result.rank]) + 1)
+			setattr(result.player, 'event_%ss' % RANK_STRINGS[result.rank], getattr(result.player, 'event_%ss' % RANK_STRINGS[result.rank]) + 1)
 			
-			# Record rating change
-			stats.rating_delta = rating_changes[result.player]
-			stats.rating += rating_changes[result.player]
-			
-			# Record new rating on player record
-			result.player.rating = stats.rating
+			# Update rating
+			result.player.rating += rating_changes[result.player]
 			result.player.save()
-			
-			stats.save()
-		
-		# Write a stats record for players not in this event
-		for player in Player.objects.exclude(pk__in=self.players.all()):
-			previous_stats = PlayerStat.objects.filter(player=player)
-			
-			if previous_stats.exists():
-				# Get previous stats for player
-				stats = previous_stats[0]
-			else:
-				stats = PlayerStat(player=player)
-			
-			stats.event = self
-			stats.pk = None
-			
-			# No change in rating
-			stats.rating_delta = 0
-			stats.rating = player.rating
-			
-			stats.save()
-		
-		for i, stats in enumerate(PlayerStat.objects.filter(event=self).order_by('-average')):
-			stats.rank = i
-			stats.save()
-		
-		for i, stats in enumerate(PlayerStat.objects.filter(event=self).order_by('-form')):
-			stats.form_rank = i
-			stats.save()
 		
 		# Now we need to update any subsequent stats records as they depend on eachother
 		try:
@@ -318,17 +312,11 @@ class Event(models.Model):
 		get_latest_by = 'event_date'
 
 
-class PlayerStat(models.Model):
-	player = models.ForeignKey(Player, related_name='stats')
-	event = models.ForeignKey(Event, related_name='stats')
+class PlayerHistory(models.Model):
+	player = models.ForeignKey(Player, related_name='history')
+	event = models.ForeignKey(Event)
 	
-	rank = models.PositiveSmallIntegerField(default=0)
-	form_rank = models.PositiveSmallIntegerField(default=0)
-	points = models.PositiveIntegerField(default=0)
-	race_count = models.PositiveIntegerField(default=0)
-	
-	average = models.FloatField(default=0.0)
-	form = models.FloatField(default=0.0)
+	rating = models.IntegerField(default=0)
 	
 	event_firsts = models.PositiveIntegerField(default=0)
 	event_seconds = models.PositiveIntegerField(default=0)
@@ -340,8 +328,11 @@ class PlayerStat(models.Model):
 	race_thirds = models.PositiveIntegerField(default=0)
 	race_fourths = models.PositiveIntegerField(default=0)
 	
-	rating = models.IntegerField(default=0)
-	rating_delta = models.IntegerField(default=0)
+	points = models.PositiveIntegerField(default=0)
+	race_count = models.PositiveIntegerField(default=0)
+	
+	average = models.FloatField(default=0.0)
+	form = models.FloatField(default=0.0)
 	
 	def _get_event_count(self):
 		return self.race_count / RACE_COUNT
@@ -350,8 +341,50 @@ class PlayerStat(models.Model):
 	def __unicode__(self):
 		return u'%s on %s' % (self.player.name, self.event)
 	
+	def restore(self):
+		self.player.rating = self.rating
+		
+		self.player.event_firsts = self.event_firsts
+		self.player.event_seconds = self.event_seconds
+		self.player.event_thirds = self.event_thirds
+		self.player.event_fourths = self.event_fourths
+		
+		self.player.race_firsts = self.race_firsts
+		self.player.race_seconds = self.race_seconds
+		self.player.race_thirds = self.race_thirds
+		self.player.race_fourths = self.race_fourths
+		
+		self.player.points = self.points
+		self.player.race_count = self.race_count
+		
+		self.player.average = self.average
+		self.player.form = self.form
+	
+	def save(self, *args, **kwargs):
+		self.rating = self.player.rating 
+		
+		self.event_firsts = self.player.event_firsts
+		self.event_seconds = self.player.event_seconds
+		self.event_thirds = self.player.event_thirds
+		self.event_fourths = self.player.event_fourths
+		
+		self.race_firsts = self.player.race_firsts 
+		self.race_seconds = self.player.race_seconds
+		self.race_thirds = self.player.race_thirds
+		self.race_fourths = self.player.race_fourths
+		
+		self.points = self.player.points
+		self.race_count = self.player.race_count
+		
+		self.average = self.player.average
+		self.form = self.player.form
+		
+		super(PlayerHistory, self).save(*args, **kwargs)
+	
 	class Meta:
-		ordering =['event', '-rating', 'form_rank', 'rank']
+		ordering =['event']
+		verbose_name = 'Player history record'
+		verbose_name_plural = 'Player history records'
 
 
 class Race(models.Model):
