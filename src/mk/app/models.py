@@ -1,7 +1,5 @@
 from django.db import models, connection, transaction
 import datetime
-from django.db.utils import IntegrityError
-from django.db.models.aggregates import Avg
 
 POSITION_POINTS = [15,9,4,1]
 
