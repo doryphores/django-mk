@@ -2,7 +2,7 @@ from mk.settings.base import *
 
 DEBUG = True
 
-BASE_URL = 'http://192.168.1.134'
+BASE_URL = 'http://mariokart'
 
 ADMIN_MEDIA_PREFIX = '/static/admin-media/'
 
