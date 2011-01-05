@@ -102,7 +102,7 @@ def new(request):
 	else:
 		selected_players = Player.objects.none()
 	
-	player_list = Player.objects.all()
+	player_list = Player.objects.order_by('name').all()
 	
 	return render_to_response('new.djhtml', { 'player_list': player_list, 'selected_players': selected_players }, context_instance=RequestContext(request))
 
