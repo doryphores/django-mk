@@ -17,22 +17,22 @@
 		</tr>
 	</thead>
 	<tbody>
-	{% for stats in player_stats %}
+	{% for player in players %}
 		<tr class="ui-btn-up-c">
-			<td class="avatar"><a href="{{ base_url }}/player/{{ stats.player.pk }}/">
-				{% if stats.player.avatar %}
-				<img src="{{ stats.player.avatar.url }}" width="40" height="40">
+			<td class="avatar"><a href="{{ base_url }}/player/{{ player.pk }}/">
+				{% if player.avatar %}
+				<img src="{{ player.avatar.url }}" width="40" height="40">
 				{% else %}
 				<img src="/static/images/avatars/default.png" width="40" height="40">
 				{% endif %}
 			</a></td>
-			<td class="name"><a href="{{ base_url }}/player/{{ stats.player.pk }}/">{{ stats.player.name }}</a></td>
-			<td>{{ stats.points }}</td>
-			<td>{{ stats.race_count }}</td>
-			<td>{{ stats.average|stringformat:'0.2f' }}</td>
-			<td class="form">{{ stats.form|stringformat:'0.2f' }}</td>
-			<td class="{% if stats.rating_delta > 0 %}delta-u{% endif %}{% if stats.rating_delta < 0 %}delta-d{% endif %}">
-				{{ stats.rating }}{% if stats.rating_delta != 0 %} <small>({{ stats.rating_delta|stringformat:'+0d' }})</small>{% endif %}
+			<td class="name"><a href="{{ base_url }}/player/{{ player.pk }}/">{{ player.name }}</a></td>
+			<td>{{ player.points }}</td>
+			<td>{{ player.race_count }}</td>
+			<td>{{ player.average|stringformat:'0.2f' }}</td>
+			<td class="form">{{ player.form|stringformat:'0.2f' }}</td>
+			<td class="{% if player.rating_change > 0 %}delta-u{% endif %}{% if player.rating_change < 0 %}delta-d{% endif %}">
+				{{ player.rating }}{% if player.rating_change != 0 %} <small>({{ player.rating_change|stringformat:'+0d' }})</small>{% endif %}
 			</td>
 		</tr>
 	{% endfor %} 

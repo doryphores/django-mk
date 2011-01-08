@@ -1,6 +1,5 @@
 from django.contrib import admin
-from mk.app.models import Player, Track, Event, Race, EventResult, RaceResult,\
-	PlayerStat
+from mk.app.models import *
 
 class PlayerAdmin(admin.ModelAdmin):
 	list_display = ('name','rating')
@@ -80,9 +79,9 @@ class EventResultAdmin(admin.ModelAdmin):
 
 admin.site.register(EventResult, EventResultAdmin)
 
-class PlayerStatAdmin(admin.ModelAdmin):
-	list_display = ('__unicode__', 'points', 'race_count', 'average', 'form', 'rank', 'form_rank', 'rating', 'rating_delta')
+class PlayerHistoryAdmin(admin.ModelAdmin):
+	list_display = ('__unicode__', 'points', 'race_count', 'average', 'form', 'rating')
 	list_filter = ['player']
 	list_per_page = 20
 
-admin.site.register(PlayerStat, PlayerStatAdmin)
+admin.site.register(PlayerHistory, PlayerHistoryAdmin)
