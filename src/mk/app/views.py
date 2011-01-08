@@ -9,7 +9,7 @@ from mk.app.forms import RaceForm
 from django.db.models import Min, Max
 
 def home(request):
-	players = Player.objects.order_by('-rating')
+	players = Player.active_objects.order_by('-rating')
 	
 	fanatic = players.order_by('-race_count')[0:1].get()
 	topform = players.order_by('-form')[0:1].get()
@@ -25,7 +25,7 @@ def home(request):
 	}, context_instance=RequestContext(request))
 
 def players(request):
-	player_list = Player.objects.order_by('-rating').all()
+	player_list = Player.active_objects.order_by('-rating').all()
 	
 	return render_to_response('players.djhtml', {
 		'player_list': player_list,

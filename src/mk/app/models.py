@@ -20,9 +20,15 @@ RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 ELO_K = 24
 
 
+class ActivePlayerManager(models.Manager):
+	def get_query_set(self):
+		return super(ActivePlayerManager, self).get_query_set().filter(active=True)
+
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
+	
+	active = models.BooleanField(default=True)
 	
 	rating = models.IntegerField(default=0)
 	
@@ -41,6 +47,9 @@ class Player(models.Model):
 	
 	average = models.FloatField(default=0.0)
 	form = models.FloatField(default=0.0)
+	
+	objects = models.Manager()
+	active_objects = ActivePlayerManager()
 	
 	def _get_event_count(self):
 		return self.race_count / RACE_COUNT
@@ -348,7 +357,7 @@ class Event(models.Model):
 			# This the latest completed event, so update rating chart
 			# TODO: probably should be moved somewhere else
 			
-			players = Player.objects.all()
+			players = Player.active_objects.all()
 			rating_data = []
 			minima = []
 			maxima = []
