@@ -5,6 +5,7 @@ import urllib2
 from django.core.files.storage import default_storage
 import urllib
 from django.core.files.base import ContentFile
+import math
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -75,6 +76,30 @@ class Player(models.Model):
 		rating_history.reverse()
 		
 		return rating_history
+	
+	def get_form_history(self):
+		cursor = connection.cursor()
+		cursor.execute('''
+			SELECT	h.form
+			FROM	app_event e LEFT OUTER JOIN app_playerhistory h
+						on h.event_id = e.id and h.player_id = %s
+			WHERE	e.completed = 1
+			ORDER BY e.event_date DESC
+		''', [self.pk])
+		
+		form_history = [self.form]
+		last_form = self.form
+		
+		for row in cursor.fetchall():
+			if row[0] is None:
+				form_history.append(last_form)
+			else:
+				form_history.append(row[0])
+				last_form = row[0]
+		
+		form_history.reverse()
+		
+		return form_history
 	
 	def __unicode__(self):
 		return self.name
@@ -323,7 +348,7 @@ class Event(models.Model):
 			# This the latest completed event, so update rating chart
 			# TODO: probably should be moved somewhere else
 			
-			players = Player.objects.order_by('-rating')
+			players = Player.objects.all()
 			rating_data = []
 			minima = []
 			maxima = []
@@ -367,6 +392,53 @@ class Event(models.Model):
 			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
 			
 			path = 'images/charts/ratings.png'
+			
+			# Delete previous chart
+			if default_storage.exists(path):
+				default_storage.delete(path)
+			
+			# Save new chart
+			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
+		
+			form_data = []
+			maxima = []
+			for p in players:
+				form_history = p.get_form_history()
+				maxima.append(max(form_history))
+				form_data.append(",".join(['%s' % el for el in form_history]))
+			
+			maximum = int(math.ceil(max(maxima)))
+			
+			chart_legends = "|".join([p.name for p in players])
+			chart_labels = '0:'
+			chart_positions = '0,'
+			for i in range(0, maximum+1, 1):
+				chart_labels += '|%s' % i
+				chart_positions += ',%s' % i
+			
+			data = {
+				'chf': 'bg,s,F0F0F000',
+				'chxr': '0,%d,%d' % (0, maximum),
+				'chxt': 'y',
+				'chs': '700x400',
+				'cht': 'lc',
+				'chco': '3072F3,FF0000,FF9900,80C65A,BBCCED,AA0033,000000,990066',
+				'chd': 't:' + "|".join(form_data),
+				'chds': '%d,%d' % (0, maximum),
+				'chdl': chart_legends,
+				'chdlp': 'b',
+				'chls': '1|1',
+				'chma': '5,5,5,25',
+				'chxl': chart_labels,
+				'chxp': chart_positions,
+				'chg': '-1,%f' % round(100.0 / float(maximum), 2),
+			}
+			
+			# Submit POST request to Google Charts
+			# TODO: should really do some error checking here
+			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
+			
+			path = 'images/charts/form.png'
 			
 			# Delete previous chart
 			if default_storage.exists(path):

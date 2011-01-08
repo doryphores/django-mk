@@ -2,6 +2,8 @@
 
 {% block page_title %}Stats{% endblock %}
 
+{% load formatters %}
+
 {% block content %}
 
 <h2>Latest stats</h2>
@@ -38,6 +40,18 @@
 	{% endfor %} 
 	</tbody>
 </table>
+<div class="titles">
+	<h3>Top form</h3>
+	<p>{{ topform.name }}</p>
+	<h3>Kart Fanatic</h3>
+	<p>{{ fanatic.name }} ({{ fanatic.event_count|percentage:total_event_count }} of events)</p>
+	<h3>Birdo</h3>
+	<p>{{ birdo.name }}</p>
+</div>
+
+<h2 style="clear:left">Form over time</h2>
+
+<img src="/static/images/charts/form.png">
 
 <h2>Ratings over time</h2>
 

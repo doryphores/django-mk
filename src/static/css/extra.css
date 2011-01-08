@@ -157,6 +157,19 @@ table.stats td.delta-d {
 	color: #d8242c;
 }
 
+table.latest-stats {
+	float: left;
+	margin-bottom: 20px;
+}
+
+
+/* Titles block */
+
+div.titles {
+	float: left;
+	margin-left: 20px;
+}
+
 
 /* Player page */
 

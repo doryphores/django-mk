@@ -11,8 +11,17 @@ from django.db.models import Min, Max
 def home(request):
 	players = Player.objects.order_by('-rating')
 	
+	fanatic = players.order_by('-race_count')[0:1].get()
+	topform = players.order_by('-form')[0:1].get()
+	birdo = players.order_by('form')[0:1].get()
+	total_event_count = Event.completed_objects.count()
+	
 	return render_to_response('home.djhtml', {
 		'players': players,
+		'fanatic': fanatic,
+		'topform': topform,
+		'birdo': birdo,
+		'total_event_count': total_event_count,
 	}, context_instance=RequestContext(request))
 
 def players(request):
