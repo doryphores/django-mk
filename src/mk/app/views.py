@@ -2,51 +2,17 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
-	RANK_STRINGS, RaceResult, Track, RACE_COUNT, PlayerHistory
+	RANK_STRINGS, RaceResult, Track, RACE_COUNT
 from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
 from django.db.models import Min, Max
-from operator import itemgetter
-from mk.utils import encoding
 
 def home(request):
-	players = Player.objects.order_by('-rating').exclude(name__in=['David'])
-	rating_data = []
-	minima = []
-	maxima = []
-	for p in players:
-		rating_history = p.get_rating_history()
-		maxima.append(max(rating_history))
-		minima.append(min(rating_history))
-		rating_data.append(rating_history)
-	
-	# Round to nearest hundred (we're dealing winth integers so no need for round function) 
-	minimum = (min(minima) - 100) / 100 * 100
-	maximum = (max(maxima) + 100) / 100 * 100
-	
-	for i, rd in enumerate(rating_data):
-		rating_data[i] = encoding.chart_dataset(rd, minimum, maximum)
-	
-	data_sets = ",".join(rating_data)
-	chart_legends = "|".join([p.name for p in players])
-	chart_labels = '0:'
-	chart_positions = '0,'
-	for i in range(minimum, maximum+100, 100):
-		chart_labels += '|%s' % i
-		chart_positions += ',%s' % i
-	
-	chart_gridstep = round(100.0 / (float(maximum - minimum) / 100.0), 2)
+	players = Player.objects.order_by('-rating')
 	
 	return render_to_response('home.djhtml', {
 		'players': players,
-		'data_sets': data_sets,
-		'chart_legends': chart_legends,
-		'chart_labels': chart_labels,
-		'chart_positions': chart_positions,
-		'chart_gridstep': chart_gridstep,
-		'min': minimum,
-		'max': maximum,
 	}, context_instance=RequestContext(request))
 
 def players(request):

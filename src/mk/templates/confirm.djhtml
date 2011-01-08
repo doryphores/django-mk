@@ -7,6 +7,6 @@
 {% include '_results.djhtml' %}
 
 <a href="{{ base_url }}/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>
-<a href="{{ base_url }}/finish/" data-role="button" data-icon="gear" data-theme="b" data-inline="true">Confirm results</a>
+<a href="{{ base_url }}/finish/" data-role="button" data-icon="gear" data-theme="b" data-inline="true" rel="external">Confirm results</a>
 
 {% endblock %}

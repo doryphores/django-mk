@@ -1,6 +1,10 @@
 from django.db import models, connection, transaction
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
+import urllib2
+from django.core.files.storage import default_storage
+import urllib
+from django.core.files.base import ContentFile
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -316,8 +320,60 @@ class Event(models.Model):
 			next_event = self.get_next_event()
 			next_event.update_stats()
 		except Event.DoesNotExist:
-			# This the latest completed event, so do nothing
-			pass
+			# This the latest completed event, so update rating chart
+			# TODO: probably should be moved somewhere else
+			
+			players = Player.objects.order_by('-rating')
+			rating_data = []
+			minima = []
+			maxima = []
+			for p in players:
+				rating_history = p.get_rating_history()
+				maxima.append(max(rating_history))
+				minima.append(min(rating_history))
+				rating_data.append(",".join(['%s' % el for el in rating_history]))
+			
+			# Round to nearest hundred (we're dealing winth integers so no need for round function) 
+			minimum = (min(minima) - 100) / 100 * 100
+			maximum = (max(maxima) + 100) / 100 * 100
+			
+			chart_legends = "|".join([p.name for p in players])
+			chart_labels = '0:'
+			chart_positions = '0,'
+			for i in range(minimum, maximum+100, 100):
+				chart_labels += '|%s' % i
+				chart_positions += ',%s' % i
+			
+			data = {
+				'chf': 'bg,s,F0F0F000',
+				'chxr': '0,%d,%d' % (minimum, maximum),
+				'chxt': 'y',
+				'chs': '700x400',
+				'cht': 'lc',
+				'chco': '3072F3,FF0000,FF9900,80C65A,BBCCED,AA0033,000000,990066',
+				'chd': 't:' + "|".join(rating_data),
+				'chds': '%d,%d' % (minimum, maximum),
+				'chdl': chart_legends,
+				'chdlp': 'b',
+				'chls': '1|1',
+				'chma': '5,5,5,25',
+				'chxl': chart_labels,
+				'chxp': chart_positions,
+				'chg': '-1,%f' % round(100.0 / (float(maximum - minimum) / 100.0), 2),
+			}
+			
+			# Submit POST request to Google Charts
+			# TODO: should really do some error checking here
+			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
+			
+			path = 'images/charts/ratings.png'
+			
+			# Delete previous chart
+			if default_storage.exists(path):
+				default_storage.delete(path)
+			
+			# Save new chart
+			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
 	
 	def save(self, *args, **kwargs):
 		if self.event_date is None:
