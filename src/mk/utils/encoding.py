@@ -2,18 +2,17 @@ import math
 EXTENDED_MAP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.'
 EXTENDED_MAP_LENGTH = len(EXTENDED_MAP)
 
-def chart_dataset(dataset):
-	#function extendedEncode(arrVals, maxVal) {
+def chart_dataset(dataset, min, max):
 	chart_data = ''
 	
-	max_value = 2000
+	max_value = max + min
 	
 	chart_value = '__'
 	
 	for value in dataset:
 		if value is not None:
 			# Scale the value to maxVal
-			scaled_val = math.floor(EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH * value / max_value)
+			scaled_val = math.floor(EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH * (value - min) / (max - min))
 			
 			if scaled_val > (EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH) - 1:
 				chart_value = ".."
