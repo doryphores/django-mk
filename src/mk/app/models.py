@@ -228,22 +228,42 @@ class Event(models.Model):
 		if self.races.count() == 0 and not self.completed:
 			return rating_changes
 		
-		results = self.results.all()
+		self.races.all()
 		
-		for result in results:
-			player = result.player
-			for opp_result in results:
-				opponent = opp_result.player
-				if opponent is not player:
-					exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
-					res = 0.5
-					if result.points > opp_result.points:
-						res = 1
-					elif result.points < opp_result.points:
-						res = 0
-					#delta = float(abs(result.points - opp_result.points)) * (res - exp)
-					delta = ELO_K * (res - exp)
-					rating_changes[player] += int(round(delta))
+		if self.races.count() == 0:
+			# Process event without race results (old style)
+			results = self.results.all()
+			for result in results:
+				player = result.player
+				for opp_result in results:
+					opponent = opp_result.player
+					if opponent is not player:
+						exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
+						res = 0.5
+						if result.points > opp_result.points:
+							res = 1
+						elif result.points < opp_result.points:
+							res = 0
+						#delta = float(abs(result.points - opp_result.points)) * (res - exp)
+						delta = ELO_K * (res - exp)
+						rating_changes[player] += int(round(delta))
+		else:
+			# Process events with race results
+			for race in self.races.all():
+				results = race.results.all()
+				
+				for result in results:
+					player = result.player
+					for opp_result in results:
+						opponent = opp_result.player
+						if opponent is not player:
+							exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
+							if result.position < opp_result.position:
+								res = 1
+							else:
+								res = 0
+							delta = ELO_K * (res - exp)
+							rating_changes[player] += int(round(delta))
 		
 		return rating_changes
 	
