@@ -48,19 +48,35 @@ class Player(models.Model):
 			return 0
 	rating_change = property(_get_rating_change)
 	
-	def rating_history(self):
-		return Player.objects.raw('''
-			select		app_track.*, count(race_id) as race_count
-			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
-						 on race_track_id = app_track.id
-			group by	app_track.id
-			order by	race_count desc, app_track.name''')
-
+	def get_rating_history(self):
+		cursor = connection.cursor()
+		cursor.execute('''
+			SELECT	h.rating
+			FROM	app_event e LEFT OUTER JOIN app_playerhistory h
+						on h.event_id = e.id and h.player_id = %s
+			WHERE	e.completed = 1
+			ORDER BY e.event_date DESC
+		''', [self.pk])
+		
+		rating_history = [self.rating]
+		last_rating = self.rating
+		
+		for row in cursor.fetchall():
+			if row[0] is None:
+				rating_history.append(last_rating)
+			else:
+				rating_history.append(row[0])
+				last_rating = row[0]
+		
+		rating_history.reverse()
+		
+		return rating_history
+	
 	def __unicode__(self):
 		return self.name
 	
 	class Meta:
-		ordering = ['-rating']
+		ordering = ['name']
 
 
 class TrackManager(models.Manager):
@@ -186,6 +202,13 @@ class Event(models.Model):
 		else:
 			raise Event.DoesNotExist
 	
+	def get_previous_event(self):
+		previous_events = Event.completed_objects.exclude(pk=self.pk).filter(event_date__lt=self.event_date).order_by('-event_date')
+		if previous_events.exists():
+			return previous_events[0:1].get()
+		else:
+			raise Event.DoesNotExist
+	
 	def update_results(self):
 		# Update points and position counts
 		for result in self.results.all():
@@ -231,7 +254,7 @@ class Event(models.Model):
 		for history in PlayerHistory.objects.filter(event=self):
 			history.restore()
 			history.delete()
-				
+		
 		# Update each participant's stats
 		for result in self.results.all():
 			# Save player stats to history
@@ -359,6 +382,8 @@ class PlayerHistory(models.Model):
 		
 		self.player.average = self.average
 		self.player.form = self.form
+		
+		self.player.save()
 	
 	def save(self, *args, **kwargs):
 		self.rating = self.player.rating 

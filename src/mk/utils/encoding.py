@@ -8,18 +8,25 @@ def chart_dataset(dataset):
 	
 	max_value = 2000
 	
+	chart_value = '__'
+	
 	for value in dataset:
-		# Scale the value to maxVal
-		scaled_val = math.floor(EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH * value / max_value)
-		
-		if scaled_val > (EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH) - 1:
-			chart_data += ".."
-		elif scaled_val < 0:
-			chart_data += '__'
+		if value is not None:
+			# Scale the value to maxVal
+			scaled_val = math.floor(EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH * value / max_value)
+			
+			if scaled_val > (EXTENDED_MAP_LENGTH * EXTENDED_MAP_LENGTH) - 1:
+				chart_value = ".."
+			elif scaled_val < 0:
+				chart_value = '__'
+			else:
+				# Calculate first and second digits and add them to the output.
+				quotient = int(math.floor(scaled_val / EXTENDED_MAP_LENGTH))
+				remainder = int(scaled_val - EXTENDED_MAP_LENGTH * quotient)
+				chart_value = EXTENDED_MAP[quotient] + EXTENDED_MAP[remainder]
 		else:
-			# Calculate first and second digits and add them to the output.
-			quotient = int(math.floor(scaled_val / EXTENDED_MAP_LENGTH))
-			remainder = int(scaled_val - EXTENDED_MAP_LENGTH * quotient)
-			chart_data += EXTENDED_MAP[quotient] + EXTENDED_MAP[remainder]
+			chart_value = '__'
+				
+		chart_data += chart_value
 		
 	return chart_data

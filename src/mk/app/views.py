@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from mk.app.models import Race, Event, EventResult, Player,\
-	RANK_STRINGS, RaceResult, Track, RACE_COUNT
+	RANK_STRINGS, RaceResult, Track, RACE_COUNT, PlayerHistory
 from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
@@ -11,22 +11,22 @@ from operator import itemgetter
 from mk.utils import encoding
 
 def home(request):
-	players = Player.objects.all()
-	#===========================================================================
-	# rating_data = []
-	# for p in players:
-	#	rating_data.append(encoding.chart_dataset(PlayerStat.objects.filter(player=p).values_list('rating', flat=True).reverse()))
-	# 
-	# data_sets = ",".join(rating_data)
-	# chart_legends = "|".join([p.name for p in players])
-	#===========================================================================
+	players = Player.objects.order_by('-rating').exclude(name__in=['David'])
+	rating_data = []
+	for p in players:
+		rating_data.append(encoding.chart_dataset(p.get_rating_history()))
+	
+	data_sets = ",".join(rating_data)
+	chart_legends = "|".join([p.name for p in players])
 	
 	return render_to_response('home.djhtml', {
 		'players': players,
+		'data_sets': data_sets,
+		'chart_legends': chart_legends,
 	}, context_instance=RequestContext(request))
 
 def players(request):
-	player_list = Player.objects.all()
+	player_list = Player.objects.order_by('-rating').all()
 	
 	return render_to_response('players.djhtml', {
 		'player_list': player_list,

@@ -4,10 +4,23 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 from mk.app.models import Event
+from django.core.exceptions import ObjectDoesNotExist
 
 class Migration(DataMigration):
 
 	def forwards(self, orm):
+		# Reset player ratings if stats records exist
+		if orm.PlayerStat.objects.count() > 0:
+			players = orm.Player.objects.all()
+			for p in players:
+				try:
+					first_state = orm.PlayerStat.objects.filter(player=p).order_by('-event')[0:1].get()
+					p.rating = first_state.rating - first_state.rating_delta
+					p.save()
+				except ObjectDoesNotExist:
+					pass
+		
+		# Run history updates
 		first_event = Event.completed_objects.order_by('event_date')[0:1].get()
 		first_event.update_stats()
 

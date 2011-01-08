@@ -39,9 +39,7 @@
 	</tbody>
 </table>
 
-{% comment %}
 <h2>Ratings over time</h2>
 
 <img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxr=0,0,2000&chxt=y&chs=800x300&cht=lc&chco=3072F3,FF0000,FF9900,80C65A,BBCCED,AA0033,000000,990066&chds=0,2000,0,2000,0,2000,0,2000,0,2000,0,2000,0,2000,0,2000&chd=e:{{ data_sets }}&chdl={{ chart_legends }}&chdlp=b&chls=1|1&chma=5,5,5,25">
-{% endcomment %}
 {% endblock %}
