@@ -12,7 +12,7 @@ MAX_EVENT_POINTS = sum(POSITION_POINTS) * RACE_COUNT
 
 RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
-ELO_K = 32
+ELO_K = 24
 
 
 class Player(models.Model):
@@ -244,8 +244,8 @@ class Event(models.Model):
 							res = 1
 						elif result.points < opp_result.points:
 							res = 0
-						#delta = float(abs(result.points - opp_result.points)) * (res - exp)
-						delta = ELO_K * (res - exp)
+						delta = float(abs(result.points - opp_result.points)) * (res - exp)
+						#delta = ELO_K * (res - exp)
 						rating_changes[player] += int(round(delta))
 		else:
 			# Process events with race results
@@ -269,7 +269,7 @@ class Event(models.Model):
 	
 	def update_stats(self):
 		rating_changes = self.get_rating_changes()
-				
+		
 		# Rollback player state from history
 		for history in PlayerHistory.objects.filter(event=self):
 			history.restore()
