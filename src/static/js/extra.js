@@ -2,6 +2,12 @@ $(document).ready(function () {
 	$("form").live("submit", function () {
 		$.mobile.pageLoading();
 	});
+	
+	$("#latest-stats").tablesorter({
+		textExtraction: function(node) {
+			return node.innerHTML.replace(/<small>.*<\/small>/, '');
+        } 
+	});
 });
 
 $("div").live('pagecreate', function (event) {
