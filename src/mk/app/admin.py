@@ -4,6 +4,7 @@ from mk.app.models import *
 class PlayerAdmin(admin.ModelAdmin):
 	list_display = ('name','rating')
 	list_editable = ('rating',)
+	list_per_page = 20
 
 admin.site.register(Player, PlayerAdmin)
 
@@ -51,6 +52,7 @@ admin.site.register(Event, EventAdmin)
 class RaceResultAdmin(admin.ModelAdmin):
 	list_display = ('race', 'player', 'position')
 	list_filter = ['player']
+	list_per_page = 20
 
 admin.site.register(RaceResult, RaceResultAdmin)
 
@@ -62,6 +64,8 @@ class RaceResultInline(admin.TabularInline):
 
 class RaceAdmin(admin.ModelAdmin):
 	list_display = ('event', 'track', 'player_list', 'order')
+	list_filter = ['track']
+	list_per_page = 20
 	
 	inlines = [
 		RaceResultInline,

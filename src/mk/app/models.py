@@ -24,6 +24,25 @@ class ActivePlayerManager(models.Manager):
 	def get_query_set(self):
 		return super(ActivePlayerManager, self).get_query_set().filter(active=True)
 
+class PlayerManager(models.Manager):
+	def get_track_rankings(self, track):
+		return Player.objects.raw('''
+			SELECT		p.*,
+						AVG(CASE
+							WHEN rr.position = 0 THEN %s
+							WHEN rr.position = 1 THEN %s
+							WHEN rr.position = 2 THEN %s
+							WHEN rr.position = 3 THEN %s
+						END) AS track_average
+			FROM		app_race r
+							INNER JOIN app_raceresult rr ON rr.race_id = r.id
+							INNER JOIN app_event e ON e.id  = r.event_id AND e.completed = 1
+							INNER JOIN app_player p ON p.id = rr.player_id
+			WHERE		r.track_id = %s
+			GROUP BY	p.name
+			ORDER BY	track_average DESC
+		''', [POSITION_POINTS[0], POSITION_POINTS[1], POSITION_POINTS[2], POSITION_POINTS[3], track.pk])
+
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	avatar = models.ImageField(upload_to='images/avatars', blank=True)
@@ -48,7 +67,7 @@ class Player(models.Model):
 	average = models.FloatField(default=0.0)
 	form = models.FloatField(default=0.0)
 	
-	objects = models.Manager()
+	objects = PlayerManager()
 	active_objects = ActivePlayerManager()
 	
 	def _get_event_count(self):
@@ -120,17 +139,20 @@ class Player(models.Model):
 class TrackManager(models.Manager):
 	def all_by_popularity(self):
 		return Track.objects.raw('''
-			select		app_track.*, count(race_id) as race_count
+			select		app_track.*, count(race_id) as count
 			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
 						 on race_track_id = app_track.id
 			group by	app_track.id
-			order by	race_count desc, app_track.name''')
-
+			order by	count desc, app_track.name''')
 
 class Track(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	
 	objects = TrackManager()
+	
+	def _get_race_count(self):
+		return Race.completed_objects.filter(track=self).count()
+	race_count = property(_get_race_count)
 	
 	def __unicode__(self):
 		return self.name
@@ -569,11 +591,18 @@ class PlayerHistory(models.Model):
 		verbose_name_plural = 'Player history records'
 
 
+class CompletedRaceManager(models.Manager):
+	def get_query_set(self):
+		return super(CompletedRaceManager, self).get_query_set().filter(event__completed=True)
+
 class Race(models.Model):
 	event = models.ForeignKey(Event, related_name='races')
 	track = models.ForeignKey(Track, null=True, related_name='races')
 	players = models.ManyToManyField(Player, through='RaceResult')
 	order = models.PositiveSmallIntegerField()
+	
+	objects = models.Manager()
+	completed_objects = CompletedRaceManager()
 	
 	def get_available_tracks(self):
 		return Track.objects.exclude(pk__in=self.event.races.exclude(pk=self.pk).values_list("track"))

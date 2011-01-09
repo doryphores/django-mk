@@ -7,7 +7,7 @@
 	{% for track in track_list %}
 	<li><a href="{{ base_url }}/track/{{ track.pk }}/">
 		<h3>{{ track.name }}</h3>
-		<span class="ui-li-count">{{ track.race_count }}</span>
+		<span class="ui-li-count">{{ track.count }}</span>
 	</a></li>
 	{% endfor %}
 </ul>

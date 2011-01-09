@@ -63,7 +63,13 @@ def tracks(request):
 def track(request, track_id):
 	track = get_object_or_404(Track, pk=track_id)
 	
-	return render_to_response('track.djhtml', { 'track': track }, context_instance=RequestContext(request))
+	players = Player.objects.get_track_rankings(track)
+	
+	return render_to_response('track.djhtml', {
+		'track': track,
+		'race_count': track.race_count,
+		'player_list': players,
+	}, context_instance=RequestContext(request))
 
 @transaction.commit_on_success()
 def new(request):
