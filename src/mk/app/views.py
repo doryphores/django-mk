@@ -25,7 +25,7 @@ def home(request):
 	}, context_instance=RequestContext(request))
 
 def players(request):
-	player_list = Player.active_objects.order_by('-rating').all()
+	player_list = Player.objects.order_by('-rating').all()
 	
 	return render_to_response('players.djhtml', {
 		'player_list': player_list,

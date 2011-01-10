@@ -9,9 +9,9 @@
 		<h3>{{ player.name }}</h3>
 		<p>
 			Rank: <strong>#{{ forloop.counter }}</strong>
-			| Points: <strong>{{ player.stats.points }}</strong>
-			| Average: <strong>{{ player.stats.average|stringformat:'0.2f' }}</strong>
-			| Form: <strong>{{ player.stats.form|stringformat:'0.2f' }}</strong>
+			| Points: <strong>{{ player.points }}</strong>
+			| Average: <strong>{{ player.average|stringformat:'0.2f' }}</strong>
+			| Form: <strong>{{ player.form|stringformat:'0.2f' }}</strong>
             | Rating: <strong>{{ player.rating }}</strong>
 		</p>
 		{% if player.avatar %}

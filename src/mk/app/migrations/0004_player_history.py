@@ -19,10 +19,6 @@ class Migration(DataMigration):
 					p.save()
 				except ObjectDoesNotExist:
 					pass
-		
-		# Run history updates
-		first_event = Event.completed_objects.order_by('event_date')[0:1].get()
-		first_event.update_stats()
 
 
 	def backwards(self, orm):

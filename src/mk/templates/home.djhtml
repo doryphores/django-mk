@@ -41,6 +41,8 @@
 	</tbody>
 </table>
 <div class="titles">
+	<h3>Events played</h3>
+	<p>{{ total_event_count }} (that's {% widthratio total_event_count 1 8 %} races)</p>
 	<h3>Top form</h3>
 	<p>{{ topform.name }}</p>
 	<h3>Kart Fanatic</h3>
