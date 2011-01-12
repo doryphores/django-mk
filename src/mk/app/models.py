@@ -130,6 +130,25 @@ class Player(models.Model):
 		
 		return form_history
 	
+	def get_track_averages(self):
+		return Track.objects.raw('''
+			SELECT		t.*,
+						AVG(CASE
+							WHEN rr.position = 0 THEN %s
+							WHEN rr.position = 1 THEN %s
+							WHEN rr.position = 2 THEN %s
+							WHEN rr.position = 3 THEN %s
+						END) AS average,
+						count(distinct r.id) as rcount
+			FROM		app_track t
+							INNER JOIN app_race r ON r.track_id = t.id
+							INNER JOIN app_raceresult rr ON rr.race_id = r.id
+							INNER JOIN app_event e ON e.id  = r.event_id AND e.completed = 1
+			WHERE		rr.player_id = %s
+			GROUP BY	t.name
+			ORDER BY	average DESC
+		''', [POSITION_POINTS[0], POSITION_POINTS[1], POSITION_POINTS[2], POSITION_POINTS[3], self.pk])
+	
 	def __unicode__(self):
 		return self.name
 	

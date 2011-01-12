@@ -61,4 +61,23 @@
 		{% endfor %}
 	</tbody>
 </table>
+<h3>Track stats</h3>
+<table class="stats">
+	<thead>
+		<tr>
+			<th>Track</th>
+			<th>Average</th>
+			<th>Races</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for track in player.get_track_averages %}
+		<tr class="ui-btn-up-c">
+			<td class="name">{{ track.name }}</td>
+			<td>{{ track.average|stringformat:"0.2f" }}</td>
+			<td>{{ track.rcount }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
