@@ -13,6 +13,7 @@
 		<tr>
 			<th colspan="2"></th>
 			<th>Average</th>
+			<th>Races</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,6 +28,7 @@
 			</a></td>
 			<td class="name"><a href="{{ base_url }}/player/{{ player.pk }}/">{{ player.name }}</a></td>
 			<td>{{ player.track_average|stringformat:'0.2f' }}</td>
+			<td>{{ player.rcount }}</td>
 		</tr>
 		{% endfor %}
 	</tbody>
