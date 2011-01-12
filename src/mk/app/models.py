@@ -17,7 +17,7 @@ MAX_EVENT_POINTS = sum(POSITION_POINTS) * RACE_COUNT
 
 RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
-ELO_K = 24
+ELO_K = 8
 
 
 class ActivePlayerManager(models.Manager):
@@ -33,7 +33,8 @@ class PlayerManager(models.Manager):
 							WHEN rr.position = 1 THEN %s
 							WHEN rr.position = 2 THEN %s
 							WHEN rr.position = 3 THEN %s
-						END) AS track_average
+						END) AS track_average,
+						count(distinct r.id) as rcount
 			FROM		app_race r
 							INNER JOIN app_raceresult rr ON rr.race_id = r.id
 							INNER JOIN app_event e ON e.id  = r.event_id AND e.completed = 1
@@ -290,25 +291,24 @@ class Event(models.Model):
 		
 		self.races.all()
 		
-		if self.races.count() == 0:
-			# Process event without race results (old style)
-			results = self.results.all()
-			for result in results:
-				player = result.player
-				for opp_result in results:
-					opponent = opp_result.player
-					if opponent is not player:
-						exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
-						res = 0.5
-						if result.points > opp_result.points:
-							res = 1
-						elif result.points < opp_result.points:
-							res = 0
-						delta = float(abs(result.points - opp_result.points)) * (res - exp)
-						#delta = ELO_K * (res - exp)
-						rating_changes[player] += int(round(delta))
-		else:
-			# Process events with race results
+		# Process event results
+		results = self.results.all()
+		for result in results:
+			player = result.player
+			for opp_result in results:
+				opponent = opp_result.player
+				if opponent is not player:
+					exp = 1 / (1 + pow(10, float(opponent.rating - player.rating)/400))
+					res = 0.5
+					if result.points > opp_result.points:
+						res = 1
+					elif result.points < opp_result.points:
+						res = 0
+					delta = float(abs(result.points - opp_result.points)) * (res - exp)
+					rating_changes[player] += int(round(delta))
+		
+		# Process race results (if present)
+		if self.races.count() > 0:
 			for race in self.races.all():
 				results = race.results.all()
 				
