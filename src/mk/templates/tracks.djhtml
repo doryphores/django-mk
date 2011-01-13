@@ -7,6 +7,20 @@
 	{% for track in track_list %}
 	<li><a href="{{ base_url }}/track/{{ track.pk }}/">
 		<h3>{{ track.name }}</h3>
+		{% if track.king %}
+		<p>King:<strong>
+			
+			{{ track.king.name }} ({{ track.king.track_average|stringformat:".2f" }})
+			
+		</strong></p>
+		{% if track.king.avatar %}
+		<img src="{{ track.king.avatar.url }}">
+		{% else %}
+		<img src="/static/images/avatars/default.png">
+		{% endif %}
+		{% else %}
+		<p>King: Still up for grabs</p>
+		{% endif %}
 		<span class="ui-li-count">{{ track.count }}</span>
 	</a></li>
 	{% endfor %}

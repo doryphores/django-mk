@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 import urllib
 from django.core.files.base import ContentFile
 import math
+from pprint import pprint
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -163,12 +164,20 @@ class TrackManager(models.Manager):
 			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
 						 on race_track_id = app_track.id
 			group by	app_track.id
-			order by	count desc, app_track.name''')
+			order by	app_track.name''')
 
 class Track(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	
 	objects = TrackManager()
+	
+	def _get_king(self):
+		kings = Player.objects.get_track_rankings(self)
+		if len(list(kings)):
+			return kings[0]
+		else:
+			return None
+	king = property(_get_king)
 	
 	def _get_race_count(self):
 		return Race.completed_objects.filter(track=self).count()
@@ -399,6 +408,13 @@ class Event(models.Model):
 			# TODO: probably should be moved somewhere else
 			
 			players = Player.active_objects.all()
+			
+			colors = ['3072F3','FF0000','FF9900','80C65A','BBCCED','AA0033','000000','990066']
+			
+			#===================================================================
+			# Rating time chart
+			#===================================================================
+			
 			rating_data = []
 			minima = []
 			maxima = []
@@ -420,12 +436,12 @@ class Event(models.Model):
 				chart_positions += ',%s' % i
 			
 			data = {
+				'cht': 'lc',
 				'chf': 'bg,s,F0F0F000',
 				'chxr': '0,%d,%d' % (minimum, maximum),
 				'chxt': 'y',
 				'chs': '700x400',
-				'cht': 'lc',
-				'chco': '3072F3,FF0000,FF9900,80C65A,BBCCED,AA0033,000000,990066',
+				'chco': ','.join(colors),
 				'chd': 't:' + "|".join(rating_data),
 				'chds': '%d,%d' % (minimum, maximum),
 				'chdl': chart_legends,
@@ -449,7 +465,11 @@ class Event(models.Model):
 			
 			# Save new chart
 			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
-		
+			
+			#===================================================================
+			# Form over time chart
+			#===================================================================
+			
 			form_data = []
 			maxima = []
 			for p in players:
@@ -467,12 +487,12 @@ class Event(models.Model):
 				chart_positions += ',%s' % i
 			
 			data = {
+				'cht': 'lc',
 				'chf': 'bg,s,F0F0F000',
 				'chxr': '0,%d,%d' % (0, maximum),
 				'chxt': 'y',
 				'chs': '700x400',
-				'cht': 'lc',
-				'chco': '3072F3,FF0000,FF9900,80C65A,BBCCED,AA0033,000000,990066',
+				'chco': ','.join(colors),
 				'chd': 't:' + "|".join(form_data),
 				'chds': '%d,%d' % (0, maximum),
 				'chdl': chart_legends,
@@ -489,6 +509,47 @@ class Event(models.Model):
 			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
 			
 			path = 'images/charts/form.png'
+			
+			# Delete previous chart
+			if default_storage.exists(path):
+				default_storage.delete(path)
+			
+			# Save new chart
+			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
+			
+			
+			#===================================================================
+			# Result scatter graph
+			#===================================================================
+			
+			scatter_data = "|".join([
+				",".join(["%.2f" % (float(p.event_firsts) / (float(p.race_count) / float(RACE_COUNT)) * 100.0) for p in players]),
+				",".join(["%.2f" % (float(p.race_firsts) / float(p.race_count) * 100.0) for p in players]),
+				",".join(["%.2f" % p.average for p in players]),
+			])
+			
+			data = {
+				'cht': 's',
+				'chxt': 'x,x,y,y',
+				'chs': '500x470',
+				'chco': '|'.join(colors),
+				'chd': 't:%s' % scatter_data,
+				'chds': '0,100,0,100,0,15',
+				'chdl': '|'.join([p.name for p in players]),
+				'chdlp': 'b',
+				'chma': '5,5,5,25',
+				'chm': 'c,000000,0,-1,40',
+				'chxl': '0:|0%|25%|50%|75%|100%|1:|Event firsts|2:| |25%|50%|75%|100%|3:|Race firsts',
+				'chxp': '1,50|3,50',
+				'chg': '25,25',
+				'chf': 'bg,s,F0F0F000|c,ls,90,EFEFEF99,0.25,CCCCCC99,0.25',
+			}
+			
+			# Submit POST request to Google Charts
+			# TODO: should really do some error checking here
+			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
+			
+			path = 'images/charts/scatter.png'
 			
 			# Delete previous chart
 			if default_storage.exists(path):

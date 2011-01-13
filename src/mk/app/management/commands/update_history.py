@@ -34,7 +34,6 @@ class Command(NoArgsCommand):
 			self.output("No history to update")
 		except:
 			transaction.rollback()
-			transaction.leave_transaction_management()
 			self.output("An error occurred while updating history")
 		
 		transaction.commit()

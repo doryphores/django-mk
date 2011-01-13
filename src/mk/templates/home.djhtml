@@ -58,4 +58,10 @@
 <h2>Ratings over time</h2>
 
 <img src="/static/images/charts/ratings.png?e={{ total_event_count }}">
+
+<h2>First place performance</h2>
+
+<p>Note: Marker size reflects average</p>
+
+<img src="/static/images/charts/scatter.png?e={{ total_event_count }}">
 {% endblock %}
