@@ -1,5 +1,7 @@
 from mk.settings.development import *
 
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
 DATABASES['import'] = {
     'ENGINE': 'sql_server.pyodbc',
     'NAME': 'kartleague',

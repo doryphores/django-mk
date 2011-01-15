@@ -6,7 +6,7 @@ PROJECT_ROOT = os.path.dirname(APP_ROOT)
 
 # Django settings for django_mk project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -38,6 +38,14 @@ DATABASES = {
 }
 
 INTERNAL_IPS=('127.0.0.1', '192.168.1.56')
+
+# Cache config
+
+if os.name == 'nt':
+	CACHE_BACKEND = 'locmem://'
+else:
+	CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -106,6 +114,12 @@ TEMPLATE_DIRS = (
 	os.path.join(APP_ROOT, "templates")
 )
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+SESSION_SAVE_EVERY_REQUEST = True
+
+SESSION_COOKIE_AGE = 10800 # 3 Hours
+
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
 	"mk.app.context_processors.base_url",
 )
@@ -113,10 +127,8 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
 INSTALLED_APPS = (
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
-	'django.contrib.sessions',
 	'django.contrib.sites',
 	'django.contrib.messages',
-	# Uncomment the next line to enable the admin:
 	'django.contrib.admin',
 	# Uncomment the next line to enable admin documentation:
 	# 'django.contrib.admindocs',
