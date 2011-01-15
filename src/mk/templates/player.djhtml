@@ -61,6 +61,8 @@
 		{% endfor %}
 	</tbody>
 </table>
+{% with player.get_track_averages as tracks %}
+{% if tracks %}
 <h3>Track stats</h3>
 <table class="stats">
 	<thead>
@@ -71,7 +73,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for track in player.get_track_averages %}
+		{% for track in tracks %}
 		<tr class="ui-btn-up-c">
 			<td class="name">{{ track.name }}</td>
 			<td>{{ track.average|stringformat:"0.2f" }}</td>
@@ -80,4 +82,6 @@
 		{% endfor %}
 	</tbody>
 </table>
+{% endif %}
+{% endwith %}
 {% endblock %}

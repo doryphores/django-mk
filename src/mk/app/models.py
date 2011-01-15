@@ -1,12 +1,13 @@
+from __future__ import division
 from django.db import models, connection, transaction
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
-import urllib2
-from django.core.files.storage import default_storage
-import urllib
-from django.core.files.base import ContentFile
+from mk.utils import charts
 import math
-from pprint import pprint
+
+
+# TODO: Add this as a field on Player model
+COLORS = ['3072F3','FF0000','FF9900','80C65A','BBCCED','AA0033','000000','990066']
 
 POSITION_POINTS = [15,9,4,1]
 
@@ -405,81 +406,66 @@ class Event(models.Model):
 			next_event.update_stats()
 		except Event.DoesNotExist:
 			# This the latest completed event, so update rating chart
+			
 			# TODO: probably should be moved somewhere else
 			
 			players = Player.active_objects.all()
 			
-			colors = ['3072F3','FF0000','FF9900','80C65A','BBCCED','AA0033','000000','990066']
-			
-			#===================================================================
-			# Rating time chart
-			#===================================================================
-			
 			rating_data = []
-			minima = []
-			maxima = []
+	
+			minimum = 1000
+			maximum = 0
+			
 			for p in players:
 				rating_history = p.get_rating_history()
-				maxima.append(max(rating_history))
-				minima.append(min(rating_history))
-				rating_data.append(",".join(['%s' % el for el in rating_history]))
+				minimum = min(minimum, min(rating_history))
+				maximum = max(maximum, max(rating_history))
+				rating_data.append(",".join([str(el) for el in rating_history]))
 			
-			# Round to nearest hundred (we're dealing winth integers so no need for round function) 
-			minimum = (min(minima) - 100) / 100 * 100
-			maximum = (max(maxima) + 100) / 100 * 100
+			# Add headroom 
+			minimum = int(math.floor(minimum / 100) * 100)
+			maximum = int(math.ceil(maximum / 100) * 100)
 			
-			chart_legends = "|".join([p.name for p in players])
 			chart_labels = '0:'
 			chart_positions = '0,'
-			for i in range(minimum, maximum+100, 100):
+			for i in range(minimum, maximum + 100, 100):
 				chart_labels += '|%s' % i
 				chart_positions += ',%s' % i
 			
 			data = {
-				'cht': 'lc',
-				'chf': 'bg,s,F0F0F000',
+				'cht': 'lc', # Line chart
+				'chs': '700x400', # Size
 				'chxr': '0,%d,%d' % (minimum, maximum),
 				'chxt': 'y',
-				'chs': '700x400',
-				'chco': ','.join(colors),
+				'chco': ','.join(COLORS),
 				'chd': 't:' + "|".join(rating_data),
 				'chds': '%d,%d' % (minimum, maximum),
-				'chdl': chart_legends,
+				'chdl': "|".join([p.name for p in players]),
 				'chdlp': 'b',
 				'chls': '1|1',
 				'chma': '5,5,5,25',
 				'chxl': chart_labels,
 				'chxp': chart_positions,
-				'chg': '-1,%f' % round(100.0 / (float(maximum - minimum) / 100.0), 2),
+				'chg': '-1,%f' % round(100 / ((maximum - minimum) / 100), 2),
 			}
 			
-			# Submit POST request to Google Charts
-			# TODO: should really do some error checking here
-			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
-			
-			path = 'images/charts/ratings.png'
-			
-			# Delete previous chart
-			if default_storage.exists(path):
-				default_storage.delete(path)
-			
-			# Save new chart
-			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
+			charts.create(data, 'ratings.png')
+
 			
 			#===================================================================
 			# Form over time chart
 			#===================================================================
 			
 			form_data = []
-			maxima = []
+			maximum = 0
+			
 			for p in players:
 				form_history = p.get_form_history()
-				maxima.append(max(form_history))
-				form_data.append(",".join(['%s' % el for el in form_history]))
+				maximum = max(maximum, max(form_history))
+				form_data.append(",".join([str(el) if el > 0 else '_' for el in form_history]))
 			
-			maximum = int(math.ceil(max(maxima)))
+			maximum = int(math.ceil(maximum))
 			
-			chart_legends = "|".join([p.name for p in players])
 			chart_labels = '0:'
 			chart_positions = '0,'
 			for i in range(0, maximum+1, 1):
@@ -487,35 +473,23 @@ class Event(models.Model):
 				chart_positions += ',%s' % i
 			
 			data = {
-				'cht': 'lc',
-				'chf': 'bg,s,F0F0F000',
+				'cht': 'lc', # Line chart
+				'chs': '700x400', # Size
 				'chxr': '0,%d,%d' % (0, maximum),
 				'chxt': 'y',
-				'chs': '700x400',
-				'chco': ','.join(colors),
+				'chco': ','.join(COLORS),
 				'chd': 't:' + "|".join(form_data),
 				'chds': '%d,%d' % (0, maximum),
-				'chdl': chart_legends,
+				'chdl': "|".join([p.name for p in players]),
 				'chdlp': 'b',
 				'chls': '1|1',
 				'chma': '5,5,5,25',
 				'chxl': chart_labels,
 				'chxp': chart_positions,
-				'chg': '-1,%f' % round(100.0 / float(maximum), 2),
+				'chg': '-1,%f' % round(100 / maximum, 2),
 			}
 			
-			# Submit POST request to Google Charts
-			# TODO: should really do some error checking here
-			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
-			
-			path = 'images/charts/form.png'
-			
-			# Delete previous chart
-			if default_storage.exists(path):
-				default_storage.delete(path)
-			
-			# Save new chart
-			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
+			charts.create(data, 'form.png')
 			
 			
 			#===================================================================
@@ -523,8 +497,8 @@ class Event(models.Model):
 			#===================================================================
 			
 			scatter_data = "|".join([
-				",".join(["%.2f" % (float(p.event_firsts) / (float(p.race_count) / float(RACE_COUNT)) * 100.0) for p in players]),
-				",".join(["%.2f" % (float(p.race_firsts) / float(p.race_count) * 100.0) for p in players]),
+				",".join(["%.2f" % (p.event_firsts / (p.race_count / RACE_COUNT) * 100) for p in players]),
+				",".join(["%.2f" % (p.race_firsts / p.race_count * 100) for p in players]),
 				",".join(["%.2f" % p.average for p in players]),
 			])
 			
@@ -532,7 +506,7 @@ class Event(models.Model):
 				'cht': 's',
 				'chxt': 'x,x,y,y',
 				'chs': '500x470',
-				'chco': '|'.join(colors),
+				'chco': '|'.join(COLORS),
 				'chd': 't:%s' % scatter_data,
 				'chds': '0,100,0,100,0,15',
 				'chdl': '|'.join([p.name for p in players]),
@@ -542,21 +516,10 @@ class Event(models.Model):
 				'chxl': '0:|0%|25%|50%|75%|100%|1:|Event firsts|2:| |25%|50%|75%|100%|3:|Race firsts',
 				'chxp': '1,50|3,50',
 				'chg': '25,25',
-				'chf': 'bg,s,F0F0F000|c,ls,90,EFEFEF99,0.25,CCCCCC99,0.25',
+				'chf': 'bg,s,00000000|c,ls,90,EFEFEF99,0.25,CCCCCC99,0.25',
 			}
 			
-			# Submit POST request to Google Charts
-			# TODO: should really do some error checking here
-			req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(data))
-			
-			path = 'images/charts/scatter.png'
-			
-			# Delete previous chart
-			if default_storage.exists(path):
-				default_storage.delete(path)
-			
-			# Save new chart
-			default_storage.save(path, ContentFile(urllib2.urlopen(req).read()))
+			charts.create(data, 'first_place_performance.png')
 	
 	def save(self, *args, **kwargs):
 		if self.event_date is None:

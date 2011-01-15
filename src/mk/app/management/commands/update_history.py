@@ -32,9 +32,11 @@ class Command(NoArgsCommand):
 			self.output("Done")
 		except Event.DoesNotExist:
 			self.output("No history to update")
-		except:
+		except Exception:
 			transaction.rollback()
+			transaction.leave_transaction_management()
 			self.output("An error occurred while updating history")
+			raise
 		
 		transaction.commit()
 		transaction.leave_transaction_management()
