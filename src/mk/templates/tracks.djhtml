@@ -3,25 +3,32 @@
 {% block page_title %}Tracks{% endblock %}
 
 {% block content %}
-<ul data-role="listview">
+<ul data-role="listview" class="track-list">
 	{% for track in track_list %}
 	<li><a href="{{ base_url }}/track/{{ track.pk }}/">
 		<h3>{{ track.name }}</h3>
-		{% if track.king %}
-		<p>King:<strong>
-			
-			{{ track.king.name }} ({{ track.king.track_average|stringformat:".2f" }})
-			
-		</strong></p>
-		{% if track.king.avatar %}
-		<img src="{{ track.king.avatar.url }}">
-		{% else %}
-		<img src="/static/images/avatars/default.png">
-		{% endif %}
-		{% else %}
-		<p>King: Still up for grabs</p>
-		{% endif %}
-		<span class="ui-li-count">{{ track.count }}</span>
+		{% with track.kings.all as kings %}
+			{% if kings %}
+				<p>King{{ kings|pluralize }}:
+					{% for king in kings %}
+					<strong>{{ king.player.name }}</strong> ({{ king.average|stringformat:".2f" }})
+					{% endfor %}
+					<span class="avatars">
+					{% for king in kings %}
+					<span>
+					{% if king.player.avatar %}
+						<img src="{{ king.player.avatar.url }}">
+					{% else %}
+						<img src="/static/images/avatars/default.png">
+					{% endif %}
+					</span>
+					{% endfor %}
+					</span>
+				</p>
+			{% else %}
+				<p>King: Still up for grabs</p>
+			{% endif %}
+		{% endwith %}
 	</a></li>
 	{% endfor %}
 </ul>

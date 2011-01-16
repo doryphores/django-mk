@@ -188,3 +188,48 @@ img.avatar {
 	background: #fff;
 	padding: 5px;
 }
+
+
+/* Track list */
+
+.track-list span.avatars {
+	display: block;
+	position: absolute;
+	left: 1px;
+	top: 0px;
+	width: 80px;
+	height: 80px;
+	overflow: hidden;
+}
+
+.track-list span.avatars span {
+	display: block;
+	width: 112px;
+	height: 112px;
+	position: absolute;
+	left: 23px;
+	top: 24px;
+	overflow: hidden;
+	-webkit-transform: rotate(-45deg);
+	border-top: 1px solid #efefef;
+}
+
+.track-list span.avatars span img {
+	-webkit-transform: rotate(45deg);
+	position: absolute;
+	left: 16px;
+	top: -40px;
+}
+
+.track-list span.avatars span:first-child {
+	width: auto;
+	height: auto;
+	position: static;
+	-webkit-transform: none;
+	border-top: none;
+}
+
+.track-list span.avatars span:first-child img {
+	-webkit-transform: none;
+	position: static;
+}

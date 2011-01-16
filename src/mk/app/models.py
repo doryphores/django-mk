@@ -4,6 +4,7 @@ import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from mk.utils import charts
 import math
+import logging
 
 
 # TODO: Add this as a field on Player model
@@ -43,7 +44,7 @@ class PlayerManager(models.Manager):
 							INNER JOIN app_player p ON p.id = rr.player_id
 			WHERE		r.track_id = %s
 			GROUP BY	p.name
-			ORDER BY	track_average DESC
+			ORDER BY	track_average DESC, rcount DESC
 		''', [POSITION_POINTS[0], POSITION_POINTS[1], POSITION_POINTS[2], POSITION_POINTS[3], track.pk])
 
 class Player(models.Model):
@@ -159,7 +160,7 @@ class Player(models.Model):
 
 
 class TrackManager(models.Manager):
-	def all_by_popularity(self):
+	def all_with_counts(self):
 		return Track.objects.raw('''
 			select		app_track.*, count(race_id) as count
 			from		app_track left outer join (select app_race.track_id as race_track_id, app_race.id as race_id from app_race inner join app_event on app_event.id = app_race.event_id and app_event.completed = 1)
@@ -172,13 +173,15 @@ class Track(models.Model):
 	
 	objects = TrackManager()
 	
-	def _get_king(self):
-		kings = Player.objects.get_track_rankings(self)
-		if len(list(kings)):
-			return kings[0]
-		else:
-			return None
-	king = property(_get_king)
+	def update_kings(self):
+		average = 0
+		
+		self.kings.all().delete()
+		for player in Player.objects.get_track_rankings(self):
+			if average and average != player.track_average:
+				break
+			King.objects.create(track=self, player=player, average=player.track_average, race_count=player.rcount)
+			average = player.track_average
 	
 	def _get_race_count(self):
 		return Race.completed_objects.filter(track=self).count()
@@ -189,6 +192,19 @@ class Track(models.Model):
 	
 	class Meta:
 		ordering = ['name']
+
+
+class King(models.Model):
+	player = models.ForeignKey(Player, related_name='titles')
+	track = models.ForeignKey(Track, related_name='kings')
+	average = models.FloatField(default=0.0)
+	race_count = models.PositiveIntegerField(default=0)
+	
+	def __unicode__(self):
+		return u'%s is King of %s (average: %.2f)' % (self.player, self.track, self.average)
+	
+	class Meta:
+		ordering = ['track', 'player']
 
 
 class CompletedEventResultManager(models.Manager):
@@ -398,6 +414,10 @@ class Event(models.Model):
 			# Update rating
 			result.player.rating += rating_changes[result.player]
 			result.player.save()
+		
+		# Update track kings
+		for race in self.races.all():
+				race.track.update_kings()
 		
 		# Now we need to update any subsequent stats records as they depend on eachother
 		try:

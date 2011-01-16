@@ -56,7 +56,7 @@ def player(request, player_id):
 	}, context_instance=RequestContext(request))
 
 def tracks(request):
-	track_list = Track.objects.all_by_popularity()
+	track_list = Track.objects.all()
 	
 	return render_to_response('tracks.djhtml', { 'track_list': track_list }, context_instance=RequestContext(request))
 
