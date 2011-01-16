@@ -25,7 +25,7 @@ ELO_K = 8
 
 class ActivePlayerManager(models.Manager):
 	def get_query_set(self):
-		return super(ActivePlayerManager, self).get_query_set().filter(active=True)
+		return super(ActivePlayerManager, self).get_query_set().filter(active=True, race_count__gt=0)
 
 class PlayerManager(models.Manager):
 	def get_track_rankings(self, track):
@@ -152,6 +152,27 @@ class Player(models.Model):
 			ORDER BY	average DESC
 		''', [POSITION_POINTS[0], POSITION_POINTS[1], POSITION_POINTS[2], POSITION_POINTS[3], self.pk])
 	
+	def get_success_rates(self):
+		return Player.objects.raw('''
+			SELECT	p2.*,
+					AVG(rr.position < (
+						SELECT	rr2.position
+						FROM	app_raceresult rr2
+						WHERE	rr2.race_id = r.id
+								AND rr2.player_id = p2.id
+					)) AS performance
+			FROM	app_raceresult rr
+						INNER JOIN app_race r ON r.id = rr.race_id
+						INNER JOIN app_event e ON e.id = r.event_id AND e.completed = 1
+						LEFT JOIN app_player p2 ON p2.id IN (
+							SELECT	DISTINCT(player_id)
+							FROM	app_raceresult
+						) AND p2.id != rr.player_id
+			WHERE 	rr.player_id = %s
+			GROUP BY p2.id
+			ORDER BY performance DESC
+		''', [self.pk])
+			
 	def __unicode__(self):
 		return self.name
 	
@@ -204,7 +225,7 @@ class King(models.Model):
 		return u'%s is King of %s (average: %.2f)' % (self.player, self.track, self.average)
 	
 	class Meta:
-		ordering = ['track', 'player']
+		ordering = ['track', '-race_count']
 
 
 class CompletedEventResultManager(models.Manager):

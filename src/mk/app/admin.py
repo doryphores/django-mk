@@ -10,6 +10,8 @@ admin.site.register(Player, PlayerAdmin)
 
 admin.site.register(Track)
 
+admin.site.register(King)
+
 class EventResultInline(admin.TabularInline):
 	model = EventResult
 	extra = 0
