@@ -11,7 +11,7 @@
 			{% if kings %}
 				<p>King{{ kings|pluralize }}:
 					{% for king in kings %}
-					<strong>{{ king.player.name }}</strong> ({{ king.average|stringformat:".2f" }})
+					<strong>{{ king.player.name }}</strong> ({{ king.average|stringformat:".2f" }}){% if not forloop.last %},{% endif %}
 					{% endfor %}
 					<span class="avatars">
 					{% for king in kings %}
