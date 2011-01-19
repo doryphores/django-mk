@@ -8,7 +8,7 @@ $("div").live('pagecreate', function (event) {
 	$(".latest-stats", event.target).tablesorter({
 		textExtraction: function(node) {
 			return node.innerHTML.replace(/<small>.*<\/small>/, '');
-        } 
+		}
 	});
 	
 	var pageWidth = $(event.target).width() - 30;

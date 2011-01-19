@@ -668,7 +668,7 @@ class PlayerHistory(models.Model):
 		self.form = self.player.form
 		
 		super(PlayerHistory, self).save(*args, **kwargs)
-	
+			
 	class Meta:
 		ordering =['event']
 		verbose_name = 'Player history record'

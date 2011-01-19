@@ -25,7 +25,8 @@ class RaceForm(forms.Form):
 		
 		super(RaceForm, self).__init__(*args, **kwargs)
 		
-		self.fields['track'].choices = [(track.pk, track.name) for track in instance.get_available_tracks()]
+		self.fields['track'].choices = [(0, 'Select a track')]
+		self.fields['track'].choices.extend([(track.pk, track.name) for track in instance.get_available_tracks()])
 		if (instance.track != None):
 			self.fields['track'].initial = instance.track.pk
 		player_choices = [(player.pk, player.name) for player in instance.event.players.all()]
@@ -41,6 +42,9 @@ class RaceForm(forms.Form):
 	def clean(self):
 		cleaned_data = self.cleaned_data
 		players = [cleaned_data.get('first'), cleaned_data.get('second'), cleaned_data.get('third'), cleaned_data.get('fourth')]
+		
+		if cleaned_data.get('track') == '0':
+			raise ValidationError, "Select a track Rota Boy!"
 		
 		for player in players:
 			if player == None:
