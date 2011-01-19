@@ -73,6 +73,8 @@ def track(request, track_id):
 
 @transaction.commit_on_success()
 def new(request):
+	selected_players = None
+	
 	if request.method == 'POST':
 		selected_players = Player.objects.filter(pk__in=request.POST.getlist('players'))
 		
@@ -88,10 +90,12 @@ def new(request):
 			return HttpResponseRedirect('/race/')
 		else:
 			messages.error(request, 'Please select exactly 4 players')
-	else:
-		selected_players = Player.objects.none()
 	
-	player_list = Player.objects.order_by('name').all()
+	# Order player list by race_count
+	player_list = Player.objects.order_by('-race_count').all()
+	if not selected_players:
+		# Auto select most fanatic players
+		selected_players = player_list[:4]
 	
 	return render_to_response('new.djhtml', { 'player_list': player_list, 'selected_players': selected_players }, context_instance=RequestContext(request))
 
