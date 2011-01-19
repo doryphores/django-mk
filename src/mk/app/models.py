@@ -85,6 +85,13 @@ class Player(models.Model):
 			return 0
 	rating_change = property(_get_rating_change)
 	
+	def get_last_result(self):
+		try:
+			latest_result = EventResult.completed_objects.filter(player=self)[FORM_COUNT-1:FORM_COUNT].get()
+			return latest_result.points
+		except EventResult.DoesNotExist:
+			return 0
+	
 	def get_rating_history(self):
 		cursor = connection.cursor()
 		cursor.execute('''

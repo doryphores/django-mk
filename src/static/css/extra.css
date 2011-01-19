@@ -13,9 +13,18 @@ html {
 	margin: 0;
 }
 
+.live-results .ui-li-thumb {
+	left: 10px !important;
+	top: 8px !important;
+}
+
 .live-results .ui-btn-inner {
 	min-height: 22px;
-	padding-left: 50px;
+	padding-left: 70px;
+}
+
+.live-results h4 {
+	margin-bottom: 5px;
 }
 
 .live-results .points {

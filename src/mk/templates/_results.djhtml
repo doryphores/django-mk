@@ -9,6 +9,11 @@
 		{% endif %}
 		<div class="ui-btn-inner">
 		<h4>{{ result.player.name }}</h4>
+		{% with result.player.get_last_result as last_result %}
+		{% if last_result %}
+		<p>Must match <strong>{{ last_result }}</strong> to stay on form</p>
+		{% endif %}
+		{% endwith %}
 		<span class="points">
 			{{ result.points }}
 			<span>({{ result.rating|stringformat:'+0d' }})</span>
