@@ -74,6 +74,7 @@
 	</thead>
 	<tbody>
 		{% for player in players %}
+		{% if player.performance != None %}
 		<tr class="ui-btn-up-c">
 			<td class="avatar"><a href="{{ base_url }}/player/{{ player.pk }}/">
 				{% if player.avatar %}
@@ -85,6 +86,7 @@
 			<td class="name"><a href="{{ base_url }}/player/{{ player.pk }}/">{{ player.name }}</a></td>
 			<td>{{ player.performance|percentage:1 }}</td>
 		</tr>
+		{% endif %}
 		{% endfor %}
 	</tbody>
 </table>
