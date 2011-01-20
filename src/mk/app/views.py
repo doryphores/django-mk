@@ -190,10 +190,30 @@ def finish(request):
 		messages.error(request, 'Event not found in session')
 		return HttpResponseRedirect('/')
 	
+	old_kings = {}
+	for track in event.tracks.all():
+		old_kings[track.pk] = list(track.kings.values_list('player__name', flat=True))
+	
 	event.completed = True
 	event.save()
+	
+	event = Event.objects.get(pk=event.pk)
+	
+	new_kings = []
+	for track in event.tracks.all():
+		king_names = list(track.kings.values_list('player__name', flat=True))
+		if king_names != old_kings[track.pk]:
+			new_kings.append({
+				'track': track.name,
+				'new': king_names,
+				'old': old_kings[track.pk],
+			})
+	
+	view_vars = {
+		'new_kings': new_kings,
+	}
 	
 	# Remove event from session
 	del request.session['event_pk']
 	
-	return HttpResponseRedirect('/')
+	return render_to_response('summary.djhtml', view_vars, context_instance=RequestContext(request))

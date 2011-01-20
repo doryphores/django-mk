@@ -1,0 +1,22 @@
+{% extends "base.djhtml" %}
+
+{% block page_title %}Summary of changes{% endblock %}
+
+{% block content %}
+
+{% if new_kings %}
+<h2>New kings</h2>
+<ul data-role="listview" data-inset="true">
+{% for king in new_kings %}
+	<li>
+		<h4>{{ king.track }}</h4>
+		<h3>New king: {{ king.new|join:", " }}</h3>
+		<p>Deposed: {{ king.old|join:", " }}</p>
+	</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<a href="{{ base_url }}/" data-role="button" data-theme="b" data-inline="true">Go to the graphs</a>
+
+{% endblock %}

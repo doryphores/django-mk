@@ -23,9 +23,9 @@
 		<tr class="ui-btn-up-c">
 			<td class="avatar"><a href="{{ base_url }}/player/{{ player.pk }}/">
 				{% if player.avatar %}
-				<img src="{{ player.avatar.url }}" width="40" height="40">
+				<img src="{{ player.avatar.url }}" width="50" height="50">
 				{% else %}
-				<img src="/static/images/avatars/default.png" width="40" height="40">
+				<img src="/static/images/avatars/default.png" width="50" height="50">
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ base_url }}/player/{{ player.pk }}/">{{ player.name }}</a></td>

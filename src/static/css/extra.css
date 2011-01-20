@@ -14,8 +14,8 @@ html {
 }
 
 .live-results .ui-li-thumb {
-	left: 10px !important;
-	top: 8px !important;
+	left: 12px !important;
+	top: 6px !important;
 }
 
 .live-results .ui-btn-inner {
@@ -25,6 +25,10 @@ html {
 
 .live-results h4 {
 	margin-bottom: 5px;
+}
+
+.live-results p {
+	margin-bottom: 0;
 }
 
 .live-results .points {

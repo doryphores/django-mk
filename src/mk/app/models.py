@@ -314,6 +314,7 @@ class Event(models.Model):
 	event_date = models.DateTimeField(unique=True)
 	completed = models.BooleanField(default=False)
 	players = models.ManyToManyField(Player, through='EventResult')
+	tracks = models.ManyToManyField(Track, through='Race')
 	
 	objects = models.Manager()
 	completed_objects = CompletedEventManager()
