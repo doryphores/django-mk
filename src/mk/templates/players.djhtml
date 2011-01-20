@@ -5,7 +5,7 @@
 {% block content %}
 <ul data-role="listview">
 	{% for player in player_list %}
-	<li><a href="{{ base_url }}/player/{{ player.pk }}/">
+	<li><a href="/player/{{ player.pk }}/">
 		<h3>{{ player.name }}</h3>
 		<p>
 			Rank: <strong>#{{ forloop.counter }}</strong>

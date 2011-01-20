@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action="{{ base_url }}/new/" method="post">
+<form action="/new/" method="post">
 {% csrf_token %}
 <fieldset data-role="controlgroup">
 <legend>Select players</legend>

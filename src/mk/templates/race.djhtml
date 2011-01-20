@@ -4,7 +4,7 @@
 
 {% block content %}
 {{ form.non_field_errors }}
-<form action="{{ base_url }}/race/{{ race.pk|default_if_none:0 }}/" method="post" class="ui-body">
+<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post" class="ui-body">
 	{% csrf_token %}
 	{{ form.track.label_tag }}
 	{{ form.track }}
@@ -27,7 +27,7 @@
 	<div class="ui-grid-a">
 		<div class="ui-block-a">
 		{% if previous_race %}
-			<a href="{{ base_url }}/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous race</a>
+			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous race</a>
 		{% else %}
 			&nbsp;
 		{% endif %}

@@ -109,10 +109,6 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 SESSION_COOKIE_AGE = 10800 # 3 Hours
 
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
-	"mk.app.context_processors.base_url",
-)
-
 INSTALLED_APPS = (
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -128,16 +124,19 @@ INSTALLED_APPS = (
 try:
 	import local_settings
 except ImportError:
-	print """ 
-		-------------------------------------------------------------------------
-		You need to create a local_settings.py file which needs to contain at least
-		database connection information.
-		
-		Copy local_settings_example.py to local_settings.py and edit it.
-		-------------------------------------------------------------------------
-		"""
-	import sys 
-	sys.exit(1)
+	pass
+	#===========================================================================
+	# print """ 
+	#	-------------------------------------------------------------------------
+	#	You need to create a local_settings.py file which needs to contain at least
+	#	database connection information.
+	#	
+	#	Copy local_settings_example.py to local_settings.py and edit it.
+	#	-------------------------------------------------------------------------
+	#	"""
+	# import sys 
+	# sys.exit(1)
+	#===========================================================================
 else:
 	# Import any symbols that begin with A-Z. Append to lists any symbols that
 	# begin with "EXTRA_".
