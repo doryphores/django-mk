@@ -20,7 +20,6 @@ set :use_sudo, false
 # Source control
 
 set :repository,  "git@github.com:doryphores/django-mk.git"
-set :branch, "develop"
 set :scm, :git
 set :deploy_via, :remote_cache
 default_run_options[:pty] = true  # Must be set for the password prompt from git to work
