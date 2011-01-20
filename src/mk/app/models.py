@@ -22,6 +22,8 @@ RANK_STRINGS = ['first', 'second', 'third', 'fourth']
 
 ELO_K = 8
 
+OLD_EVENT_AGE = 2 # Number of days an incomplete event stays in the database
+
 
 class ActivePlayerManager(models.Manager):
 	def get_query_set(self):

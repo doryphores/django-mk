@@ -103,5 +103,10 @@ namespace :django do
     run "#{current_path}/#{app_location}/manage.py update_history --noinput"
   end
   
-  after "deploy", "django:migrate", "django:update"
+  desc "Cleanup"
+  task :cleanup do
+    run "#{current_path}/#{app_location}/manage.py cleanup"
+  end
+  
+  after "deploy", "django:migrate"
 end
