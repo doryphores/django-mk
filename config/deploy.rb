@@ -94,7 +94,7 @@ namespace :deploy do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     
     # Symlink to admin media folder
-    run "ln -s #{django_admin_media} #{latest_release}/#{static_location}/admin_media"
+    run "ln -s #{django_admin_media} #{latest_release}/#{static_location}/admin-media"
     
     # Symlink database
     run "ln -s #{shared_path}/system/db.sqlite #{latest_release}/#{db_location}/db.sqlite"
