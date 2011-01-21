@@ -209,11 +209,13 @@ def finish(request):
 				'old': old_kings[track.pk],
 			})
 	
-	view_vars = {
-		'new_kings': new_kings,
-	}
-	
 	# Remove event from session
 	del request.session['event_pk']
 	
-	return render_to_response('summary.djhtml', view_vars, context_instance=RequestContext(request))
+	if new_kings:
+		view_vars = {
+			'new_kings': new_kings,
+		}
+		return render_to_response('summary.djhtml', view_vars, context_instance=RequestContext(request))
+	else:
+		return HttpResponseRedirect('/')
