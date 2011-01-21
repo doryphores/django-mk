@@ -29,8 +29,6 @@ role :app, domain
 role :db,  domain, :primary => true
 
 
-after "deploy:update", "deploy:cleanup"
-
 # Backups
 
 namespace :backup do
@@ -128,5 +126,5 @@ namespace :django do
     django_manage "cleanup"
   end
   
-  after "deploy", "django:migrate", "django:cleanup", "django:update"
+  after "deploy", "django:migrate", "django:cleanup", "django:update", "deploy:cleanup"
 end
