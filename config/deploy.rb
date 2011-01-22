@@ -24,6 +24,18 @@ set :scm, :git
 set :deploy_via, :remote_cache
 default_run_options[:pty] = true  # Must be set for the password prompt from git to work
 
+set :branch do
+  default_tag = `git tag`.split("\n").last
+
+  tag = Capistrano::CLI.ui.ask "Tag to deploy (make sure to push the tag first, A to abort): [#{default_tag}] "
+  tag = default_tag if tag.empty?
+  if tag == 'A' then
+    error = CommandError.new("Aborted")
+    raise error
+  end
+  tag
+end
+
 role :web, domain
 role :app, domain
 role :db,  domain, :primary => true
@@ -36,12 +48,12 @@ namespace :backup do
     run "mkdir -p #{deploy_to}/#{backup_dir}"
   end
   
-  task :db do
+  task :run do
     run "cp #{shared_path}/system/db.sqlite #{backup_dir}/db.#{Time.now.to_f}.sqlite"
   end
   
   after   "deploy:setup", "backup:setup"
-  before  "deploy", "backup:db"
+  after   "deploy", "backup:run"
 end
 
 
@@ -85,7 +97,8 @@ end
 # Override default capistrano tasks
 
 namespace :deploy do
-  task :start do ; end
+  task :start do
+  end
   task :stop do ; end
   task :finalize_update do
     run "chown -R :www-data #{latest_release}"
