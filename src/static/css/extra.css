@@ -140,6 +140,10 @@ table.stats td {
 	font-weight: normal;
 }
 
+table.stats td:first-child {
+	border-left: none;
+}
+
 table.stats .form-event td {
 	font-weight: bold;
 }
@@ -150,7 +154,6 @@ table.stats td.name {
 
 table.stats td.avatar {
 	padding: 0;
-	border-left: none;
 }
 
 table.stats td.avatar img {
