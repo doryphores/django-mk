@@ -185,6 +185,10 @@ class Player(models.Model):
 	def __unicode__(self):
 		return self.name
 	
+	@models.permalink
+	def get_absolute_url(self):
+		return ('mk.app.views.player', (), { 'player_id': str(self.pk) })
+	
 	class Meta:
 		ordering = ['name']
 
@@ -219,6 +223,10 @@ class Track(models.Model):
 	
 	def __unicode__(self):
 		return self.name
+	
+	@models.permalink
+	def get_absolute_url(self):
+		return ('mk.app.views.track', (), { 'track_id': str(self.pk) })
 	
 	class Meta:
 		ordering = ['name']

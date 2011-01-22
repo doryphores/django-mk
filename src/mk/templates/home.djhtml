@@ -21,14 +21,14 @@
 	<tbody>
 	{% for player in players %}
 		<tr class="ui-btn-up-c">
-			<td class="avatar"><a href="/player/{{ player.pk }}/">
+			<td class="avatar"><a href="{{ player.get_absolute_url }}">
 				{% if player.avatar %}
 				<img src="{{ player.avatar.url }}" width="50" height="50">
 				{% else %}
 				<img src="/static/images/avatars/default.png" width="50" height="50">
 				{% endif %}
 			</a></td>
-			<td class="name"><a href="/player/{{ player.pk }}/">{{ player.name }}</a></td>
+			<td class="name"><a href="{{ player.get_absolute_url }}">{{ player.name }}</a></td>
 			<td>{{ player.points }}</td>
 			<td>{{ player.race_count }}</td>
 			<td>{{ player.average|stringformat:'0.2f' }}</td>

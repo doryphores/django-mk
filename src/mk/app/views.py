@@ -7,6 +7,7 @@ from django.db import transaction
 from django.contrib import messages
 from mk.app.forms import RaceForm
 from django.db.models import Min, Max
+from django.core.urlresolvers import reverse
 
 def home(request):
 	players = Player.active_objects.order_by('-rating')
@@ -103,12 +104,12 @@ def new(request):
 def race(request, race_id=0):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	
 	try:
 		race = Race.objects.filter(event=event).get(pk=race_id)
@@ -130,7 +131,7 @@ def race(request, race_id=0):
 				RaceResult(race=race, player=Player.objects.get(pk=form.cleaned_data[position]), position=i).save()
 			
 			if event.race_count == RACE_COUNT:
-				return HttpResponseRedirect('/confirm/')
+				return HttpResponseRedirect(reverse('confirm-results'))
 			else:
 				try:
 					next_race = event.races.get(order=race.order + 1)
@@ -161,12 +162,12 @@ def race(request, race_id=0):
 def confirm(request):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	
 	ratings = event.get_rating_changes()
 	results = [{'player': r.player, 'points': r.points, 'rating': ratings[r.player]} for r in event.results.all()]
@@ -183,12 +184,12 @@ def confirm(request):
 def finish(request):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))
 	
 	old_kings = {}
 	for track in event.tracks.all():
@@ -218,4 +219,4 @@ def finish(request):
 		}
 		return render_to_response('summary.djhtml', view_vars, context_instance=RequestContext(request))
 	else:
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect(reverse('home-page'))

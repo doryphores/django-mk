@@ -17,6 +17,6 @@
 </ul>
 {% endif %}
 
-<a href="/" data-role="button" data-theme="b" data-inline="true">Go to the graphs</a>
+<a href="{% url home-page %}" data-role="button" data-theme="b" data-inline="true">Go to the graphs</a>
 
 {% endblock %}

@@ -22,7 +22,7 @@ $(document).bind("mobileinit", function(){
 <div data-role="page">
 	<div data-role="header" data-nobackbtn="true">
 		<h1>{% block page_title %}{% endblock %}</h1>
-		<a href="/new/" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
+		<a href="{% url new-event %}" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
 	</div>
 	<div data-role="content">
 	{% if messages %}
@@ -37,9 +37,9 @@ $(document).bind("mobileinit", function(){
 	<div data-role="footer" data-position="fixed" data-id="footer-nav">
 		<div data-role="navbar" class="footer-nav">
 			<ul>
-				<li id="btn-home"><a href="/" data-icon="custom">Home</a></li>
-				<li id="btn-players"><a href="/players/" data-icon="custom">Players</a></li>
-				<li id="btn-tracks"><a href="/tracks/" data-icon="custom">Tracks</a></li>
+				<li id="btn-home"><a href="{% url home-page %}" data-icon="custom">Home</a></li>
+				<li id="btn-players"><a href="{% url player-list %}" data-icon="custom">Players</a></li>
+				<li id="btn-tracks"><a href="{% url track-list %}" data-icon="custom">Tracks</a></li>
 				{#<li id="btn-events"><a href="/events/" data-icon="custom">Events</a></li>#}
 			</ul>
 		</div>
