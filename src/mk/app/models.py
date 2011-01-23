@@ -151,7 +151,11 @@ class Player(models.Model):
 							WHEN rr.position = 2 THEN %s
 							WHEN rr.position = 3 THEN %s
 						END) AS average,
-						count(distinct r.id) as rcount
+						count(distinct r.id) as rcount,
+						(SELECT	count(*)
+						FROM	app_king k
+						WHERE	k.track_id = t.id
+								AND k.player_id = rr.player_id) > 0 as is_king 
 			FROM		app_track t
 							INNER JOIN app_race r ON r.track_id = t.id
 							INNER JOIN app_raceresult rr ON rr.race_id = r.id

@@ -1,4 +1,4 @@
-{% extends "base.djhtml" %}
+{% extends "page.djhtml" %}
 
 {% block page_title %}Player: {{ player.name }}{% endblock %}
 
@@ -21,8 +21,8 @@
 	Lowest score: <strong>{{ scores.min }}</strong>
 </p>
 
-<h3>Last {{ recent_rankings|length }} event results</h3>
-<span class="results-chart" chart-url="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxl=0:|4th|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:',' }}&chdlp=l&chts=000000,12"></span>
+<a href="{% url player-events player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-inline="true" data-icon="arrow-u">Recent events</a>
+<a href="{% url player-tracks player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-inline="true" data-icon="arrow-u">Track stats</a>
 
 <div class="ui-grid-a">
 	<div class="ui-block-a">
@@ -34,33 +34,6 @@
 		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.event_count }}&chd=t:{{ player.event_firsts }},{{ player.event_seconds }},{{ player.event_thirds }},{{ player.event_fourths }}&chdlp=l&chl=1st ({{ player.event_firsts|percentage:player.event_count }})|2nd ({{ player.event_seconds|percentage:player.event_count }})|3rd ({{ player.event_thirds|percentage:player.event_count }})|4th ({{ player.event_fourths|percentage:player.event_count }})" width="380" height="200" alt="" />
 	</div>
 </div>
-<h3>Recent events</h3>
-<table class="stats">
-	<thead>
-		<tr>
-			<th>Event</th>
-			<th>Firsts</th>
-			<th>Seconds</th>
-			<th>Thirds</th>
-			<th>Fourths</th>
-			<th>Points</th>
-			<th>Rank</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for result in recent_results %}
-		<tr class="ui-btn-up-c{% if forloop.counter0 < 10 %} form-event{% endif %}">
-			<td class="name">{{ result.event }}</td>
-			<td>{{ result.firsts }}</td>
-			<td>{{ result.seconds }}</td>
-			<td>{{ result.thirds }}</td>
-			<td>{{ result.fourths }}</td>
-			<td>{{ result.points }}</td>
-			<td class="name">{{ result.rank|position }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
 {% with player.get_success_rates as players %}
 {% if players %}
 <h3>Opponent stats</h3>
@@ -87,30 +60,6 @@
 			<td class="avatar"><img src="http://chart.apis.google.com/chart?chf=bg,s,00000000&chxs=0,676767,9&chxt=x&chs=150x80&cht=gm&chco=6D6D6D&chd=t:{% widthratio player.performance 1 100 %}&chl={{ player.performance|percentage:1 }}25&chma=0,0,5,5" width="150" height="80" alt="" /></td>
 		</tr>
 		{% endif %}
-		{% endfor %}
-	</tbody>
-</table>
-{% endif %}
-{% endwith %}
-
-{% with player.get_track_averages as tracks %}
-{% if tracks %}
-<h3>Track stats</h3>
-<table class="stats">
-	<thead>
-		<tr>
-			<th>Track</th>
-			<th>Average</th>
-			<th>Races</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for track in tracks %}
-		<tr class="ui-btn-up-c">
-			<td class="name"><a href="{{ track.get_absolute_url }}">{{ track.name }}</a></td>
-			<td>{{ track.average|stringformat:"0.2f" }}</td>
-			<td>{{ track.rcount }}</td>
-		</tr>
 		{% endfor %}
 	</tbody>
 </table>

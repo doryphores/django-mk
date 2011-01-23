@@ -9,6 +9,8 @@ urlpatterns = patterns('mk.app.views',
 	url(r'^finish/$', 'finish', name="finish-event"),
 	url(r'^players/$', 'players', name='player-list'),
 	(r'^player/(?P<player_id>\d+)/$', 'player'),
+	url(r'^player/(?P<player_id>\d+)/events/$', 'player_events', name="player-events"),
+	url(r'^player/(?P<player_id>\d+)/tracks/$', 'player_tracks', name="player-tracks"),
 	url(r'^tracks/$', 'tracks', name="track-list"),
 	(r'^track/(?P<track_id>\d+)/$', 'track'),
 )

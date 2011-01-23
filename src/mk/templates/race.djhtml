@@ -1,4 +1,4 @@
-{% extends "base.djhtml" %}
+{% extends "page.djhtml" %}
 
 {% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 

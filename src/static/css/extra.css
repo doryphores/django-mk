@@ -110,10 +110,12 @@ html {
 
 table.stats {
 	border-collapse: collapse;
+	position: relative;
 }
 
 table.stats tr {
 	cursor: default;
+	position: relative;
 }
 
 table.stats th {
@@ -171,6 +173,18 @@ table.stats td.delta-u {
 
 table.stats td.delta-d {
 	color: #d8242c;
+}
+
+table.stats strong.king {
+	position: absolute;
+	width: 40px;
+	height: 30px;
+	right: -50px;
+	background: url(../images/icons/king.png) no-repeat center center;
+	overflow: hidden;
+	text-indent: -999em;
+	text-align: left;
+	margin-top: -5px;
 }
 
 table.latest-stats {

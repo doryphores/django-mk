@@ -1,0 +1,34 @@
+{% extends "dialog.djhtml" %}
+
+{% block page_title %}Track stats for {{ player.name }}{% endblock %}
+
+{% block content %}
+{% with player.get_track_averages as tracks %}
+{% if tracks %}
+<h3>Track stats</h3>
+<table class="stats">
+	<thead>
+		<tr>
+			<th>Track</th>
+			<th>Average</th>
+			<th>Races</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for track in tracks %}
+		<tr class="ui-btn-up-c">
+			<td class="name">{{ track.name }}</td>
+			<td>
+				{{ track.average|stringformat:"0.2f" }}
+				{% if track.is_king %}
+				<strong class="king">(King)</strong>
+				{% endif %}
+			</td>
+			<td>{{ track.rcount }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+{% endwith %}
+{% endblock %}

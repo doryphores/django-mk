@@ -1,0 +1,27 @@
+{% extends "base.djhtml" %}
+
+{% block body %}
+<div data-role="header" data-nobackbtn="true">
+	<h1>{% block page_title %}{% endblock %}</h1>
+	<a href="{% url new-event %}" data-theme="b" data-icon="plus" rel="external" class="ui-btn-right">New event</a>
+</div>
+<div data-role="content">
+{% if messages %}
+<ul class="errorlist">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% block content %}{% endblock %}
+</div>
+<div data-role="footer" data-position="fixed" data-id="footer-nav">
+	<div data-role="navbar" class="footer-nav">
+		<ul>
+			<li id="btn-home"><a href="{% url home-page %}" data-icon="custom">Home</a></li>
+			<li id="btn-players"><a href="{% url player-list %}" data-icon="custom">Players</a></li>
+			<li id="btn-tracks"><a href="{% url track-list %}" data-icon="custom">Tracks</a></li>
+		</ul>
+	</div>
+</div>
+{% endblock %}

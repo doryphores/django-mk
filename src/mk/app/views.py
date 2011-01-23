@@ -39,21 +39,40 @@ def player(request, player_id):
 	
 	event_results = EventResult.completed_objects.filter(player=player).select_related('event')
 	
+	scores = event_results.aggregate(min=Min('points'), max=Max('points'))
+	
+	return render_to_response('player.djhtml', {
+		'total_event_count': total_event_count,
+		'player': player,
+		'scores': scores,
+	}, context_instance=RequestContext(request))
+
+def player_events(request, player_id):
+	player = get_object_or_404(Player, pk=player_id)
+	
+	total_event_count = Event.completed_objects.count()
+	
+	event_results = EventResult.completed_objects.filter(player=player).select_related('event')
+	
 	# Data for event ranking graph (reverse rank values to fit graph)
 	recent_rankings = [str(abs(er.rank - 3)+1) for er in event_results[0:100]]
 	# Reverse order so that recent events are on the left
 	recent_rankings.reverse()
 	
-	scores = event_results.aggregate(min=Min('points'), max=Max('points'))
-	
 	recent_results = event_results[0:20]
 	
-	return render_to_response('player.djhtml', {
+	return render_to_response('player_events.djhtml', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'recent_rankings': recent_rankings,
-		'scores': scores,
 		'recent_results': recent_results,
+	}, context_instance=RequestContext(request))
+
+def player_tracks(request, player_id):
+	player = get_object_or_404(Player, pk=player_id)
+	
+	return render_to_response('player_tracks.djhtml', {
+		'player': player,
 	}, context_instance=RequestContext(request))
 
 def tracks(request):

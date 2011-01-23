@@ -1,0 +1,38 @@
+{% extends "dialog.djhtml" %}
+
+{% block page_title %}Recent events for {{ player.name }}{% endblock %}
+
+{% load formatters %}
+
+{% block content %}
+<h2>Last {{ recent_rankings|length }} event results</h2>
+<span class="results-chart" chart-url="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxl=0:|4th|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:',' }}&chdlp=l&chts=000000,12"></span>
+
+<h2>Recent events results</h2>
+<table class="stats">
+	<thead>
+		<tr>
+			<th>Event</th>
+			<th>Firsts</th>
+			<th>Seconds</th>
+			<th>Thirds</th>
+			<th>Fourths</th>
+			<th>Points</th>
+			<th>Rank</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for result in recent_results %}
+		<tr class="ui-btn-up-c{% if forloop.counter0 < 10 %} form-event{% endif %}">
+			<td class="name">{{ result.event }}</td>
+			<td>{{ result.firsts }}</td>
+			<td>{{ result.seconds }}</td>
+			<td>{{ result.thirds }}</td>
+			<td>{{ result.fourths }}</td>
+			<td>{{ result.points }}</td>
+			<td class="name">{{ result.rank|position }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
