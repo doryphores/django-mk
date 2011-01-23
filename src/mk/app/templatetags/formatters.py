@@ -1,5 +1,4 @@
 from django import template
-from mk.app.models import RANK_STRINGS
 from django.template.defaultfilters import stringfilter
 
 register = template.Library()
@@ -14,4 +13,4 @@ percentage.is_safe = True
 @stringfilter
 def position(value):
 	"Displays race or event position as string"
-	return RANK_STRINGS[int(value)]
+	return "#%s" % str(int(value) + 1)

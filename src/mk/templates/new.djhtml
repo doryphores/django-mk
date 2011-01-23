@@ -4,6 +4,7 @@
 
 {% block content %}
 
+<div class="race-form">
 <form action="/new/" method="post">
 {% csrf_token %}
 <fieldset data-role="controlgroup">
@@ -13,7 +14,10 @@
 <label for="player{{ forloop.counter }}">{{ player.name }}</label>
 {% endfor %}
 </fieldset>
+<div class="actions">
 <input type="submit" value="Start" data-inline="true" data-theme="b" data-icon="arrow-r">
+</div>
 </form>
+</div>
 
 {% endblock %}

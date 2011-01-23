@@ -1,11 +1,11 @@
 <h3>Results</h3>
-<ul data-role="listview" data-inset="true" data-theme="d" class="live-results">
+<ul data-role="listview" data-inset="true" data-theme="c" class="live-results">
 	{% for result in results %}
 	<li>
 		{% if result.player.avatar %}
-		<img src="{{ result.player.avatar.url }}" width="40" height="40">
+		<img src="{{ result.player.avatar.url }}">
 		{% else %}
-		<img src="/static/images/avatars/default.png" width="40" height="40">
+		<img src="/static/images/avatars/default.png">
 		{% endif %}
 		<div class="ui-btn-inner">
 		<h4>{{ result.player.name }}</h4>

@@ -5,7 +5,6 @@
 {% block content %}
 {% with player.get_track_averages as tracks %}
 {% if tracks %}
-<h3>Track stats</h3>
 <table class="stats">
 	<thead>
 		<tr>
@@ -18,7 +17,7 @@
 		{% for track in tracks %}
 		<tr class="ui-btn-up-c">
 			<td class="name">{{ track.name }}</td>
-			<td>
+			<td class="right">
 				{{ track.average|stringformat:"0.2f" }}
 				{% if track.is_king %}
 				<strong class="king">(King)</strong>

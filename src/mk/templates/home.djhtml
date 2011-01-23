@@ -10,10 +10,11 @@
 <table class="stats latest-stats">
 	<thead>
 		<tr>
-			<th colspan="2" />
-			<th>Points</th>
-			<th>Races</th>
-			<th>Average</th>
+			<th/>
+			<th/>
+			<th class="optional">Points</th>
+			<th class="optional">Races</th>
+			<th class="optional">Average</th>
 			<th>Form</th>
 			<th>Rating</th>
 		</tr>
@@ -23,17 +24,17 @@
 		<tr class="ui-btn-up-c">
 			<td class="avatar"><a href="{{ player.get_absolute_url }}">
 				{% if player.avatar %}
-				<img src="{{ player.avatar.url }}" width="50" height="50">
+				<img src="{{ player.avatar.url }}">
 				{% else %}
-				<img src="/static/images/avatars/default.png" width="50" height="50">
+				<img src="/static/images/avatars/default.png">
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ player.get_absolute_url }}">{{ player.name }}</a></td>
-			<td>{{ player.points }}</td>
-			<td>{{ player.race_count }}</td>
-			<td>{{ player.average|stringformat:'0.2f' }}</td>
-			<td class="form">{{ player.form|stringformat:'0.2f' }}</td>
-			<td class="{% if player.rating_change > 0 %}delta-u{% endif %}{% if player.rating_change < 0 %}delta-d{% endif %}">
+			<td class="optional right">{{ player.points }}</td>
+			<td class="optional right">{{ player.race_count }}</td>
+			<td class="optional right">{{ player.average|stringformat:'0.2f' }}</td>
+			<td class="form right">{{ player.form|stringformat:'0.2f' }}</td>
+			<td class="right {% if player.rating_change > 0 %}delta-u{% endif %}{% if player.rating_change < 0 %}delta-d{% endif %}">
 				{{ player.rating }}{% if player.rating_change != 0 %} <small>({{ player.rating_change|stringformat:'+0d' }})</small>{% endif %}
 			</td>
 		</tr>
@@ -53,15 +54,15 @@
 
 <h2 style="clear:left">Form over time</h2>
 
-<img src="/static/images/charts/form.png?e={{ total_event_count }}">
+<img src="/static/images/charts/form.png?e={{ total_event_count }}" class="graph">
 
 <h2>Ratings over time</h2>
 
-<img src="/static/images/charts/ratings.png?e={{ total_event_count }}">
+<img src="/static/images/charts/ratings.png?e={{ total_event_count }}" class="graph">
 
 <h2>First place performance</h2>
 
 <p>Note: Marker size reflects average</p>
 
-<img src="/static/images/charts/first_place_performance.png?e={{ total_event_count }}">
+<img src="/static/images/charts/first_place_performance.png?e={{ total_event_count }}" class="graph">
 {% endblock %}

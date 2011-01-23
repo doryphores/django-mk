@@ -21,17 +21,19 @@
 	Lowest score: <strong>{{ scores.min }}</strong>
 </p>
 
-<a href="{% url player-events player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-inline="true" data-icon="arrow-u">Recent events</a>
-<a href="{% url player-tracks player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-inline="true" data-icon="arrow-u">Track stats</a>
+<div data-role="controlgroup" data-type="horizontal">
+<a href="{% url player-events player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-icon="arrow-u">Events</a>
+<a href="{% url player-tracks player_id=player.pk %}" data-rel="dialog" data-transition="pop" data-role="button" data-theme="b" data-icon="arrow-u">Tracks</a>
+</div>
 
-<div class="ui-grid-a">
-	<div class="ui-block-a">
+<div class="result-graphs">
+	<div>
 		<h3>Race results</h3>
-		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.race_count }}&chd=t:{{ player.race_firsts }},{{ player.race_seconds }},{{ player.race_thirds }},{{ player.race_fourths }}&chdlp=l&chl=1st ({{ player.race_firsts|percentage:player.race_count }})|2nd ({{ player.race_seconds|percentage:player.race_count }})|3rd ({{ player.race_thirds|percentage:player.race_count }})|4th ({{ player.race_fourths|percentage:player.race_count }})" width="380" height="200" alt="" />
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.race_count }}&chd=t:{{ player.race_firsts }},{{ player.race_seconds }},{{ player.race_thirds }},{{ player.race_fourths }}&chdlp=l&chl=1st ({{ player.race_firsts|percentage:player.race_count }})|2nd ({{ player.race_seconds|percentage:player.race_count }})|3rd ({{ player.race_thirds|percentage:player.race_count }})|4th ({{ player.race_fourths|percentage:player.race_count }})" class="graph"/>
 	</div>
-	<div class="ui-block-b">
+	<div>
 		<h3>Event results</h3>
-		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.event_count }}&chd=t:{{ player.event_firsts }},{{ player.event_seconds }},{{ player.event_thirds }},{{ player.event_fourths }}&chdlp=l&chl=1st ({{ player.event_firsts|percentage:player.event_count }})|2nd ({{ player.event_seconds|percentage:player.event_count }})|3rd ({{ player.event_thirds|percentage:player.event_count }})|4th ({{ player.event_fourths|percentage:player.event_count }})" width="380" height="200" alt="" />
+		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.event_count }}&chd=t:{{ player.event_firsts }},{{ player.event_seconds }},{{ player.event_thirds }},{{ player.event_fourths }}&chdlp=l&chl=1st ({{ player.event_firsts|percentage:player.event_count }})|2nd ({{ player.event_seconds|percentage:player.event_count }})|3rd ({{ player.event_thirds|percentage:player.event_count }})|4th ({{ player.event_fourths|percentage:player.event_count }})" class="graph"/>
 	</div>
 </div>
 {% with player.get_success_rates as players %}
@@ -40,7 +42,7 @@
 <table class="stats">
 	<thead>
 		<tr>
-			<th></th>
+			<th class="optional"/>
 			<th>Opponent</th>
 			<th>Success rate</th>
 		</tr>
@@ -49,7 +51,7 @@
 		{% for player in players %}
 		{% if player.performance != None %}
 		<tr class="ui-btn-up-c">
-			<td class="avatar"><a href="{{ player.get_absolute_url }}">
+			<td class="avatar optional"><a href="{{ player.get_absolute_url }}">
 				{% if player.avatar %}
 				<img src="{{ player.avatar.url }}" width="80" height="80">
 				{% else %}
@@ -57,7 +59,7 @@
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ player.get_absolute_url }}">{{ player.name }}</a></td>
-			<td class="avatar"><img src="http://chart.apis.google.com/chart?chf=bg,s,00000000&chxs=0,676767,9&chxt=x&chs=150x80&cht=gm&chco=6D6D6D&chd=t:{% widthratio player.performance 1 100 %}&chl={{ player.performance|percentage:1 }}25&chma=0,0,5,5" width="150" height="80" alt="" /></td>
+			<td class="graph"><img src="http://chart.apis.google.com/chart?chf=bg,s,00000000&chxs=0,000000,9&chxt=x&chs=140x60&cht=gm&chco=6D6D6D&chd=t:{% widthratio player.performance 1 100 %}&chl={{ player.performance|percentage:1 }}25&chma=0,0,5,5"/></td>
 		</tr>
 		{% endif %}
 		{% endfor %}
