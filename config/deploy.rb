@@ -48,12 +48,12 @@ namespace :backup do
     run "mkdir -p #{deploy_to}/#{backup_dir}"
   end
   
-  task :run do
+  task :db do
     run "cp #{shared_path}/system/db.sqlite #{backup_dir}/db.#{Time.now.to_f}.sqlite"
   end
   
   after   "deploy:setup", "backup:setup"
-  after   "deploy", "backup:run"
+  after   "deploy", "backup:db"
 end
 
 
