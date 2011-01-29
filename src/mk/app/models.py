@@ -77,7 +77,7 @@ class Player(models.Model):
 	active_objects = ActivePlayerManager()
 	
 	def _get_event_count(self):
-		return self.race_count / RACE_COUNT
+		return self.race_count // RACE_COUNT
 	event_count = property(_get_event_count)
 	
 	def _get_rating_change(self):
@@ -643,7 +643,7 @@ class PlayerHistory(models.Model):
 	form = models.FloatField(default=0.0)
 	
 	def _get_event_count(self):
-		return self.race_count / RACE_COUNT
+		return self.race_count // RACE_COUNT
 	event_count = property(_get_event_count)
 	
 	def __unicode__(self):
