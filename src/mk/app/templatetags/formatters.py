@@ -10,6 +10,12 @@ def percentage(value, arg):
 percentage.is_safe = True
 
 @register.filter
+def ratio(value, arg):
+	"Displays ratio"
+	return "%.3f" % (float(value) / float(arg),)
+percentage.is_safe = True
+
+@register.filter
 @stringfilter
 def position(value):
 	"Displays race or event position as string"

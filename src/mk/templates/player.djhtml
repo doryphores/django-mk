@@ -36,6 +36,7 @@
 		<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxs=0,555555,14&chxt=x&chs=380x200&cht=p&chco=76A4FB&chds=0,{{ player.event_count }}&chd=t:{{ player.event_firsts }},{{ player.event_seconds }},{{ player.event_thirds }},{{ player.event_fourths }}&chdlp=l&chl=1st ({{ player.event_firsts|percentage:player.event_count }})|2nd ({{ player.event_seconds|percentage:player.event_count }})|3rd ({{ player.event_thirds|percentage:player.event_count }})|4th ({{ player.event_fourths|percentage:player.event_count }})" class="graph"/>
 	</div>
 </div>
+
 {% with player.get_success_rates as players %}
 {% if players %}
 <h3>Opponent stats</h3>

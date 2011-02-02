@@ -56,16 +56,41 @@ def player_events(request, player_id):
 	
 	# Data for event ranking graph (reverse rank values to fit graph)
 	recent_rankings = [str(abs(er.rank - 3)+1) for er in event_results[0:100]]
+	recent_points = [str(er.points) for er in event_results[0:100]]
 	# Reverse order so that recent events are on the left
 	recent_rankings.reverse()
+	recent_points.reverse()
 	
 	recent_results = event_results[0:20]
+	
+	slot_performance = player.get_slot_performance()
+	
+	# Build data sets for week day performance graph
+	
+	weekday_labels = [] # Labels for week days
+	lunch_data = [] # Lunch averages
+	evening_data = [] # Evening averages
+	wd = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',)
+	for row in slot_performance:
+		day = wd[int(row[0])-1]
+		if not day in weekday_labels:
+			weekday_labels.append(day)
+		if row[1] == 0:
+			lunch_data.append("%.2f" % row[2])
+		else:
+			evening_data.append("%.2f" % row[2])
+	
+	# Convert data sets to formatted string
+	weekday_stats = '|'.join([','.join(lunch_data), ','.join(evening_data)])
 	
 	return render_to_response('player_events.djhtml', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'recent_rankings': recent_rankings,
+		'recent_points': recent_points,
 		'recent_results': recent_results,
+		'weekday_stats': weekday_stats,
+		'weekday_labels': '|'.join(weekday_labels),
 	}, context_instance=RequestContext(request))
 
 def player_tracks(request, player_id):
