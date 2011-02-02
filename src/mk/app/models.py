@@ -196,7 +196,7 @@ class Player(models.Model):
 			FROM		app_eventresult er INNER JOIN app_event e ON e.id = er.event_id AND e.completed = 1
 			WHERE		er.player_id = %s
 			GROUP BY	(STRFTIME('%%H', e.event_date) > '16'), STRFTIME('%%w', e.event_date)
-			ORDER BY	slot, week_day
+			ORDER BY	week_day, slot
 		''', [self.pk])
 		
 		return cursor.fetchall()
