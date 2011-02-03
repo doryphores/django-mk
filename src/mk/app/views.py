@@ -67,18 +67,14 @@ def player_events(request, player_id):
 	
 	# Build data sets for week day performance graph
 	
-	weekday_labels = [] # Labels for week days
-	lunch_data = [] # Lunch averages
-	evening_data = [] # Evening averages
-	wd = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',)
+	weekday_labels = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',)
+	lunch_data = ['-1'] * 7 # Lunch averages
+	evening_data = ['-1'] * 7 # Evening averages
 	for row in slot_performance:
-		day = wd[int(row[0])-1]
-		if not day in weekday_labels:
-			weekday_labels.append(day)
 		if row[1] == 0:
-			lunch_data.append("%.2f" % row[2])
+			lunch_data[int(row[0])-1] = "%.2f" % row[2]
 		else:
-			evening_data.append("%.2f" % row[2])
+			evening_data[int(row[0])-1] = "%.2f" % row[2]
 	
 	# Convert data sets to formatted string
 	weekday_stats = '|'.join([','.join(lunch_data), ','.join(evening_data)])
