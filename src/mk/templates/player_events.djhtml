@@ -7,7 +7,7 @@
 {% block content %}
 <h2>Last {{ recent_rankings|length }} event results</h2>
 
-<img src="http://chart.apis.google.com/chart?chs=1000x100&chf=bg,s,F0F0F000&chxl=0:|4th|3rd|2nd|1st&chxp=0,3,2,1,0&chxr=0,4,0&chxt=y&chbh=a&cht=bvg&chco=76A4FB&chds=0,4&chd=t:{{ recent_rankings|join:',' }}&chdlp=l&chts=000000,12" class="graph"/>
+<img src="http://chart.apis.google.com/chart?chs=1000x100&chf=bg,s,F0F0F000&chxl=0:|0|40|80|120|1:|1st|2nd|3rd|4th&chxp=0,0,40,80,120|1,4,3,2,1&chxr=0,0,120|1,0,4&chxt=r,y&chbh=a&cht=bvg&chco=76A4FB,3D7930&chds=0,4,0,120&chd=t1:{{ recent_rankings|join:',' }}|{{ recent_points|join:',' }}&chdlp=l&chts=000000,12&chm=D,3D7930,1,0,2,1&chg=0,25&chdl=Positions|Points&chdlp=b" class="graph"/>
 
 <h2>Week day stats</h2>
 
