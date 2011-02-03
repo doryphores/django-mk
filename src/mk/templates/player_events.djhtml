@@ -7,11 +7,11 @@
 {% block content %}
 <h2>Last {{ recent_rankings|length }} event results</h2>
 
-<img src="http://chart.apis.google.com/chart?chs=1000x100&chf=bg,s,F0F0F000&chxl=0:|0|40|80|120|1:|1st|2nd|3rd|4th&chxp=0,0,40,80,120|1,4,3,2,1&chxr=0,0,120|1,0,4&chxt=r,y&chbh=a&cht=bvg&chco=76A4FB,3D7930&chds=0,4,0,120&chd=t1:{{ recent_rankings|join:',' }}|{{ recent_points|join:',' }}&chdlp=l&chts=000000,12&chm=D,3D7930,1,0,2,1&chg=0,25&chdl=Positions|Points&chdlp=b" class="graph"/>
+<img src="http://chart.apis.google.com/chart?chs=1000x140&chf=bg,s,F0F0F000&chxl=1:|1st|2nd|3rd|4th&chxp=1,4,3,2,1&chxr=0,0,120|1,0,4&chxt=r,y&chbh=a&cht=bvg&chco=B9CDF399,3D7930&chds=0,4,0,120&chd=t1:{{ recent_rankings|join:',' }}|{{ recent_points|join:',' }}&chdlp=l&chts=000000,12&chm=D,3D7930,1,0,2,1&chg=0,16.66,1,4&chdl=Positions|Points&chdlp=b" class="graph"/>
 
 <h2>Week day stats</h2>
 
-<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxl=0:|{{ weekday_labels }}|2:|Average&chxp=2,{% widthratio player.average 12 100 %}&chxr=1,0,12&chxs=0,676767,11.5,0,lt,676767&chxt=x,y,r&chbh=a,5,40&chs=650x300&cht=bvg&chco=A2C180,3D7930&chds=0,12,0,12&chd=t:{{ weekday_stats }}&chdl=Lunch|Evening&chdlp=b&chg=0,-1,1,4&chma=|5&chm=N,000000,0,-1,11.5|N,000000,1,-1,11.5|r,76A4FB22,0,{{ player.average|ratio:12 }},0" class="graph"/>
+<img src="http://chart.apis.google.com/chart?chf=bg,s,F0F0F000&chxl=0:|{{ weekday_labels }}|2:|Average&chxp=2,{% widthratio player.average 12 100 %}&chxr=1,0,12&chxs=0,676767,11.5,0,lt,676767&chxt=x,y,r&chbh=a,2,20&chs=650x300&cht=bvg&chco=A2C180,3D7930&chds=0,12,0,12&chd=t:{{ weekday_stats }}&chdl=Lunch|Evening&chdlp=b&chg=0,-1,1,4&chma=|5&chm=N,000000,0,-1,11.5|N,000000,1,-1,11.5|r,76A4FB22,0,{{ player.average|ratio:12 }},0" class="graph"/>
 
 <h2>Recent events results</h2>
 <table class="stats events">

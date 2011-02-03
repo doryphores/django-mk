@@ -524,7 +524,7 @@ class Event(models.Model):
 				'chma': '5,5,5,25',
 				'chxl': chart_labels,
 				'chxp': chart_positions,
-				'chg': '-1,%f' % round(100 / ((maximum - minimum) / 100), 2),
+				'chg': '-1,%f,1,4' % round(100 / ((maximum - minimum) / 100), 2),
 			}
 			
 			charts.create(data, 'ratings.png')
@@ -564,7 +564,7 @@ class Event(models.Model):
 				'chma': '5,5,5,25',
 				'chxl': chart_labels,
 				'chxp': chart_positions,
-				'chg': '-1,%f' % round(100 / maximum, 2),
+				'chg': '-1,%f,1,4' % round(100 / maximum, 2),
 			}
 			
 			charts.create(data, 'form.png')
@@ -593,7 +593,7 @@ class Event(models.Model):
 				'chm': 'c,000000,0,-1,40',
 				'chxl': '0:|0%|25%|50%|75%|100%|1:|Event firsts|2:| |25%|50%|75%|100%|3:|Race firsts',
 				'chxp': '1,50|3,50',
-				'chg': '25,25',
+				'chg': '25,25,1,4',
 				'chf': 'bg,s,00000000|c,ls,90,EFEFEF99,0.25,CCCCCC99,0.25',
 			}
 			
