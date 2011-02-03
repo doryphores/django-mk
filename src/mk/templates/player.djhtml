@@ -15,6 +15,7 @@
 <p>
 	Races: <strong>{{ player.race_count }} races / {{ player.event_count }} events (participated in {{ player.event_count|percentage:total_event_count }} of events)</strong><br />
 	Points: <strong>{{ player.points }}</strong><br />
+	Rating: <strong>{{ player.rating }}</strong><br />
 	Average: <strong>{{ player.average|stringformat:'0.2f' }}</strong><br />
 	Form: <strong>{{ player.form|stringformat:'0.2f' }}</strong><br />
 	Highest score: <strong>{{ scores.max }}</strong><br />
