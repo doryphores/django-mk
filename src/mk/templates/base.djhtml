@@ -3,9 +3,9 @@
 <head>
 <title>{% block title %}Mario Kart{% endblock %}</title>
 
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
 <link rel="stylesheet" href="/static/css/extra.css" />
-<script src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.5.min.js"></script>
 <script>
 $(document).bind("mobileinit", function(){
 	$.extend(  $.mobile , {
@@ -14,7 +14,7 @@ $(document).bind("mobileinit", function(){
 	});
 });
 </script>
-<script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
 <script src="/static/js/jquery.tablesorter.min.js"></script>
 <script src="/static/js/extra.js"></script>
 </head>

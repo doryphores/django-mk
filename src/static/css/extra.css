@@ -2,6 +2,9 @@ html {
 	overflow-y: scroll;
 }
 
+body {
+	background: #dddddd;
+}
 
 .max-width-480px .ui-header .ui-title {
 	text-align: left;
@@ -128,12 +131,12 @@ form .ui-controlgroup-controls {
 	width: 100%;
 }
 
-.race-form .actions a {
+.race-form .actions .ui-btn {
 	float: left;
 	margin: 0;
 }
 
-.race-form .actions a+a {
+.race-form .actions div.ui-btn {
 	float: right;
 }
 

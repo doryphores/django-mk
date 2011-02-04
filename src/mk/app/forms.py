@@ -13,7 +13,7 @@ class RadioSelectPlain(widgets.RadioSelect):
 		return mark_safe(unicode(output))
 
 class RaceForm(forms.Form):
-	track = forms.ChoiceField(required=True, widget=widgets.Select({ 'data-inline': 'true' }))
+	track = forms.ChoiceField(required=True, widget=widgets.Select({ 'data-inline': 'false' }))
 	first = forms.ChoiceField(widget=RadioSelectPlain, required=True)
 	second = forms.ChoiceField(widget=RadioSelectPlain, required=True)
 	third = forms.ChoiceField(widget=RadioSelectPlain, required=True)
@@ -25,7 +25,7 @@ class RaceForm(forms.Form):
 		
 		super(RaceForm, self).__init__(*args, **kwargs)
 		
-		self.fields['track'].choices = [(0, 'Select a track')]
+		self.fields['track'].choices = [('', 'Select a track')]
 		self.fields['track'].choices.extend([(track.pk, track.name) for track in instance.get_available_tracks()])
 		if (instance.track != None):
 			self.fields['track'].initial = instance.track.pk
