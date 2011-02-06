@@ -136,6 +136,7 @@ form .ui-controlgroup-controls {
 	margin: 0;
 }
 
+.race-form .actions .ui-btn + .ui-btn,
 .race-form .actions div.ui-btn {
 	float: right;
 }
