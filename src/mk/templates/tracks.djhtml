@@ -7,28 +7,30 @@
 	{% for track in track_list %}
 	<li><a href="{{ track.get_absolute_url }}">
 		<h3>{{ track.name }}</h3>
+		<p>
 		{% with track.kings.all as kings %}
 			{% if kings %}
-				<p>King{{ kings|pluralize }}:
-					{% for king in kings %}
-					<strong>{{ king.player.name }}</strong> ({{ king.average|stringformat:".2f" }}){% if not forloop.last %},{% endif %}
-					{% endfor %}
-					<span class="avatars">
-					{% for king in kings %}
-					<span>
-					{% if king.player.avatar %}
-						<img src="{{ king.player.avatar.url }}">
-					{% else %}
-						<img src="/static/images/avatars/default.png">
-					{% endif %}
-					</span>
-					{% endfor %}
-					</span>
-				</p>
+				King{{ kings|pluralize }}:
+				{% for king in kings %}
+				<strong>{{ king.player.name }}</strong> ({{ king.average|stringformat:".2f" }}){% if forloop.last %}.{% else %},{% endif %}
+				{% endfor %}
+				<span class="avatars">
+				{% for king in kings %}
+				<span>
+				{% if king.player.avatar %}
+					<img src="{{ king.player.avatar.url }}">
+				{% else %}
+					<img src="/static/images/avatars/default.png">
+				{% endif %}
+				</span>
+				{% endfor %}
+				</span>
 			{% else %}
-				<p>King: Still up for grabs</p>
+				<p>King: Still up for grabs.</p>
 			{% endif %}
 		{% endwith %}
+		Raced <strong>{{ track.race_count }}</strong> times.
+		</p>
 	</a></li>
 	{% endfor %}
 </ul>
