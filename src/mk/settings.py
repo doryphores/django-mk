@@ -1,5 +1,4 @@
 import os
-import django.conf.global_settings as DEFAULT_SETTINGS
 
 APP_ROOT = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(APP_ROOT)

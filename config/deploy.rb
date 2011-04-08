@@ -1,8 +1,8 @@
 set :application, "Mario Kart"
 
-set :domain, "192.168.1.134"
+set :domain, "doryphores.net"
 
-set :deploy_to, "/home/martin/www/django-mk-prod"
+set :deploy_to, "/opt/django-projects/mk"
 set :db_location, "src"
 set :project_location, "src/mk"
 set :apache_connector, "#{project_location}/apache/connector.wsgi"
@@ -14,7 +14,7 @@ set :keep_releases, 3
 
 # User
 
-set :user, "martin"
+set :user, "ubuntu"
 set :use_sudo, false
 
 # Source control
@@ -45,7 +45,7 @@ role :db,  domain, :primary => true
 
 namespace :backup do
   task :setup do
-    run "mkdir -p #{deploy_to}/#{backup_dir}"
+    run "mkdir -p #{backup_dir}"
   end
   
   task :db do

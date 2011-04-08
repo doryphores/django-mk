@@ -11,5 +11,5 @@ import django.core.handlers.wsgi
 
 application = django.core.handlers.wsgi.WSGIHandler()
 
-import mk.monitor
-mk.monitor.start(interval=1.0)
+#import mk.monitor
+#mk.monitor.start(interval=1.0)
