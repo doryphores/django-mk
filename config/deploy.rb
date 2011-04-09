@@ -4,12 +4,12 @@ set :domain, "doryphores.net"
 
 set :deploy_to, "/opt/django-projects/mk2"
 set :db_location, "db.sqlite"
-set :apache_connector, "apache/connector.wsgi"
+set :apache_connector, "apache/production.wsgi"
 set :static_location, "static"
 set :django_admin_media, "/usr/local/lib/python2.6/dist-packages/django/contrib/admin/media"
 set :backup_dir, "#{deploy_to}/backups"
-set :virtualenv_root "#{shared_path}/system/env"
-set :requirements "requirements/prod.txt"
+set :virtualenv_root, "#{shared_path}/system/env"
+set :requirements_file, "#{release_path}/requirements/prod.txt"
 
 set :keep_releases, 3
 
@@ -42,9 +42,9 @@ role :app, domain
 role :db,  domain, :primary => true
 
 
-# Bootstrap
+# Environment
 
-namespace :bootstrap do
+namespace :env do
   task :setup do
     run "virtualenv --no-site-packages #{virtualenv_root}"
   end
@@ -53,12 +53,12 @@ namespace :bootstrap do
     run "ln -nfs #{virtualenv_root} #{release_path}/env"
   end
   
-  task :requirements do
-    run "pip install -E #{virtualenv_root} --requirement #{requirements}"
+  task :update_requirements do
+    run "pip install -q -E #{virtualenv_root} --requirement #{requirements_file}"
   end
   
-  after "deploy:setup", "bootstrap:setup", "bootstrap:requirements"
-  after "deploy:finalize_update", "bootstrap:symlink"
+  after "deploy:setup", "env:setup"
+  after "deploy:finalize_update", "env:symlink", "env:update_requirements"
 end
 
 
