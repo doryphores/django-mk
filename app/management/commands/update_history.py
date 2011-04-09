@@ -1,6 +1,6 @@
 from django.core.management.base import NoArgsCommand, BaseCommand
 from django.db import transaction
-from mk.app.models import Player, Event, PlayerHistory
+from app.models import Player, Event, PlayerHistory
 from optparse import make_option
 
 class Command(NoArgsCommand):

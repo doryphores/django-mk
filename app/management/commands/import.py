@@ -1,6 +1,6 @@
 from django.core.management.base import NoArgsCommand
 from django.db import connections, transaction
-from mk.app.models import Player, Event, EventResult, MAX_EVENT_POINTS
+from app.models import Player, Event, EventResult, MAX_EVENT_POINTS
 from django.db.utils import IntegrityError
 
 class Command(NoArgsCommand):

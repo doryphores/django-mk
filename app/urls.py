@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('mk.app.views',
+urlpatterns = patterns('app.views',
 	url(r'^$', 'home', name="home-page"),
 	url(r'^new/$', 'new', name="new-event"),
 	(r'^race/(?P<race_id>\d+)/$', 'race'),

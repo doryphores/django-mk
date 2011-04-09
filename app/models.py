@@ -2,7 +2,7 @@ from __future__ import division
 from django.db import models, connection, transaction
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from mk.utils import charts
+from utils import charts
 import math
 import logging
 
@@ -206,7 +206,7 @@ class Player(models.Model):
 	
 	@models.permalink
 	def get_absolute_url(self):
-		return ('mk.app.views.player', (), { 'player_id': str(self.pk) })
+		return ('app.views.player', (), { 'player_id': str(self.pk) })
 	
 	class Meta:
 		ordering = ['name']
@@ -245,7 +245,7 @@ class Track(models.Model):
 	
 	@models.permalink
 	def get_absolute_url(self):
-		return ('mk.app.views.track', (), { 'track_id': str(self.pk) })
+		return ('app.views.track', (), { 'track_id': str(self.pk) })
 	
 	class Meta:
 		ordering = ['name']

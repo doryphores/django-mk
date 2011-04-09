@@ -1,11 +1,11 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
-from mk.app.models import Race, Event, EventResult, Player,\
+from app.models import Race, Event, EventResult, Player,\
 	RANK_STRINGS, RaceResult, Track, RACE_COUNT
 from django.db import transaction
 from django.contrib import messages
-from mk.app.forms import RaceForm
+from app.forms import RaceForm
 from django.db.models import Min, Max
 from django.core.urlresolvers import reverse
 

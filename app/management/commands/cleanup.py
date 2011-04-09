@@ -1,6 +1,6 @@
 from django.core.management.base import NoArgsCommand, BaseCommand
 from django.db import transaction
-from mk.app.models import Event, OLD_EVENT_AGE
+from app.models import Event, OLD_EVENT_AGE
 from optparse import make_option
 import datetime
 

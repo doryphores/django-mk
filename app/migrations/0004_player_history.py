@@ -3,7 +3,7 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from mk.app.models import Event
+from app.models import Event
 from django.core.exceptions import ObjectDoesNotExist
 
 class Migration(DataMigration):

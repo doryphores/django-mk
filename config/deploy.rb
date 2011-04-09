@@ -3,10 +3,10 @@ set :application, "Mario Kart"
 set :domain, "doryphores.net"
 
 set :deploy_to, "/opt/django-projects/mk"
-set :db_location, "src"
+set :db_location, "db.sqlite"
 set :project_location, "src/mk"
-set :apache_connector, "#{project_location}/apache/connector.wsgi"
-set :static_location, "src/static"
+set :apache_connector, "apache/connector.wsgi"
+set :static_location, "static"
 set :django_admin_media, "/usr/local/lib/python2.6/dist-packages/django/contrib/admin/media"
 set :backup_dir, "#{deploy_to}/backups"
 
@@ -108,7 +108,7 @@ namespace :deploy do
     run "ln -s #{django_admin_media} #{latest_release}/#{static_location}/admin-media"
     
     # Symlink database
-    run "ln -s #{shared_path}/system/db.sqlite #{latest_release}/#{db_location}/db.sqlite"
+    run "ln -s #{shared_path}/system/db.sqlite #{latest_release}/#{db_location}"
   end
   task :restart, :roles => :app, :except => { :no_release => true } do
     # Touch WSGI script to restart app

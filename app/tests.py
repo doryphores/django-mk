@@ -6,7 +6,7 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from mk.app.models import Event, Player, EventResult
+from app.models import Event, Player, EventResult
 from django.test.client import Client
 
 class SimpleTest(TestCase):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from mk.app.models import *
+from app.models import *
 
 class PlayerAdmin(admin.ModelAdmin):
 	list_display = ('name','rating')
