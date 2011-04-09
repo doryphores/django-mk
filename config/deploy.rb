@@ -4,7 +4,6 @@ set :domain, "doryphores.net"
 
 set :deploy_to, "/opt/django-projects/mk"
 set :db_location, "db.sqlite"
-set :project_location, "src/mk"
 set :apache_connector, "apache/connector.wsgi"
 set :static_location, "static"
 set :django_admin_media, "/usr/local/lib/python2.6/dist-packages/django/contrib/admin/media"
@@ -120,7 +119,7 @@ end
 # Django specific tasks
 
 def django_manage(cmd, options={})
-  run "cd #{latest_release}/#{project_location}; python manage.py #{cmd}", options
+  run "cd #{latest_release}; python manage.py #{cmd}", options
 end
 
 namespace :django do
