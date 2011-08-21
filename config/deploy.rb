@@ -5,10 +5,11 @@ set :domain, "doryphores.net"
 set :deploy_to, "/opt/django-projects/mk"
 set :db_location, "db.sqlite"
 set :apache_connector, "apache/production.wsgi"
-set :static_location, "static"
 set :backup_dir, "#{deploy_to}/backups"
 set :virtualenv_root, "#{shared_path}/system/env"
 set :requirements_file, "#{release_path}/requirements/prod.txt"
+
+set :python, "#{virtualenv_root}/bin/python"
 
 set :keep_releases, 3
 
@@ -93,8 +94,8 @@ namespace :shared do
     for the most recently deployed version.
   EOD
   task :symlink, :except => { :no_release => true } do
-    run "rm -rf #{release_path}/media"
-    run "ln -nfs #{shared_path}/media #{release_path}/media"
+    run "rm -rf #{release_path}/public/media"
+    run "ln -nfs #{shared_path}/media #{release_path}/public/media"
   end
   
   desc <<-EOD
@@ -135,7 +136,7 @@ end
 # Django specific tasks
 
 def django_manage(cmd, options={})
-  run "cd #{latest_release}; python manage.py #{cmd}", options
+  run "cd #{latest_release}; #{python} manage.py #{cmd}", options
 end
 
 namespace :django do
@@ -159,5 +160,7 @@ namespace :django do
     django_manage "cleanup"
   end
   
-  after "deploy", "django:migrate", "django:cleanup", "django:update", "deploy:cleanup", "deploy:collectstatic"
+  after "deploy:finalize_update", "django:migrate", "django:collectstatic", "django:update", "django:cleanup"
 end
+
+after "deploy", "deploy:cleanup"
