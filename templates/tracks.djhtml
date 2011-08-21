@@ -20,7 +20,7 @@
 					{% if king.player.avatar %}
 						<img src="{{ king.player.avatar.url }}">
 					{% else %}
-						<img src="/static/images/avatars/default.png">
+						<img src="/static/images/default-avatars.png">
 					{% endif %}
 					</span>
 					{% endfor %}

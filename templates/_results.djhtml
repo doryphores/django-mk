@@ -5,7 +5,7 @@
 		{% if result.player.avatar %}
 		<img src="{{ result.player.avatar.url }}">
 		{% else %}
-		<img src="/static/images/avatars/default.png">
+		<img src="/static/images/default-avatars.png">
 		{% endif %}
 		<div class="ui-btn-inner">
 		<h4>{{ result.player.name }}</h4>

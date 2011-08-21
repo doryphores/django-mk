@@ -17,7 +17,7 @@
 		{% if player.avatar %}
 		<img src="{{ player.avatar.url }}">
 		{% else %}
-		<img src="/static/images/avatars/default.png">
+		<img src="/static/images/default-avatars.png">
 		{% endif %}
 	</a></li>
 	{% endfor %}
