@@ -4,13 +4,10 @@ apache_configuration= os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(apache_configuration)
 sys.path.append(PROJECT_ROOT)
 
-site.addsitedir('/home/martin/.virtualenvs/mk/lib/python2.6/site-packages')
+site.addsitedir('/home/martin/.virtualenvs/mk/lib/python2.7/site-packages')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 import django.core.handlers.wsgi
 
 application = django.core.handlers.wsgi.WSGIHandler()
-
-#import mk.monitor
-#mk.monitor.start(interval=1.0)
