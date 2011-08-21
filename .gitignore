@@ -3,5 +3,5 @@
 .project
 .pydevproject
 .settings
-.settings/*
 local_settings.py
+/public/static/admin

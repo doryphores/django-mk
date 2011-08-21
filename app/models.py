@@ -4,7 +4,6 @@ import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from utils import charts
 import math
-import logging
 
 
 # TODO: Add this as a field on Player model
@@ -51,7 +50,7 @@ class PlayerManager(models.Manager):
 
 class Player(models.Model):
 	name = models.CharField(max_length=200, unique=True)
-	avatar = models.ImageField(upload_to='images/avatars', blank=True)
+	avatar = models.ImageField(upload_to='avatars', blank=True)
 	
 	active = models.BooleanField(default=True)
 	

@@ -15,7 +15,7 @@ def create(data, file):
 	# Setup request
 	req = urllib2.Request(url='http://chart.apis.google.com/chart', data=urllib.urlencode(post_data))
 	
-	path = 'images/charts/%s' % file
+	path = 'charts/%s' % file
 	
 	try:
 		# Do the call to Google Charts
