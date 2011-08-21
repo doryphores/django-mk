@@ -2,11 +2,10 @@ set :application, "Mario Kart"
 
 set :domain, "doryphores.net"
 
-set :deploy_to, "/opt/django-projects/mk2"
+set :deploy_to, "/opt/django-projects/mk"
 set :db_location, "db.sqlite"
 set :apache_connector, "apache/production.wsgi"
 set :static_location, "static"
-set :django_admin_media, "/usr/local/lib/python2.6/dist-packages/django/contrib/admin/media"
 set :backup_dir, "#{deploy_to}/backups"
 set :virtualenv_root, "#{shared_path}/system/env"
 set :requirements_file, "#{release_path}/requirements/prod.txt"
@@ -94,10 +93,8 @@ namespace :shared do
     for the most recently deployed version.
   EOD
   task :symlink, :except => { :no_release => true } do
-    run "rm -rf #{release_path}/#{static_location}/images/avatars"
-    run "ln -nfs #{shared_path}/uploads/avatars #{release_path}/#{static_location}/images/avatars"
-    run "rm -rf #{release_path}/#{static_location}/images/charts"
-    run "ln -nfs #{shared_path}/uploads/charts #{release_path}/#{static_location}/images/charts"
+    run "rm -rf #{release_path}/media"
+    run "ln -nfs #{shared_path}/media #{release_path}/media"
   end
   
   desc <<-EOD
@@ -105,7 +102,7 @@ namespace :shared do
     and registers them in Capistrano environment.
   EOD
   task :register_dirs do
-    set :uploads_dirs,    %w(uploads uploads/avatars uploads/charts)
+    set :uploads_dirs,    %w(media)
     set :shared_children, fetch(:shared_children) + fetch(:uploads_dirs)
   end
   
@@ -124,9 +121,6 @@ namespace :deploy do
   task :finalize_update do
     run "chown -R :www-data #{latest_release}"
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-    
-    # Symlink to admin media folder
-    run "ln -s #{django_admin_media} #{latest_release}/#{static_location}/admin-media"
     
     # Symlink database
     run "ln -s #{shared_path}/system/db.sqlite #{latest_release}/#{db_location}"
@@ -150,6 +144,11 @@ namespace :django do
     django_manage "syncdb --noinput --migrate"
   end
   
+  desc "Collect static files"
+  task :collectstatic do
+    django_manage "collectstatic --noinput -l"
+  end
+  
   desc "Re-run history"
   task :update do
     django_manage "update_history --noinput"
@@ -160,5 +159,5 @@ namespace :django do
     django_manage "cleanup"
   end
   
-  after "deploy", "django:migrate", "django:cleanup", "django:update", "deploy:cleanup"
+  after "deploy", "django:migrate", "django:cleanup", "django:update", "deploy:cleanup", "deploy:collectstatic"
 end

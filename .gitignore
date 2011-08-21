@@ -5,3 +5,4 @@
 .settings
 local_settings.py
 /public/static/admin
+/public/media
