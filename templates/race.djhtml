@@ -5,7 +5,7 @@
 {% block content %}
 {{ form.non_field_errors }}
 <div class="race-form">
-<form action="/race/{{ race.pk|default_if_none:0 }}/" method="post">
+<form action="{% url race race.pk|default_if_none:0 %}" method="post">
 	{% csrf_token %}
 	{{ form.track.label_tag }}
 	{{ form.track }}
@@ -27,7 +27,7 @@
 	</fieldset>
 	<div class="actions">
 		{% if previous_race %}
-			<a href="/race/{{ previous_race.pk }}/" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous</a>
+			<a href="{% url race previous_race.pk %}" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true" rel="external">Previous</a>
 		{% endif %}
 		<input type="submit" value="{% if race.order == 7 %}Finish{% else %}Next{% endif %}" data-theme="b" data-icon="arrow-r" data-inline="true" data-iconpos="right">
 	</div>

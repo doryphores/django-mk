@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="race-form">
-<form action="/new/" method="post">
+<form action="{% url new-event %}" method="post">
 {% csrf_token %}
 <fieldset data-role="controlgroup">
 <legend>Select players</legend>
