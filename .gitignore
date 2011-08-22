@@ -1,3 +1,4 @@
+.env
 *.sqlite
 *.pyc
 .project
@@ -6,3 +7,4 @@
 local_settings.py
 /public/static/admin
 /public/media
+/logs
