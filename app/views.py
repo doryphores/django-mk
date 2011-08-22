@@ -125,7 +125,7 @@ def new(request):
 			
 			request.session['event_pk'] = event.pk
 			
-			return redirect('/race/')
+			return redirect("race-start")
 		else:
 			messages.error(request, 'Please select exactly 4 players')
 	
