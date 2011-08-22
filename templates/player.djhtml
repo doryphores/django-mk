@@ -57,7 +57,7 @@
 				{% if player.avatar %}
 				<img src="{{ player.avatar.url }}" width="80" height="80">
 				{% else %}
-				<img src="/static/images/default-avatars.png" width="80" height="80">
+				<img src="{{ STATIC_URL }}images/default-avatar.png" width="80" height="80">
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ player.get_absolute_url }}">{{ player.name }}</a></td>
