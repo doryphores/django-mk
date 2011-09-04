@@ -7,7 +7,7 @@ sys.path.append(PROJECT_ROOT)
 if os.name == 'nt':
 	site.addsitedir(os.path.join(PROJECT_ROOT, '.env\\Lib\\site-packages'))
 else:
-	site.addsitedir('/home/martin/.virtualenvs/mk/lib/python2.7/site-packages')
+	site.addsitedir(PROJECT_ROOT + '/.env/lib/python2.7/site-packages')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 

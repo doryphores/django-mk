@@ -1,11 +1,11 @@
-{% extends "page.djhtml" %}
+{% extends "page.html" %}
 
 {% block page_title %}Confirm event{% endblock %}
 
 {% block content %}
 
 <div class="race-form">
-{% include '_results.djhtml' %}
+{% include '_results.html' %}
 
 <div class="actions">
 <a href="{% url race previous_race.pk %}" data-role="button" data-icon="arrow-l" data-theme="a" data-inline="true">Back</a>

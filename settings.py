@@ -8,7 +8,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-	# ('Your Name', 'your_email@domain.com'),
+	('Martin', 'martin.laine@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -27,6 +27,7 @@ DATABASES = {
 INTERNAL_IPS=('127.0.0.1', '192.168.0.4')
 
 # Cache config
+
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
 
@@ -114,7 +115,6 @@ INSTALLED_APPS = (
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sites',
-	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.admin',
 	'django.contrib.staticfiles',

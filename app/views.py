@@ -14,7 +14,7 @@ def home(request):
 	birdo = players.order_by('form')[0:1].get()
 	total_event_count = Event.completed_objects.count()
 	
-	return render(request, 'home.djhtml', {
+	return render(request, 'home.html', {
 		'players': players,
 		'fanatic': fanatic,
 		'topform': topform,
@@ -25,7 +25,7 @@ def home(request):
 def players(request):
 	player_list = Player.objects.order_by('-rating').all()
 	
-	return render(request, 'players.djhtml', {
+	return render(request, 'players.html', {
 		'player_list': player_list,
 	})
 
@@ -38,7 +38,7 @@ def player(request, player_id):
 	
 	scores = event_results.aggregate(min=Min('points'), max=Max('points'))
 	
-	return render(request, 'player.djhtml', {
+	return render(request, 'player.html', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'scores': scores,
@@ -76,7 +76,7 @@ def player_events(request, player_id):
 	# Convert data sets to formatted string
 	weekday_stats = '|'.join([','.join(lunch_data), ','.join(evening_data)])
 	
-	return render(request, 'player_events.djhtml', {
+	return render(request, 'player_events.html', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'recent_rankings': recent_rankings,
@@ -89,21 +89,21 @@ def player_events(request, player_id):
 def player_tracks(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
 	
-	return render(request, 'player_tracks.djhtml', {
+	return render(request, 'player_tracks.html', {
 		'player': player,
 	})
 
 def tracks(request):
 	track_list = Track.objects.all()
 	
-	return render(request, 'tracks.djhtml', { 'track_list': track_list })
+	return render(request, 'tracks.html', { 'track_list': track_list })
 
 def track(request, track_id):
 	track = get_object_or_404(Track, pk=track_id)
 	
 	players = Player.objects.get_track_rankings(track)
 	
-	return render(request, 'track.djhtml', {
+	return render(request, 'track.html', {
 		'track': track,
 		'race_count': track.race_count,
 		'player_list': players,
@@ -135,7 +135,7 @@ def new(request):
 		# Auto select most fanatic players
 		selected_players = player_list[:4]
 	
-	return render(request, 'new.djhtml', { 'player_list': player_list, 'selected_players': selected_players })
+	return render(request, 'new.html', { 'player_list': player_list, 'selected_players': selected_players })
 
 @transaction.commit_on_success()
 def race(request, race_id=0):
@@ -193,7 +193,7 @@ def race(request, race_id=0):
 		'previous_race': previous_race,
 	}
 	
-	return render(request, 'race.djhtml', view_vars)
+	return render(request, 'race.html', view_vars)
 
 
 def confirm(request):
@@ -214,7 +214,7 @@ def confirm(request):
 		'previous_race': event.races.all()[:1].get(),
 	}
 	
-	return render(request, 'confirm.djhtml', view_vars)
+	return render(request, 'confirm.html', view_vars)
 
 
 @transaction.commit_on_success()
@@ -254,6 +254,6 @@ def finish(request):
 		view_vars = {
 			'new_kings': new_kings,
 		}
-		return render(request, 'summary.djhtml', view_vars)
+		return render(request, 'summary.html', view_vars)
 	else:
 		return redirect('home-page')
