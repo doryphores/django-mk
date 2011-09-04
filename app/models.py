@@ -205,7 +205,7 @@ class Player(models.Model):
 	
 	@models.permalink
 	def get_absolute_url(self):
-		return ('app.views.player', (), { 'player_id': str(self.pk) })
+		return ("player-details", (), { 'player_id': str(self.pk) })
 	
 	class Meta:
 		ordering = ['name']
@@ -244,7 +244,7 @@ class Track(models.Model):
 	
 	@models.permalink
 	def get_absolute_url(self):
-		return ('app.views.track', (), { 'track_id': str(self.pk) })
+		return ("track-details", (), { 'track_id': str(self.pk) })
 	
 	class Meta:
 		ordering = ['name']

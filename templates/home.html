@@ -26,7 +26,7 @@
 				{% if player.avatar %}
 				<img src="{{ player.avatar.url }}">
 				{% else %}
-				<img src="/static/images/default-avatars.png">
+				<img src="{{ STATIC_URL }}images/default-avatar.png">
 				{% endif %}
 			</a></td>
 			<td class="name"><a href="{{ player.get_absolute_url }}">{{ player.name }}</a></td>
@@ -57,12 +57,12 @@
 <div data-role="collapsible-set">
 	<div data-role="collapsible" data-collapsed="true">
 		<h3>Form over time</h3>
-		<img src="/media/charts/form.png?e={{ total_event_count }}" class="graph">
+		<img src="{{ MEDIA_URL }}charts/form.png?e={{ total_event_count }}" class="graph">
 	</div>
 	<div data-role="collapsible" data-collapsed="true">
 		<h3>Ratings over time</h3>
 		
-		<img src="/media/charts/ratings.png?e={{ total_event_count }}" class="graph">
+		<img src="{{ MEDIA_URL }}charts/ratings.png?e={{ total_event_count }}" class="graph">
 	</div>
 
 	<div data-role="collapsible" data-collapsed="true">
@@ -70,7 +70,7 @@
 		
 		<p>Note: Marker size reflects average</p>
 		
-		<img src="/media/charts/first_place_performance.png?e={{ total_event_count }}" class="graph">
+		<img src="{{ MEDIA_URL }}charts/first_place_performance.png?e={{ total_event_count }}" class="graph">
 	</div>
 </div>
 

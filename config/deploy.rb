@@ -46,7 +46,7 @@ role :db,  domain, :primary => true
 
 namespace :env do
   task :setup do
-    run "virtualenv --no-site-packages #{virtualenv_root}"
+    run "virtualenv --distribute --no-site-packages #{virtualenv_root}"
   end
   
   task :symlink do

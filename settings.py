@@ -28,10 +28,7 @@ INTERNAL_IPS=('127.0.0.1', '192.168.0.4')
 
 # Cache config
 
-if os.name == 'nt':
-	CACHE_BACKEND = 'locmem://' # Memcached not supported on Windows
-else:
-	CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
 
 # Local time zone for this installation. Choices can be found here:

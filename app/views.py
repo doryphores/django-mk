@@ -1,13 +1,10 @@
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template.context import RequestContext
-from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from app.models import Race, Event, EventResult, Player,\
 	RANK_STRINGS, RaceResult, Track, RACE_COUNT
 from django.db import transaction
 from django.contrib import messages
 from app.forms import RaceForm
 from django.db.models import Min, Max
-from django.core.urlresolvers import reverse
 
 def home(request):
 	players = Player.active_objects.order_by('-rating')
@@ -17,20 +14,20 @@ def home(request):
 	birdo = players.order_by('form')[0:1].get()
 	total_event_count = Event.completed_objects.count()
 	
-	return render_to_response('home.html', {
+	return render(request, 'home.html', {
 		'players': players,
 		'fanatic': fanatic,
 		'topform': topform,
 		'birdo': birdo,
 		'total_event_count': total_event_count,
-	}, context_instance=RequestContext(request))
+	})
 
 def players(request):
 	player_list = Player.objects.order_by('-rating').all()
 	
-	return render_to_response('players.html', {
+	return render(request, 'players.html', {
 		'player_list': player_list,
-	}, context_instance=RequestContext(request))
+	})
 
 def player(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
@@ -41,11 +38,11 @@ def player(request, player_id):
 	
 	scores = event_results.aggregate(min=Min('points'), max=Max('points'))
 	
-	return render_to_response('player.html', {
+	return render(request, 'player.html', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'scores': scores,
-	}, context_instance=RequestContext(request))
+	})
 
 def player_events(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
@@ -79,7 +76,7 @@ def player_events(request, player_id):
 	# Convert data sets to formatted string
 	weekday_stats = '|'.join([','.join(lunch_data), ','.join(evening_data)])
 	
-	return render_to_response('player_events.html', {
+	return render(request, 'player_events.html', {
 		'total_event_count': total_event_count,
 		'player': player,
 		'recent_rankings': recent_rankings,
@@ -87,30 +84,30 @@ def player_events(request, player_id):
 		'recent_results': recent_results,
 		'weekday_stats': weekday_stats,
 		'weekday_labels': '|'.join(weekday_labels),
-	}, context_instance=RequestContext(request))
+	})
 
 def player_tracks(request, player_id):
 	player = get_object_or_404(Player, pk=player_id)
 	
-	return render_to_response('player_tracks.html', {
+	return render(request, 'player_tracks.html', {
 		'player': player,
-	}, context_instance=RequestContext(request))
+	})
 
 def tracks(request):
 	track_list = Track.objects.all()
 	
-	return render_to_response('tracks.html', { 'track_list': track_list }, context_instance=RequestContext(request))
+	return render(request, 'tracks.html', { 'track_list': track_list })
 
 def track(request, track_id):
 	track = get_object_or_404(Track, pk=track_id)
 	
 	players = Player.objects.get_track_rankings(track)
 	
-	return render_to_response('track.html', {
+	return render(request, 'track.html', {
 		'track': track,
 		'race_count': track.race_count,
 		'player_list': players,
-	}, context_instance=RequestContext(request))
+	})
 
 @transaction.commit_on_success()
 def new(request):
@@ -128,7 +125,7 @@ def new(request):
 			
 			request.session['event_pk'] = event.pk
 			
-			return HttpResponseRedirect('/race/')
+			return redirect("race-start")
 		else:
 			messages.error(request, 'Please select exactly 4 players')
 	
@@ -138,18 +135,18 @@ def new(request):
 		# Auto select most fanatic players
 		selected_players = player_list[:4]
 	
-	return render_to_response('new.html', { 'player_list': player_list, 'selected_players': selected_players }, context_instance=RequestContext(request))
+	return render(request, 'new.html', { 'player_list': player_list, 'selected_players': selected_players })
 
 @transaction.commit_on_success()
 def race(request, race_id=0):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	
 	try:
 		race = Race.objects.filter(event=event).get(pk=race_id)
@@ -171,13 +168,13 @@ def race(request, race_id=0):
 				RaceResult(race=race, player=Player.objects.get(pk=form.cleaned_data[position]), position=i).save()
 			
 			if event.race_count == RACE_COUNT:
-				return HttpResponseRedirect(reverse('confirm-results'))
+				return redirect('confirm-results')
 			else:
 				try:
 					next_race = event.races.get(order=race.order + 1)
-					return HttpResponseRedirect('/race/%s/' % next_race.pk)
+					return redirect("race", (), { "race_id": next_race.pk })
 				except Race.DoesNotExist:
-					return HttpResponseRedirect('/race/')
+					return redirect("race-start")
 	else:
 		form = RaceForm(instance=race)
 	
@@ -196,18 +193,18 @@ def race(request, race_id=0):
 		'previous_race': previous_race,
 	}
 	
-	return render_to_response('race.html', view_vars, context_instance=RequestContext(request))
+	return render(request, 'race.html', view_vars)
 
 
 def confirm(request):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	
 	ratings = event.get_rating_changes()
 	results = [{'player': r.player, 'points': r.points, 'rating': ratings[r.player]} for r in event.results.all()]
@@ -217,19 +214,19 @@ def confirm(request):
 		'previous_race': event.races.all()[:1].get(),
 	}
 	
-	return render_to_response('confirm.html', view_vars, context_instance=RequestContext(request))
+	return render(request, 'confirm.html', view_vars)
 
 
 @transaction.commit_on_success()
 def finish(request):
 	if 'event_pk' not in request.session:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	try:
 		event = Event.objects.get(pk=request.session['event_pk'])
 	except Event.DoesNotExist:
 		messages.error(request, 'Event not found in session')
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')
 	
 	old_kings = {}
 	for track in event.tracks.all():
@@ -257,6 +254,6 @@ def finish(request):
 		view_vars = {
 			'new_kings': new_kings,
 		}
-		return render_to_response('summary.html', view_vars, context_instance=RequestContext(request))
+		return render(request, 'summary.html', view_vars)
 	else:
-		return HttpResponseRedirect(reverse('home-page'))
+		return redirect('home-page')

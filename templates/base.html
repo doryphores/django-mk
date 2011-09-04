@@ -4,7 +4,7 @@
 <title>{% block title %}Mario Kart{% endblock %}</title>
 
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
-<link rel="stylesheet" href="/static/css/extra.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/extra.css" />
 <script src="http://code.jquery.com/jquery-1.5.min.js"></script>
 <script>
 $(document).bind("mobileinit", function(){
@@ -15,8 +15,8 @@ $(document).bind("mobileinit", function(){
 });
 </script>
 <script src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
-<script src="/static/js/jquery.tablesorter.min.js"></script>
-<script src="/static/js/extra.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
+<script src="{{ STATIC_URL }}js/extra.js"></script>
 </head>
 <body>
 <div data-role="page">

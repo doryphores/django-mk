@@ -9,19 +9,6 @@ from django.test import TestCase
 from app.models import Event, Player, EventResult
 from django.test.client import Client
 
-class SimpleTest(TestCase):
-	def test_basic_addition(self):
-		"""
-		Tests that 1 + 1 always equals 2.
-		"""
-		self.failUnlessEqual(1 + 1, 2)
-
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
-
->>> 1 + 1 == 2
-True
-"""}
 
 class RecordEventTestCase(TestCase):
 	fixtures = ['test_data',]
@@ -36,15 +23,19 @@ class RecordEventTestCase(TestCase):
 		
 		self.failUnlessEqual(len(response.context['player_list']), 8, '8 players to select from')
 		
+		session = self.client.session
+		
 		try:
-			self.client.session['event_pk']
+			session['event_pk']
 			self.fail("Shouldn't have a session value")
 		except KeyError:
 			pass
 		
 		response = self.client.post('/new/', { 'players': ['1','2','4','5'] }, follow=True)
-		#self.assertRedirects(response, '/race/')
-		self.assertEqual(self.client.session.get('event_pk'), response.context['race'].event.pk)
+		
+		self.assertRedirects(response, '/race/')
+		
+		self.assertEqual(self.client.session['event_pk'], response.context['race'].event.pk)
 
 class EventTestCase(TestCase):
 	fixtures = ['test_data',]
