@@ -43,17 +43,17 @@ class RaceForm(forms.Form):
 		cleaned_data = self.cleaned_data
 		players = [cleaned_data.get('first'), cleaned_data.get('second'), cleaned_data.get('third'), cleaned_data.get('fourth')]
 		
-		if cleaned_data.get('track') == '0':
-			raise ValidationError, "Select a track Rota Boy!"
+		if not cleaned_data.get('track'):
+			raise ValidationError, "Invalid race result: Please select a track before submitting result"
 		
 		for player in players:
 			if player == None:
-				raise ValidationError, "All positions must be selected"
+				raise ValidationError, "Invalid race result: All players must be assigned to a position"
 		
 		if len(players) < 4:
-			raise ValidationError, "All positions must be selected"
+			raise ValidationError, "Invalid race result: All players must be assigned to a position"
 		
 		if len(set(players)) < 4:
-			raise ValidationError, "Can't have multiple players in same position"
+			raise ValidationError, "Invalid race result: At least one player has been assigned to multiple positions"
 		
 		return cleaned_data
