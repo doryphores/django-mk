@@ -1,4 +1,4 @@
-{% extends "page.djhtml" %}
+{% extends "page.html" %}
 
 {% block page_title %}Race #{{ race.order|add:1 }}{% endblock %}
 
@@ -33,6 +33,6 @@
 	</div>
 </form>
 
-{% include '_results.djhtml' %}
+{% include '_results.html' %}
 </div>
 {% endblock %}
