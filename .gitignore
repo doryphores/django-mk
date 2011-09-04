@@ -1,11 +1,11 @@
 .env
-*.sqlite
+data
 *.pyc
 .env
 .project
 .pydevproject
 .settings
 local_settings.py
-/public/static/admin
-/public/media
-/logs
+public/static/admin
+public/media
+logs
